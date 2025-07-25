@@ -140,6 +140,65 @@
             height: 20px;
             border-radius: 3px;
         }
+        
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 350px;
+            text-align: center;
+            border: 1px solid #4ecdc4;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .booking-info {
+            margin: 20px 0;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: transform 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        select {
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #4ecdc4;
+        }
     </style>
 </head>
 <body>
@@ -170,8 +229,169 @@
             <!-- Ряд 1: 8 одноместных пуфиков -->
             <div class="row">
                 <div class="row-label">1</div>
-                <div class="seat single" onclick="selectSeat(this, 'single', '1-1')">1</div>
-                <div class="seat single" onclick="selectSeat(this, 'single', '1-2')">2</div>
-                <div class="seat single" onclick="selectSeat(this, 'single', '1-3')">3</div>
-                <div class="seat single" onclick="selectSeat(this, 'single', '1-4')">4</div>
-                <div class="
+                <div class="seat single" onclick="openBooking('1-1', 'single')">1</div>
+                <div class="seat single" onclick="openBooking('1-2', 'single')">2</div>
+                <div class="seat single" onclick="openBooking('1-3', 'single')">3</div>
+                <div class="seat single" onclick="openBooking('1-4', 'single')">4</div>
+                <div class="seat single" onclick="openBooking('1-5', 'single')">5</div>
+                <div class="seat single" onclick="openBooking('1-6', 'single')">6</div>
+                <div class="seat single" onclick="openBooking('1-7', 'single')">7</div>
+                <div class="seat single" onclick="openBooking('1-8', 'single')">8</div>
+            </div>
+            
+            <!-- Ряд 2: 5 двухместных диванов -->
+            <div class="row">
+                <div class="row-label">2</div>
+                <div class="seat double" onclick="openBooking('2-1', 'double')">2-1</div>
+                <div class="seat double" onclick="openBooking('2-2', 'double')">2-2</div>
+                <div class="seat double" onclick="openBooking('2-3', 'double')">2-3</div>
+                <div class="seat double" onclick="openBooking('2-4', 'double')">2-4</div>
+                <div class="seat double" onclick="openBooking('2-5', 'double')">2-5</div>
+            </div>
+            
+            <!-- Ряд 3: 6 двухместных диванов -->
+            <div class="row">
+                <div class="row-label">3</div>
+                <div class="seat double" onclick="openBooking('3-1', 'double')">3-1</div>
+                <div class="seat double" onclick="openBooking('3-2', 'double')">3-2</div>
+                <div class="seat double" onclick="openBooking('3-3', 'double')">3-3</div>
+                <div class="seat double" onclick="openBooking('3-4', 'double')">3-4</div>
+                <div class="seat double" onclick="openBooking('3-5', 'double')">3-5</div>
+                <div class="seat double" onclick="openBooking('3-6', 'double')">3-6</div>
+            </div>
+            
+            <!-- Ряд 4: 6 двухместных диванов -->
+            <div class="row">
+                <div class="row-label">4</div>
+                <div class="seat double" onclick="openBooking('4-1', 'double')">4-1</div>
+                <div class="seat double" onclick="openBooking('4-2', 'double')">4-2</div>
+                <div class="seat double" onclick="openBooking('4-3', 'double')">4-3</div>
+                <div class="seat double" onclick="openBooking('4-4', 'double')">4-4</div>
+                <div class="seat double" onclick="openBooking('4-5', 'double')">4-5</div>
+                <div class="seat double" onclick="openBooking('4-6', 'double')">4-6</div>
+            </div>
+            
+            <!-- Ряд 5: 4хместные по краям, 2хместные в центре -->
+            <div class="row">
+                <div class="row-label">5</div>
+                <div class="seat quad" onclick="openBooking('5-1', 'quad')">5-1</div>
+                <div class="seat double" onclick="openBooking('5-2', 'double')">5-2</div>
+                <div class="seat double" onclick="openBooking('5-3', 'double')">5-3</div>
+                <div class="seat double" onclick="openBooking('5-4', 'double')">5-4</div>
+                <div class="seat double" onclick="openBooking('5-5', 'double')">5-5</div>
+                <div class="seat quad" onclick="openBooking('5-6', 'quad')">5-6</div>
+            </div>
+            
+            <!-- Ряд 6: 4хместный по краям, 2хместные в центре -->
+            <div class="row">
+                <div class="row-label">6</div>
+                <div class="seat quad" onclick="openBooking('6-1', 'quad')">6-1</div>
+                <div class="seat double" onclick="openBooking('6-2', 'double')">6-2</div>
+                <div class="seat double" onclick="openBooking('6-3', 'double')">6-3</div>
+                <div class="seat double" onclick="openBooking('6-4', 'double')">6-4</div>
+                <div class="seat quad" onclick="openBooking('6-5', 'quad')">6-5</div>
+            </div>
+        </div>
+        
+        <a href="index.html" class="back-link">← На главную</a>
+    </div>
+    
+    <!-- Модальное окно бронирования -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Бронирование места</h3>
+            <div class="booking-info">
+                <p>Место: <span id="modalSeat"></span></p>
+                <p>Тип: <span id="modalType"></span></p>
+                <div id="peopleSelector">
+                    <label>Количество человек:</label><br>
+                    <select id="peopleCount">
+                        <option value="1">1</option>
+                    </select>
+                </div>
+                <p>Стоимость: <span id="modalPrice">400</span> руб.</p>
+            </div>
+            <button onclick="confirmBooking()">Забронировать</button>
+            <button onclick="closeModal()" style="background: #666;">Отмена</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSeat = '';
+        let currentType = '';
+        const pricePerSeat = 400;
+        const modal = document.getElementById('bookingModal');
+        
+        function openBooking(seat, type) {
+            currentSeat = seat;
+            currentType = type;
+            
+            document.getElementById('modalSeat').textContent = seat;
+            document.getElementById('modalType').textContent = 
+                type === 'single' ? 'Одноместный' :
+                type === 'double' ? 'Двухместный' : 'Четырехместный';
+            
+            // Настраиваем селектор количества человек
+            const peopleSelect = document.getElementById('peopleCount');
+            peopleSelect.innerHTML = '';
+            
+            let min = 1, max = 1;
+            if (type === 'double') {
+                min = 2;
+                max = 3;
+            } else if (type === 'quad') {
+                min = 4;
+                max = 6;
+            }
+            
+            for (let i = min; i <= max; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                peopleSelect.appendChild(option);
+            }
+            
+            updatePrice();
+            modal.style.display = 'block';
+        }
+        
+        function updatePrice() {
+            const peopleCount = parseInt(document.getElementById('peopleCount').value);
+            const totalPrice = peopleCount * pricePerSeat;
+            document.getElementById('modalPrice').textContent = totalPrice;
+        }
+        
+        function confirmBooking() {
+            const people = document.getElementById('peopleCount').value;
+            const price = document.getElementById('modalPrice').textContent;
+            
+            alert(`Бронирование подтверждено!\nМесто: ${currentSeat}\nКоличество человек: ${people}\nСтоимость: ${price} руб.`);
+            
+            // Помечаем место как забронированное
+            const seatElement = Array.from(document.querySelectorAll('.seat')).find(seat => 
+                seat.textContent.trim() === currentSeat);
+            if (seatElement) {
+                seatElement.classList.add('booked');
+                seatElement.onclick = null;
+            }
+            
+            closeModal();
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+        
+        // Закрытие модального окна кликом вне его
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+        // Обновляем цену при изменении количества человек
+        document.getElementById('peopleCount').addEventListener('change', updatePrice);
+    </script>
+</body>
+</html>
