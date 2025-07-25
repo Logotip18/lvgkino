@@ -73,6 +73,7 @@
             color: #ff6b6b;
             margin-bottom: 15px;
             font-size: 1.4rem;
+            text-align: center;
         }
         
         .seance-date {
@@ -86,12 +87,14 @@
             color: #4ecdc4;
             margin-bottom: 10px;
             font-size: 1.1rem;
+            text-align: center;
         }
         
         .seances-list {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            justify-content: center;
         }
         
         .seance {
@@ -102,19 +105,13 @@
             color: white;
             transition: all 0.3s;
             font-weight: bold;
-            min-width: 100px;
+            min-width: 80px;
             text-align: center;
         }
         
         .seance:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        
-        .seance-info {
-            font-size: 0.8rem;
-            opacity: 0.9;
-            margin-top: 5px;
         }
         
         .no-seances {
@@ -129,6 +126,7 @@
             gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .filter-button {
@@ -165,12 +163,8 @@
             
             .seance {
                 padding: 10px 12px;
-                min-width: 80px;
+                min-width: 70px;
                 font-size: 0.9rem;
-            }
-            
-            .seance-info {
-                font-size: 0.7rem;
             }
         }
         
@@ -188,7 +182,7 @@
             }
             
             .seance {
-                min-width: 70px;
+                min-width: 60px;
                 padding: 8px 10px;
                 font-size: 0.8rem;
             }
@@ -337,16 +331,10 @@
                         `;
                         
                         for (const seance of seances) {
-                            // Получаем информацию о занятых местах
-                            const occupiedSeats = await getOccupiedSeatsCount(seance.movie, seance.time, date);
-                            const totalSeats = 30; // Общее количество мест в зале
-                            const freeSeats = totalSeats - occupiedSeats;
-                            
                             html += `
                                 <a href="hall.html?film=${encodeURIComponent(seance.movie)}&time=${encodeURIComponent(seance.time)}&date=${encodeURIComponent(date)}" 
                                    class="seance">
                                     ${seance.time}
-                                    <div class="seance-info">Свободно: ${freeSeats}</div>
                                 </a>
                             `;
                         }
@@ -379,12 +367,12 @@
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             
             if (filter === 'today') {
-                const todayString = today.toISOString().split('T')[0];
+                const todayString = formatDateForComparison(today);
                 return seances.filter(seance => seance.date === todayString);
             } else if (filter === 'tomorrow') {
                 const tomorrow = new Date(today);
                 tomorrow.setDate(tomorrow.getDate() + 1);
-                const tomorrowString = tomorrow.toISOString().split('T')[0];
+                const tomorrowString = formatDateForComparison(tomorrow);
                 return seances.filter(seance => seance.date === tomorrowString);
             } else if (filter === 'week') {
                 const nextWeek = new Date(today);
@@ -402,6 +390,14 @@
                 const seanceDate = new Date(seance.date + 'T00:00:00');
                 return seanceDate >= today && seanceDate <= twoWeeks;
             });
+        }
+        
+        // Форматирование даты для сравнения (YYYY-MM-DD)
+        function formatDateForComparison(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
         
         // Группировка сеансов по фильмам и датам
@@ -423,23 +419,7 @@
             return grouped;
         }
         
-        // Получение количества занятых мест
-        async function getOccupiedSeatsCount(film, time, date) {
-            try {
-                const querySnapshot = await db.collection('bookings')
-                    .where('film', '==', film)
-                    .where('time', '==', time)
-                    .where('date', '==', date)
-                    .get();
-                
-                return querySnapshot.size;
-            } catch (error) {
-                console.error('Ошибка получения занятых мест:', error);
-                return 0;
-            }
-        }
-        
-        // Форматирование даты
+        // Форматирование даты для отображения
         function formatDate(date) {
             return date.toLocaleDateString('ru-RU', {
                 day: '2-digit',
