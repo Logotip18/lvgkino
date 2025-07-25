@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Локация - LVG Kino</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #4ecdc4;
+        }
+        
+        .location-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .location-info h2 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+        
+        .location-info p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .photo-placeholder {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            height: 300px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        .map-placeholder {
+            background: #333;
+            height: 400px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #4ecdc4;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid #4ecdc4;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(78, 205, 196, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Наше расположение</h1>
+            <p>Кинотеатр LVG Kino на берегу моря</p>
+        </header>
+        
+        <div class="location-info">
+            <h2>Адрес</h2>
+            <p>📍 г. Новоросс, набережная Морская, д. 15</p>
+            <p>⏰ Режим работы: ежедневно с 10:00 до 23:00</p>
+            <p>🚗 Парковка: есть (бесплатная)</p>
+            <p>♿ Доступность: вход для маломобильных групп</p>
+        </div>
+        
+        <div class="photo-placeholder">
+            📸 Фотографии кинотеатра и видов на море
+        </div>
+        
+        <div class="map-placeholder">
+            🗺️ Интерактивная карта с расположением
+        </div>
+        
+        <a href="index.html" class="back-link">← На главную</a>
+    </div>
+</body>
+</html>
