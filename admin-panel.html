@@ -439,6 +439,19 @@
         .clear-archive-btn:hover {
             background: linear-gradient(45deg, #ff5252, #ff7b38);
         }
+        /* Кнопка удаления бронирования */
+        .delete-booking-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .delete-booking-btn:hover {
+            background: #ff5252;
+        }
     </style>
 </head>
 <body>
@@ -484,11 +497,12 @@
                         <th>Место</th>
                         <th>Человек</th>
                         <th>Стоимость</th>
+                        <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody id="activeBookingsTableBody">
                     <tr>
-                        <td colspan="5" style="text-align: center;">Нет активных бронирований</td>
+                        <td colspan="6" style="text-align: center;">Нет активных бронирований</td>
                     </tr>
                 </tbody>
             </table>
@@ -508,11 +522,12 @@
                             <th>Место</th>
                             <th>Человек</th>
                             <th>Стоимость</th>
+                            <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody id="archiveBookingsTableBody">
                         <tr>
-                            <td colspan="5" style="text-align: center;">Нет архивных бронирований</td>
+                            <td colspan="6" style="text-align: center;">Нет архивных бронирований</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1011,7 +1026,7 @@
                 const bookingsTableBody = document.getElementById('activeBookingsTableBody');
                 bookingsTableBody.innerHTML = '';
                 if (filteredBookings.length === 0) {
-                    bookingsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет активных бронирований</td></tr>';
+                    bookingsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет активных бронирований</td></tr>';
                 } else {
                     filteredBookings.forEach(booking => {
                         // Создаем уникальный ID для строки
@@ -1023,12 +1038,19 @@
                             <td>${booking.seat || '---'}</td>
                             <td>${booking.people || '---'}</td>
                             <td>${booking.price || 0} руб.</td>
+                            <td>
+                                <button class="delete-booking-btn" onclick="deleteBooking('${booking.id}', true)">Удалить</button>
+                            </td>
                         `;
                         // Делаем строку кликабельной
                         row.id = rowId;
                         row.style.cursor = 'pointer';
                         row.title = 'Кликните для просмотра схемы зала';
-                        row.addEventListener('click', () => {
+                        row.addEventListener('click', (e) => {
+                            // Игнорируем клик, если он был по кнопке удаления
+                            if (e.target.classList.contains('delete-booking-btn')) {
+                                return;
+                            }
                             showHallScheme(booking.film, booking.date, booking.time);
                         });
                         bookingsTableBody.appendChild(row);
@@ -1078,7 +1100,7 @@
                 const archiveTableBody = document.getElementById('archiveBookingsTableBody');
                 archiveTableBody.innerHTML = '';
                 if (archiveBookings.length === 0) {
-                    archiveTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет архивных бронирований</td></tr>';
+                    archiveTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет архивных бронирований</td></tr>';
                 } else {
                     archiveBookings.forEach(booking => {
                         // Создаем уникальный ID для строки
@@ -1090,12 +1112,19 @@
                             <td>${booking.seat || '---'}</td>
                             <td>${booking.people || '---'}</td>
                             <td>${booking.price || 0} руб.</td>
+                            <td>
+                                <button class="delete-booking-btn" onclick="deleteBooking('${booking.id}', false)">Удалить</button>
+                            </td>
                         `;
                         // Делаем строку кликабельной
                         row.id = rowId;
                         row.style.cursor = 'pointer';
                         row.title = 'Кликните для просмотра схемы зала';
-                        row.addEventListener('click', () => {
+                        row.addEventListener('click', (e) => {
+                            // Игнорируем клик, если он был по кнопке удаления
+                            if (e.target.classList.contains('delete-booking-btn')) {
+                                return;
+                            }
                             showHallScheme(booking.film, booking.date, booking.time);
                         });
                         archiveTableBody.appendChild(row);
@@ -1106,6 +1135,26 @@
             } catch (error) {
                 console.error('Ошибка загрузки архивных бронирований:', error);
                 document.getElementById('archiveBookingsLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
+            }
+        }
+        
+        // Функция для удаления бронирования
+        async function deleteBooking(bookingId, isActive) {
+            if (confirm('Вы уверены, что хотите удалить это бронирование?')) {
+                try {
+                    await db.collection('bookings').doc(bookingId).delete();
+                    alert('Бронирование удалено!');
+                    
+                    // Перезагружаем соответствующую таблицу
+                    if (isActive) {
+                        loadActiveBookings(currentBookingFilter);
+                    } else {
+                        loadArchiveBookings();
+                    }
+                } catch (error) {
+                    console.error('Ошибка удаления бронирования:', error);
+                    alert('Ошибка удаления бронирования: ' + error.message);
+                }
             }
         }
         
@@ -1276,6 +1325,7 @@
                     <p><strong>Имя:</strong> ${booking.customerName || '---'}</p>
                     <p><strong>Телефон:</strong> ${booking.customerPhone || '---'}</p>
                     <p><strong>Время бронирования:</strong> ${bookingTimeStr}</p>
+                    <button class="delete-booking-btn" style="margin-top: 15px;" onclick="deleteBookingFromModal('${bookingId}')">Удалить бронирование</button>
                 `;
                 
                 // Показываем модальное окно
@@ -1285,6 +1335,13 @@
                 infoContent.innerHTML = '<p style="color: #ff6b6b;">Ошибка загрузки информации</p>';
                 infoModal.style.display = 'block';
             }
+        }
+        
+        // Функция для удаления бронирования из модального окна информации
+        async function deleteBookingFromModal(bookingId) {
+            closeBookingInfoModal();
+            closeHallSchemeModal();
+            await deleteBooking(bookingId, true); // Предполагаем, что это активное бронирование
         }
         
         // Функция для закрытия модального окна информации о бронировании
