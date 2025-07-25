@@ -108,6 +108,7 @@
             color: #4ecdc4;
             margin-bottom: 15px;
             font-size: 1.5rem;
+            text-align: center;
         }
         
         table {
@@ -212,6 +213,7 @@
             gap: 10px;
             margin-bottom: 15px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .nav-button {
@@ -347,7 +349,7 @@
         <!-- Секция бронирований -->
         <div id="bookings" class="section active">
             <h2>Все бронирования</h2>
-            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; justify-content: center;">
                 <div class="nav-buttons" style="margin: 0;">
                     <button class="nav-button" onclick="filterBookings('all')" id="allBtn">Все</button>
                     <button class="nav-button" onclick="filterBookings('today')" id="todayBtn">Сегодня</button>
@@ -399,7 +401,7 @@
             <div id="movieSuccess" class="success-message">Фильм успешно добавлен!</div>
             <div id="movieError" class="error-message">Заполните все поля!</div>
             
-            <h3 style="margin-top: 25px;">Список фильмов</h3>
+            <h3 style="margin-top: 25px; text-align: center;">Список фильмов</h3>
             <div id="moviesLoading" class="loading">Загрузка фильмов...</div>
             <table id="moviesTable" style="display: none;">
                 <thead>
@@ -435,8 +437,8 @@
             <div id="seanceSuccess" class="success-message">Сеанс успешно добавлен!</div>
             <div id="seanceError" class="error-message">Заполните все поля!</div>
             
-            <h3 style="margin-top: 25px;">Список сеансов</h3>
-            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+            <h3 style="margin-top: 25px; text-align: center;">Список сеансов</h3>
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; justify-content: center;">
                 <div class="nav-buttons" style="margin: 0;">
                     <button class="nav-button" onclick="filterSeances('all')" id="allSeancesBtn">Все</button>
                     <button class="nav-button" onclick="filterSeances('today')" id="todaySeancesBtn">Сегодня</button>
@@ -686,20 +688,20 @@
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 
                 if (filter === 'today') {
-                    const todayString = today.toISOString().split('T')[0];
+                    const todayString = formatDateForComparison(today);
                     filteredSeances = allSeances.filter(seance => seance.date === todayString);
                 } else if (filter === 'week') {
                     const nextWeek = new Date(today);
                     nextWeek.setDate(today.getDate() + 7);
-                    const todayString = today.toISOString().split('T')[0];
-                    const nextWeekString = nextWeek.toISOString().split('T')[0];
+                    const todayString = formatDateForComparison(today);
+                    const nextWeekString = formatDateForComparison(nextWeek);
                     filteredSeances = allSeances.filter(seance => 
                         seance.date >= todayString && seance.date <= nextWeekString
                     );
                 } else if (filter === 'future') {
                     const tomorrow = new Date(today);
                     tomorrow.setDate(tomorrow.getDate() + 1);
-                    const tomorrowString = tomorrow.toISOString().split('T')[0];
+                    const tomorrowString = formatDateForComparison(tomorrow);
                     filteredSeances = allSeances.filter(seance => seance.date >= tomorrowString);
                 }
                 
@@ -743,6 +745,14 @@
                 console.error('Ошибка загрузки сеансов:', error);
                 document.getElementById('seancesLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
             }
+        }
+        
+        // Форматирование даты для сравнения (YYYY-MM-DD)
+        function formatDateForComparison(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
         
         // Добавление сеанса
@@ -831,15 +841,16 @@
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 
                 if (filter === 'today') {
-                    const todayString = today.toLocaleDateString('ru-RU');
+                    const todayString = formatDateForComparison(today);
                     filteredBookings = allBookings.filter(booking => booking.date === todayString);
                 } else if (filter === 'week') {
                     const nextWeek = new Date(today);
                     nextWeek.setDate(today.getDate() + 7);
+                    const todayString = formatDateForComparison(today);
+                    const nextWeekString = formatDateForComparison(nextWeek);
                     filteredBookings = allBookings.filter(booking => {
                         if (booking.date) {
-                            const bookingDate = new Date(booking.date.split('.').reverse().join('-'));
-                            return bookingDate >= today && bookingDate <= nextWeek;
+                            return booking.date >= todayString && booking.date <= nextWeekString;
                         }
                         return false;
                     });
