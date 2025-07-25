@@ -326,7 +326,7 @@
                     `;
                     
                     for (const [date, seances] of Object.entries(dates)) {
-                        const dateObj = new Date(date);
+                        const dateObj = new Date(date + 'T00:00:00'); // Фикс времени
                         const formattedDate = formatDate(dateObj);
                         const weekday = getWeekday(dateObj);
                         
@@ -374,8 +374,9 @@
         
         // Фильтрация сеансов по дате
         function filterSeancesByDate(seances, filter) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            // Используем правильное время
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             
             if (filter === 'today') {
                 const todayString = today.toISOString().split('T')[0];
@@ -388,9 +389,8 @@
             } else if (filter === 'week') {
                 const nextWeek = new Date(today);
                 nextWeek.setDate(nextWeek.getDate() + 7);
-                const nextWeekString = nextWeek.toISOString().split('T')[0];
                 return seances.filter(seance => {
-                    const seanceDate = new Date(seance.date);
+                    const seanceDate = new Date(seance.date + 'T00:00:00');
                     return seanceDate >= today && seanceDate <= nextWeek;
                 });
             }
@@ -399,7 +399,7 @@
             const twoWeeks = new Date(today);
             twoWeeks.setDate(twoWeeks.getDate() + 14);
             return seances.filter(seance => {
-                const seanceDate = new Date(seance.date);
+                const seanceDate = new Date(seance.date + 'T00:00:00');
                 return seanceDate >= today && seanceDate <= twoWeeks;
             });
         }
