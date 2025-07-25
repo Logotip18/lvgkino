@@ -430,22 +430,28 @@
                     const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
                     if (seatElement) {
                         seatElement.classList.add('booked');
-                        seatElement.onclick = null;
+                        // Убираем обработчик клика у забронированных мест
+                        seatElement.onclick = null; // или seatElement.removeEventListener('click', ...);
+                        // Делаем курсор "запрещенным"
+                        seatElement.style.cursor = 'not-allowed';
                     }
+                });
+                // Добавляем обработчики клика только к НЕзабронированным местам
+                document.querySelectorAll('.seat:not(.booked)').forEach(seat => {
+                    seat.addEventListener('click', function() {
+                        openBooking(this);
+                    });
                 });
             } catch (error) {
                 console.error('Ошибка загрузки бронирований:', error);
             }
         }
-        // Обработчики кликов по местам
-        document.querySelectorAll('.seat').forEach(seat => {
-            if (!seat.classList.contains('booked')) {
-                seat.addEventListener('click', function() {
-                    openBooking(this);
-                });
-            }
-        });
         function openBooking(seatElement) {
+            // Дополнительная проверка (на всякий случай)
+            if (seatElement.classList.contains('booked')) {
+                return; // Не открываем модальное окно для забронированных мест
+            }
+            
             currentSeat = seatElement.dataset.seat;
             currentType = seatElement.dataset.type;
             document.getElementById('modalSeat').textContent = currentSeat;
@@ -496,7 +502,8 @@
                 const seatElement = document.querySelector(`[data-seat="${currentSeat}"]`);
                 if (seatElement) {
                     seatElement.classList.add('booked');
-                    seatElement.onclick = null;
+                    seatElement.onclick = null; // Убираем обработчик клика
+                    seatElement.style.cursor = 'not-allowed'; // Меняем курсор
                 }
                 alert(`Бронирование подтверждено!
 Место: ${currentSeat}
