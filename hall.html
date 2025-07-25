@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Зал - LVG Kino</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #1a1a1a; 
+            color: white; 
+            padding: 20px; 
+        }
+        .screen { 
+            background: #4a90e2; 
+            height: 50px; 
+            text-align: center; 
+            line-height: 50px; 
+            margin-bottom: 30px; 
+        }
+        .row { 
+            text-align: center; 
+            margin-bottom: 15px; 
+        }
+        .seat { 
+            display: inline-block;
+            width: 50px; 
+            height: 40px; 
+            background: #555; 
+            margin: 5px; 
+            line-height: 40px; 
+            text-align: center; 
+            cursor: pointer; 
+        }
+        .seat:hover { background: #666; }
+        .booked { background: #ff4444; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Зал кинотеатра</h1>
+    <div class="screen">ЭКРАН</div>
+    
+    <div class="row">
+        <div class="seat" onclick="bookSeat(this)">1</div>
+        <div class="seat" onclick="bookSeat(this)">2</div>
+        <div class="seat" onclick="bookSeat(this)">3</div>
+        <div class="seat" onclick="bookSeat(this)">4</div>
+        <div class="seat" onclick="bookSeat(this)">5</div>
+        <div class="seat" onclick="bookSeat(this)">6</div>
+        <div class="seat" onclick="bookSeat(this)">7</div>
+        <div class="seat" onclick="bookSeat(this)">8</div>
+    </div>
+    
+    <div class="row">
+        <div class="seat" onclick="bookSeat(this)">2-1</div>
+        <div class="seat" onclick="bookSeat(this)">2-2</div>
+        <div class="seat" onclick="bookSeat(this)">2-3</div>
+        <div class="seat" onclick="bookSeat(this)">2-4</div>
+        <div class="seat" onclick="bookSeat(this)">2-5</div>
+    </div>
+
+    <script>
+        function bookSeat(seat) {
+            if (seat.classList.contains('booked')) {
+                alert('Это место уже забронировано!');
+            } else {
+                seat.classList.add('booked');
+                alert('Место забронировано! Стоимость: 400 руб.');
+            }
+        }
+    </script>
+</body>
+</html>
