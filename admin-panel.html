@@ -241,6 +241,28 @@
             margin-left: 10px;
         }
         
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            background: rgba(78, 205, 196, 0.2);
+            color: white;
+            border: 1px solid #4ecdc4;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+        
         /* Мобильная адаптация */
         @media (max-width: 768px) {
             body {
@@ -309,7 +331,7 @@
                 overflow-x: auto;
             }
             
-            .nav-buttons {
+            .nav-buttons, .tab-buttons {
                 flex-direction: column;
             }
             
@@ -348,14 +370,18 @@
         
         <!-- Секция бронирований -->
         <div id="bookings" class="section active">
-            <h2>Все бронирования</h2>
+            <h2>Бронирования</h2>
             <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; justify-content: center;">
+                <div class="tab-buttons" style="margin: 0;">
+                    <button class="tab-button active" onclick="switchBookingTab('active')" id="activeTab">Активные</button>
+                    <button class="tab-button" onclick="switchBookingTab('archive')" id="archiveTab">Архив</button>
+                </div>
                 <div class="nav-buttons" style="margin: 0;">
                     <button class="nav-button" onclick="filterBookings('all')" id="allBtn">Все</button>
                     <button class="nav-button" onclick="filterBookings('today')" id="todayBtn">Сегодня</button>
                     <button class="nav-button" onclick="filterBookings('week')" id="weekBtn">Неделя</button>
                 </div>
-                <button class="refresh-btn" onclick="loadBookings(currentBookingFilter)">Обновить</button>
+                <button class="refresh-btn" onclick="loadBookings(currentBookingFilter, currentBookingTab)">Обновить</button>
             </div>
             <div id="bookingsLoading" class="loading">Загрузка бронирований...</div>
             <table id="bookingsTable" style="display: none;">
@@ -485,7 +511,9 @@
         
         // Глобальные переменные для фильтров
         let currentBookingFilter = 'all';
+        let currentBookingTab = 'active';
         let currentSeanceFilter = 'all';
+        let allSeances = []; // Кэш сеансов для проверки существования
         
         // Устанавливаем сегодняшнюю дату по умолчанию
         document.addEventListener('DOMContentLoaded', function() {
@@ -495,6 +523,7 @@
             
             loadMovies();
             loadSeances();
+            loadAllSeances(); // Загружаем сеансы для проверки бронирований
         });
         
         function logout() {
@@ -517,8 +546,20 @@
             } else if (sectionId === 'seances') {
                 loadSeances(currentSeanceFilter);
             } else if (sectionId === 'bookings') {
-                loadBookings(currentBookingFilter);
+                loadBookings(currentBookingFilter, currentBookingTab);
             }
+        }
+        
+        // Переключение вкладок бронирований
+        function switchBookingTab(tab) {
+            // Обновляем активные кнопки
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tab + 'Tab').classList.add('active');
+            
+            currentBookingTab = tab;
+            loadBookings(currentBookingFilter, tab);
         }
         
         // Навигация по бронированиям
@@ -530,7 +571,7 @@
             document.getElementById(filter + 'Btn').classList.add('active');
             
             currentBookingFilter = filter;
-            loadBookings(filter);
+            loadBookings(filter, currentBookingTab);
         }
         
         // Навигация по сеансам
@@ -543,6 +584,34 @@
             
             currentSeanceFilter = filter;
             loadSeances(filter);
+        }
+        
+        // Загрузка всех сеансов для проверки существования
+        async function loadAllSeances() {
+            try {
+                const querySnapshot = await db.collection('seances').get();
+                allSeances = [];
+                querySnapshot.forEach((doc) => {
+                    const seance = doc.data();
+                    if (seance.movie && seance.date && seance.time) {
+                        allSeances.push({
+                            id: doc.id,
+                            ...seance
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки сеансов для проверки:', error);
+            }
+        }
+        
+        // Проверка, существует ли сеанс
+        function seanceExists(film, date, time) {
+            return allSeances.some(seance => 
+                seance.movie === film && 
+                seance.date === date && 
+                seance.time === time
+            );
         }
         
         // Загрузка фильмов
@@ -741,6 +810,9 @@
                 document.getElementById('seancesLoading').style.display = 'none';
                 document.getElementById('seancesTable').style.display = 'table';
                 
+                // Обновляем кэш сеансов
+                loadAllSeances();
+                
             } catch (error) {
                 console.error('Ошибка загрузки сеансов:', error);
                 document.getElementById('seancesLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
@@ -813,47 +885,67 @@
             }
         }
         
-        // Загрузка бронирований с фильтрацией
-        async function loadBookings(filter = 'all') {
+        // Загрузка бронирований с фильтрацией и архивированием
+        async function loadBookings(filter = 'all', tab = 'active') {
             try {
                 document.getElementById('bookingsLoading').style.display = 'block';
                 document.getElementById('bookingsTable').style.display = 'none';
                 
-                // Загружаем все бронирования и фильтруем на клиенте
+                // Загружаем все бронирования
                 const querySnapshot = await db.collection('bookings').get();
                 
                 // Преобразуем в массив для удобной фильтрации
                 const allBookings = [];
-                querySnapshot.forEach((doc) => {
+                const archiveBookings = [];
+                
+                // Обновляем кэш сеансов
+                await loadAllSeances();
+                
+                for (const doc of querySnapshot.docs) {
                     const booking = doc.data();
                     // Проверяем, что у бронирования есть все необходимые данные
-                    if (booking.film) {
-                        allBookings.push({
+                    if (booking.film && booking.date && booking.time) {
+                        // Проверяем, существует ли сеанс
+                        const exists = seanceExists(booking.film, booking.date, booking.time);
+                        
+                        const bookingData = {
                             id: doc.id,
+                            docRef: doc.ref, // Сохраняем ссылку на документ
                             ...booking
-                        });
+                        };
+                        
+                        if (exists) {
+                            allBookings.push(bookingData);
+                        } else {
+                            // Если сеанса нет, добавляем в архив
+                            archiveBookings.push(bookingData);
+                            
+                            // Если это активная вкладка, то не показываем архивные бронирования
+                            if (tab === 'active') {
+                                // Можно автоматически переместить в архив, но пока просто не показываем
+                            }
+                        }
                     }
-                });
+                }
                 
-                // Фильтруем на клиенте
-                let filteredBookings = allBookings;
+                // Выбираем нужные бронирования в зависимости от вкладки
+                let filteredBookings = tab === 'active' ? allBookings : archiveBookings;
+                
+                // Фильтруем по дате
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 
                 if (filter === 'today') {
                     const todayString = formatDateForComparison(today);
-                    filteredBookings = allBookings.filter(booking => booking.date === todayString);
+                    filteredBookings = filteredBookings.filter(booking => booking.date === todayString);
                 } else if (filter === 'week') {
                     const nextWeek = new Date(today);
                     nextWeek.setDate(today.getDate() + 7);
                     const todayString = formatDateForComparison(today);
                     const nextWeekString = formatDateForComparison(nextWeek);
-                    filteredBookings = allBookings.filter(booking => {
-                        if (booking.date) {
-                            return booking.date >= todayString && booking.date <= nextWeekString;
-                        }
-                        return false;
-                    });
+                    filteredBookings = filteredBookings.filter(booking => 
+                        booking.date >= todayString && booking.date <= nextWeekString
+                    );
                 }
                 
                 // Сортируем с проверкой на undefined
