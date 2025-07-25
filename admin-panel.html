@@ -165,6 +165,14 @@
             margin: 10px 0;
             display: none;
         }
+        
+        .error-message {
+            background: rgba(255, 107, 107, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -238,9 +246,10 @@
             </div>
             <button onclick="addMovie()">Добавить фильм</button>
             <div id="movieSuccess" class="success-message">Фильм успешно добавлен!</div>
+            <div id="movieError" class="error-message">Заполните все поля!</div>
             
             <h3 style="margin-top: 30px;">Список фильмов</h3>
-            <table>
+            <table id="moviesTable">
                 <thead>
                     <tr>
                         <th>Название</th>
@@ -249,24 +258,24 @@
                         <th>Действия</th>
                     </tr>
                 </thead>
-                <tbody id="moviesTable">
-                    <tr>
+                <tbody>
+                    <tr id="movieRow1">
                         <td>Интерстеллар</td>
                         <td>Научная фантастика, 2014</td>
                         <td>16+</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('Интерстеллар')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('movieRow1')">Удалить</button></td>
                     </tr>
-                    <tr>
+                    <tr id="movieRow2">
                         <td>Начало</td>
                         <td>Триллер, 2010</td>
                         <td>16+</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('Начало')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('movieRow2')">Удалить</button></td>
                     </tr>
-                    <tr>
+                    <tr id="movieRow3">
                         <td>Матрица</td>
                         <td>Фантастика, 1999</td>
                         <td>16+</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('Матрица')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('movieRow3')">Удалить</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -289,6 +298,7 @@
             </div>
             <button onclick="addSeance()">Добавить сеанс</button>
             <div id="seanceSuccess" class="success-message">Сеанс успешно добавлен!</div>
+            <div id="seanceError" class="error-message">Выберите фильм и время!</div>
             
             <h3 style="margin-top: 30px;">Список сеансов</h3>
             <table id="seancesTable">
@@ -300,20 +310,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr id="seanceRow1">
                         <td>Интерстеллар</td>
                         <td>12:00</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('Интерстеллар', '12:00')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('seanceRow1')">Удалить</button></td>
                     </tr>
-                    <tr>
+                    <tr id="seanceRow2">
                         <td>Интерстеллар</td>
                         <td>15:30</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('Интерстеллар', '15:30')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('seanceRow2')">Удалить</button></td>
                     </tr>
-                    <tr>
+                    <tr id="seanceRow3">
                         <td>Интерстеллар</td>
                         <td>19:00</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('Интерстеллар', '19:00')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('seanceRow3')">Удалить</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -346,7 +356,26 @@
             const desc = document.getElementById('movieDesc').value;
             const age = document.getElementById('movieAge').value;
             
+            // Скрываем сообщения
+            document.getElementById('movieSuccess').style.display = 'none';
+            document.getElementById('movieError').style.display = 'none';
+            
             if (name && desc) {
+                // Добавляем фильм в таблицу
+                const table = document.getElementById('moviesTable').getElementsByTagName('tbody')[0];
+                const newRow = table.insertRow();
+                
+                // Генерируем уникальный ID
+                const rowId = 'movieRow' + Date.now();
+                newRow.id = rowId;
+                
+                newRow.innerHTML = `
+                    <td>${name}</td>
+                    <td>${desc}</td>
+                    <td>${age}</td>
+                    <td><button style="background: #ff6b6b;" onclick="deleteMovie('${rowId}')">Удалить</button></td>
+                `;
+                
                 // Показываем сообщение об успехе
                 document.getElementById('movieSuccess').style.display = 'block';
                 setTimeout(() => {
@@ -357,18 +386,28 @@
                 document.getElementById('movieName').value = '';
                 document.getElementById('movieDesc').value = '';
                 
-                // Здесь будет код для добавления в базу данных
-                console.log(`Добавлен фильм: ${name}, ${desc}, ${age}`);
+                // Добавляем фильм в селект сеансов
+                const seanceSelect = document.getElementById('seanceMovie');
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                seanceSelect.appendChild(option);
+                
             } else {
-                alert('Заполните все поля!');
+                // Показываем ошибку
+                document.getElementById('movieError').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('movieError').style.display = 'none';
+                }, 3000);
             }
         }
         
-        function deleteMovie(movieName) {
-            if (confirm(`Удалить фильм "${movieName}"?`)) {
-                // Здесь будет код для удаления из базы данных
-                console.log(`Удален фильм: ${movieName}`);
-                alert(`Фильм "${movieName}" удален!`);
+        function deleteMovie(rowId) {
+            if (confirm('Удалить фильм?')) {
+                const row = document.getElementById(rowId);
+                if (row) {
+                    row.remove();
+                }
             }
         }
         
@@ -376,15 +415,23 @@
             const movie = document.getElementById('seanceMovie').value;
             const time = document.getElementById('seanceTime').value;
             
+            // Скрываем сообщения
+            document.getElementById('seanceSuccess').style.display = 'none';
+            document.getElementById('seanceError').style.display = 'none';
+            
             if (movie && time) {
                 // Добавляем сеанс в таблицу
                 const table = document.getElementById('seancesTable').getElementsByTagName('tbody')[0];
                 const newRow = table.insertRow();
                 
+                // Генерируем уникальный ID
+                const rowId = 'seanceRow' + Date.now();
+                newRow.id = rowId;
+                
                 newRow.innerHTML = `
                     <td>${movie}</td>
                     <td>${time}</td>
-                    <td><button style="background: #ff6b6b;" onclick="deleteSeance('${movie}', '${time}')">Удалить</button></td>
+                    <td><button style="background: #ff6b6b;" onclick="deleteSeance('${rowId}')">Удалить</button></td>
                 `;
                 
                 // Показываем сообщение об успехе
@@ -396,18 +443,21 @@
                 // Очищаем поле времени
                 document.getElementById('seanceTime').value = '';
                 
-                // Здесь будет код для добавления в базу данных
-                console.log(`Добавлен сеанс: ${movie} в ${time}`);
             } else {
-                alert('Выберите фильм и время!');
+                // Показываем ошибку
+                document.getElementById('seanceError').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('seanceError').style.display = 'none';
+                }, 3000);
             }
         }
         
-        function deleteSeance(movieName, time) {
-            if (confirm(`Удалить сеанс "${movieName} в ${time}"?`)) {
-                // Здесь будет код для удаления из базы данных
-                console.log(`Удален сеанс: ${movieName} в ${time}`);
-                alert(`Сеанс "${movieName} в ${time}" удален!`);
+        function deleteSeance(rowId) {
+            if (confirm('Удалить сеанс?')) {
+                const row = document.getElementById(rowId);
+                if (row) {
+                    row.remove();
+                }
             }
         }
         
