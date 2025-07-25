@@ -36,6 +36,21 @@
             color: #4ecdc4;
         }
         
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid #4ecdc4;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(78, 205, 196, 0.1);
+        }
+        
         .movie {
             background: rgba(255, 255, 255, 0.05);
             padding: 20px;
@@ -64,25 +79,12 @@
             background: rgba(78, 205, 196, 0.4);
             transform: translateY(-2px);
         }
-        
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            color: #4ecdc4;
-            text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid #4ecdc4;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        
-        .back-link:hover {
-            background: rgba(78, 205, 196, 0.1);
-        }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="index.html" class="back-link">← На главную</a>
+        
         <header>
             <h1>Расписание сеансов</h1>
             <p>Выберите фильм и удобное время</p>
@@ -92,10 +94,10 @@
             <h2>🎬 Интерстеллар</h2>
             <p>Научная фантастика, 2014, 16+</p>
             <div>
-                <a href="hall.html" class="seance">12:00</a>
-                <a href="hall.html" class="seance">15:30</a>
-                <a href="hall.html" class="seance">19:00</a>
-                <a href="hall.html" class="seance">22:30</a>
+                <a href="hall.html?film=Интерстеллар&time=12:00" class="seance">12:00</a>
+                <a href="hall.html?film=Интерстеллар&time=15:30" class="seance">15:30</a>
+                <a href="hall.html?film=Интерстеллар&time=19:00" class="seance">19:00</a>
+                <a href="hall.html?film=Интерстеллар&time=22:30" class="seance">22:30</a>
             </div>
         </div>
         
@@ -103,10 +105,10 @@
             <h2>🎬 Начало</h2>
             <p>Триллер, 2010, 16+</p>
             <div>
-                <a href="hall.html" class="seance">11:00</a>
-                <a href="hall.html" class="seance">14:30</a>
-                <a href="hall.html" class="seance">18:00</a>
-                <a href="hall.html" class="seance">21:30</a>
+                <a href="hall.html?film=Начало&time=11:00" class="seance">11:00</a>
+                <a href="hall.html?film=Начало&time=14:30" class="seance">14:30</a>
+                <a href="hall.html?film=Начало&time=18:00" class="seance">18:00</a>
+                <a href="hall.html?film=Начало&time=21:30" class="seance">21:30</a>
             </div>
         </div>
         
@@ -114,13 +116,11 @@
             <h2>🎬 Матрица</h2>
             <p>Фантастика, 1999, 16+</p>
             <div>
-                <a href="hall.html" class="seance">13:00</a>
-                <a href="hall.html" class="seance">16:30</a>
-                <a href="hall.html" class="seance">20:00</a>
+                <a href="hall.html?film=Матрица&time=13:00" class="seance">13:00</a>
+                <a href="hall.html?film=Матрица&time=16:30" class="seance">16:30</a>
+                <a href="hall.html?film=Матрица&time=20:00" class="seance">20:00</a>
             </div>
         </div>
-        
-        <a href="index.html" class="back-link">← На главную</a>
     </div>
 </body>
 </html>
