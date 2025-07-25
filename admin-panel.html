@@ -764,46 +764,41 @@
                 document.getElementById('bookingsLoading').style.display = 'block';
                 document.getElementById('bookingsTable').style.display = 'none';
                 
-                let query = db.collection('bookings');
-                
-                // Применяем фильтр
-                if (filter === 'today') {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const tomorrow = new Date(today);
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    
-                    query = query
-                        .where('date', '>=', today.toLocaleDateString('ru-RU'))
-                        .where('date', '<', tomorrow.toLocaleDateString('ru-RU'));
-                } else if (filter === 'week') {
-                    const today = new Date();
-                    const nextWeek = new Date();
-                    nextWeek.setDate(today.getDate() + 7);
-                    
-                    query = query
-                        .where('date', '>=', today.toLocaleDateString('ru-RU'))
-                        .where('date', '<=', nextWeek.toLocaleDateString('ru-RU'));
-                }
-                
-                query = query.orderBy('film').orderBy('time');
-                
-                const querySnapshot = await query.get();
+                // Загружаем все бронирования без фильтрации по дате
+                const querySnapshot = await db.collection('bookings').get();
                 const bookingsTable = document.getElementById('bookingsTable').getElementsByTagName('tbody')[0];
                 bookingsTable.innerHTML = '';
                 
                 if (querySnapshot.empty) {
                     bookingsTable.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет бронирований</td></tr>';
                 } else {
+                    // Преобразуем QuerySnapshot в массив и сортируем
+                    const bookings = [];
                     querySnapshot.forEach((doc) => {
                         const booking = doc.data();
+                        bookings.push({
+                            id: doc.id,
+                            ...booking
+                        });
+                    });
+                    
+                    // Сортируем по фильму и времени
+                    bookings.sort((a, b) => {
+                        if (a.film !== b.film) {
+                            return a.film.localeCompare(b.film);
+                        }
+                        return (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || '');
+                    });
+                    
+                    // Отображаем бронирования
+                    bookings.forEach(booking => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${booking.film}</td>
+                            <td>${booking.film || '---'}</td>
                             <td>${booking.date || '---'} ${booking.time || ''}</td>
-                            <td>${booking.seat}</td>
-                            <td>${booking.people}</td>
-                            <td>${booking.price} руб.</td>
+                            <td>${booking.seat || '---'}</td>
+                            <td>${booking.people || '---'}</td>
+                            <td>${booking.price || 0} руб.</td>
                         `;
                         bookingsTable.appendChild(row);
                     });
@@ -814,7 +809,7 @@
                 
             } catch (error) {
                 console.error('Ошибка загрузки бронирований:', error);
-                document.getElementById('bookingsLoading').innerHTML = 'Ошибка загрузки';
+                document.getElementById('bookingsLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
             }
         }
     </script>
