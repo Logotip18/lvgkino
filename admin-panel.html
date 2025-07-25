@@ -228,6 +228,17 @@
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
         }
         
+        .refresh-btn {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        
         /* Мобильная адаптация */
         @media (max-width: 768px) {
             body {
@@ -336,10 +347,13 @@
         <!-- Секция бронирований -->
         <div id="bookings" class="section active">
             <h2>Все бронирования</h2>
-            <div class="nav-buttons">
-                <button class="nav-button" onclick="filterBookings('all')" id="allBtn">Все</button>
-                <button class="nav-button" onclick="filterBookings('today')" id="todayBtn">Сегодня</button>
-                <button class="nav-button" onclick="filterBookings('week')" id="weekBtn">Неделя</button>
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                <div class="nav-buttons" style="margin: 0;">
+                    <button class="nav-button" onclick="filterBookings('all')" id="allBtn">Все</button>
+                    <button class="nav-button" onclick="filterBookings('today')" id="todayBtn">Сегодня</button>
+                    <button class="nav-button" onclick="filterBookings('week')" id="weekBtn">Неделя</button>
+                </div>
+                <button class="refresh-btn" onclick="loadBookings(currentBookingFilter)">Обновить</button>
             </div>
             <div id="bookingsLoading" class="loading">Загрузка бронирований...</div>
             <table id="bookingsTable" style="display: none;">
@@ -422,11 +436,14 @@
             <div id="seanceError" class="error-message">Заполните все поля!</div>
             
             <h3 style="margin-top: 25px;">Список сеансов</h3>
-            <div class="nav-buttons">
-                <button class="nav-button" onclick="filterSeances('all')" id="allSeancesBtn">Все</button>
-                <button class="nav-button" onclick="filterSeances('today')" id="todaySeancesBtn">Сегодня</button>
-                <button class="nav-button" onclick="filterSeances('week')" id="weekSeancesBtn">Неделя</button>
-                <button class="nav-button" onclick="filterSeances('future')" id="futureSeancesBtn">Будущие</button>
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                <div class="nav-buttons" style="margin: 0;">
+                    <button class="nav-button" onclick="filterSeances('all')" id="allSeancesBtn">Все</button>
+                    <button class="nav-button" onclick="filterSeances('today')" id="todaySeancesBtn">Сегодня</button>
+                    <button class="nav-button" onclick="filterSeances('week')" id="weekSeancesBtn">Неделя</button>
+                    <button class="nav-button" onclick="filterSeances('future')" id="futureSeancesBtn">Будущие</button>
+                </div>
+                <button class="refresh-btn" onclick="loadSeances(currentSeanceFilter)">Обновить</button>
             </div>
             <div id="seancesLoading" class="loading">Загрузка сеансов...</div>
             <table id="seancesTable" style="display: none;">
@@ -464,6 +481,10 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
+        // Глобальные переменные для фильтров
+        let currentBookingFilter = 'all';
+        let currentSeanceFilter = 'all';
+        
         // Устанавливаем сегодняшнюю дату по умолчанию
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
@@ -492,9 +513,9 @@
             if (sectionId === 'movies') {
                 loadMovies();
             } else if (sectionId === 'seances') {
-                loadSeances();
+                loadSeances(currentSeanceFilter);
             } else if (sectionId === 'bookings') {
-                loadBookings();
+                loadBookings(currentBookingFilter);
             }
         }
         
@@ -506,6 +527,7 @@
             });
             document.getElementById(filter + 'Btn').classList.add('active');
             
+            currentBookingFilter = filter;
             loadBookings(filter);
         }
         
@@ -517,6 +539,7 @@
             });
             document.getElementById(filter + 'SeancesBtn').classList.add('active');
             
+            currentSeanceFilter = filter;
             loadSeances(filter);
         }
         
@@ -659,8 +682,8 @@
                 
                 // Фильтруем на клиенте
                 let filteredSeances = allSeances;
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 
                 if (filter === 'today') {
                     const todayString = today.toISOString().split('T')[0];
@@ -751,7 +774,7 @@
                     document.getElementById('seanceTime').value = '';
                     
                     // Перезагружаем список сеансов
-                    loadSeances();
+                    loadSeances(currentSeanceFilter);
                     
                 } catch (error) {
                     console.error('Ошибка добавления сеанса:', error);
@@ -771,7 +794,7 @@
             if (confirm('Удалить сеанс?')) {
                 try {
                     await db.collection('seances').doc(seanceId).delete();
-                    loadSeances();
+                    loadSeances(currentSeanceFilter);
                     alert('Сеанс удален!');
                 } catch (error) {
                     console.error('Ошибка удаления сеанса:', error);
@@ -804,14 +827,22 @@
                 
                 // Фильтруем на клиенте
                 let filteredBookings = allBookings;
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 
                 if (filter === 'today') {
                     const todayString = today.toLocaleDateString('ru-RU');
                     filteredBookings = allBookings.filter(booking => booking.date === todayString);
                 } else if (filter === 'week') {
-                    // Для простоты показываем все бронирования
+                    const nextWeek = new Date(today);
+                    nextWeek.setDate(today.getDate() + 7);
+                    filteredBookings = allBookings.filter(booking => {
+                        if (booking.date) {
+                            const bookingDate = new Date(booking.date.split('.').reverse().join('-'));
+                            return bookingDate >= today && bookingDate <= nextWeek;
+                        }
+                        return false;
+                    });
                 }
                 
                 // Сортируем с проверкой на undefined
