@@ -644,29 +644,25 @@
                 let query = db.collection('seances');
                 
                 // Применяем фильтр
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
                 if (filter === 'today') {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
+                    const todayString = today.toISOString().split('T')[0];
+                    query = query.where('date', '==', todayString);
+                } else if (filter === 'week') {
+                    const nextWeek = new Date(today);
+                    nextWeek.setDate(today.getDate() + 7);
+                    const todayString = today.toISOString().split('T')[0];
+                    const nextWeekString = nextWeek.toISOString().split('T')[0];
+                    query = query
+                        .where('date', '>=', todayString)
+                        .where('date', '<=', nextWeekString);
+                } else if (filter === 'future') {
                     const tomorrow = new Date(today);
                     tomorrow.setDate(tomorrow.getDate() + 1);
-                    
-                    query = query
-                        .where('date', '>=', today.toISOString().split('T')[0])
-                        .where('date', '<', tomorrow.toISOString().split('T')[0]);
-                } else if (filter === 'week') {
-                    const today = new Date();
-                    const nextWeek = new Date();
-                    nextWeek.setDate(today.getDate() + 7);
-                    
-                    query = query
-                        .where('date', '>=', today.toISOString().split('T')[0])
-                        .where('date', '<=', nextWeek.toISOString().split('T')[0]);
-                } else if (filter === 'future') {
-                    const today = new Date();
-                    today.setDate(today.getDate() + 1);
-                    
-                    query = query
-                        .where('date', '>=', today.toISOString().split('T')[0]);
+                    const tomorrowString = tomorrow.toISOString().split('T')[0];
+                    query = query.where('date', '>=', tomorrowString);
                 }
                 
                 query = query.orderBy('date').orderBy('time');
@@ -696,7 +692,7 @@
                 
             } catch (error) {
                 console.error('Ошибка загрузки сеансов:', error);
-                document.getElementById('seancesLoading').innerHTML = 'Ошибка загрузки';
+                document.getElementById('seancesLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
             }
         }
         
@@ -725,7 +721,7 @@
                         document.getElementById('seanceSuccess').style.display = 'none';
                     }, 3000);
                     
-                    // Очищаем поля
+                    // Очищаем поля времени
                     document.getElementById('seanceTime').value = '';
                     
                     // Перезагружаем список сеансов
@@ -764,7 +760,7 @@
                 document.getElementById('bookingsLoading').style.display = 'block';
                 document.getElementById('bookingsTable').style.display = 'none';
                 
-                // Загружаем все бронирования без фильтрации по дате
+                // Загружаем все бронирования без сложной фильтрации
                 const querySnapshot = await db.collection('bookings').get();
                 const bookingsTable = document.getElementById('bookingsTable').getElementsByTagName('tbody')[0];
                 bookingsTable.innerHTML = '';
@@ -782,7 +778,7 @@
                         });
                     });
                     
-                    // Сортируем по фильму и времени
+                    // Сортируем по фильму и дате
                     bookings.sort((a, b) => {
                         if (a.film !== b.film) {
                             return a.film.localeCompare(b.film);
