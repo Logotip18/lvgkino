@@ -15,9 +15,9 @@
         }
         body {
             font-family: 'Arial', sans-serif;
-            /* Изменен на более солнечный градиент */
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #fbc2eb 100%);
-            color: #333;
+            /* Морская лагуна */
+            background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
+            color: white;
             min-height: 100vh;
             padding: 15px;
         }
@@ -28,19 +28,18 @@
         .back-link {
             display: inline-block;
             margin-bottom: 15px;
-            /* Изменены цвета ссылки */
-            color: #ff6b6b;
+            /* Акцентный цвет */
+            color: #009688;
             text-decoration: none;
             padding: 8px 15px;
-            border: 1px solid #ff6b6b;
+            border: 1px solid #009688;
             border-radius: 5px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.05);
         }
         .back-link:hover {
-            /* Изменен фон при наведении */
-            background: rgba(255, 107, 107, 0.1);
+            background: rgba(0, 150, 136, 0.1);
         }
         header {
             text-align: center;
@@ -51,8 +50,8 @@
         h1 {
             font-size: 1.8rem;
             margin-bottom: 10px;
-            /* Изменен цвет заголовка */
-            color: #ff6b6b;
+            /* Акцентный цвет */
+            color: #009688;
         }
         .admin-menu {
             display: grid;
@@ -61,52 +60,47 @@
             margin-bottom: 20px;
         }
         .menu-item {
-            /* Изменен фон пункта меню */
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 15px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             min-height: 80px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .menu-item:hover {
-            /* Изменен фон при наведении */
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.1);
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         .menu-item h3 {
-            /* Изменен цвет заголовка пункта меню */
-            color: #4ecdc4;
+            /* Цвет ошибок/важных элементов */
+            color: #FF5722;
             margin-bottom: 8px;
             font-size: 1.2rem;
         }
         .menu-item p {
             font-size: 0.9rem;
             opacity: 0.9;
-            color: #555;
         }
         .section {
-            /* Изменен фон секции */
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 20px;
             display: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .section.active {
             display: block;
         }
         .section h2 {
-            /* Изменен цвет заголовка секции */
-            color: #ff6b6b;
+            /* Акцентный цвет */
+            color: #009688;
             margin-bottom: 15px;
             font-size: 1.5rem;
             text-align: center;
@@ -116,24 +110,23 @@
             border-collapse: collapse;
             margin: 15px 0;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 5px;
             overflow: hidden;
         }
         th, td {
             padding: 10px;
             text-align: left;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         th {
-            /* Изменен фон заголовка таблицы */
-            background: rgba(255, 107, 107, 0.2);
+            /* Акцентный цвет */
+            background: rgba(0, 150, 136, 0.2);
             font-size: 0.9rem;
-            color: #333;
         }
         .logout-btn {
-            /* Изменен цвет кнопки выхода */
-            background: #ff6b6b;
+            /* Цвет ошибок */
+            background: #FF5722;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -143,11 +136,10 @@
             top: 0;
             right: 0;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
         .logout-btn:hover {
-            /* Изменен цвет при наведении */
-            background: #ff5252;
+            background: #E64A19;
         }
         .form-group {
             margin-bottom: 15px;
@@ -157,20 +149,19 @@
             margin-bottom: 5px;
             font-weight: bold;
             font-size: 0.9rem;
-            color: #555;
         }
         input, select, textarea {
             width: 100%;
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ff6b6b;
-            background: rgba(255, 255, 255, 0.8);
-            color: #333;
+            border: 1px solid #009688;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
             font-size: 0.9rem;
         }
         button {
-            /* Изменен градиент кнопок */
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            /* Градиент кнопок */
+            background: linear-gradient(45deg, #FF5722, #FF9800);
             color: white;
             border: none;
             padding: 10px 20px;
@@ -180,38 +171,35 @@
             margin: 5px;
             font-size: 0.9rem;
             min-height: 40px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .success-message {
-            /* Изменен фон сообщения об успехе */
+            /* Акцентный цвет */
             background: rgba(76, 175, 80, 0.2);
             padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
             display: none;
             font-size: 0.9rem;
-            color: #333;
         }
         .error-message {
-            /* Изменен фон сообщения об ошибке */
-            background: rgba(255, 107, 107, 0.2);
+            /* Цвет ошибок */
+            background: rgba(255, 87, 34, 0.2);
             padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
             display: none;
             font-size: 0.9rem;
-            color: #333;
         }
         .loading {
             text-align: center;
             padding: 20px;
             font-size: 1rem;
-            color: #555;
         }
         .nav-buttons {
             display: flex;
@@ -221,27 +209,26 @@
             justify-content: center;
         }
         .nav-button {
-            /* Изменен фон кнопки навигации */
-            background: rgba(255, 107, 107, 0.2);
-            color: #333;
-            border: 1px solid #ff6b6b;
+            /* Акцентный цвет */
+            background: rgba(0, 150, 136, 0.2);
+            color: white;
+            border: 1px solid #009688;
             padding: 8px 15px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
         .nav-button:hover {
-            background: rgba(255, 107, 107, 0.3);
+            background: rgba(0, 150, 136, 0.3);
         }
         .nav-button.active {
-            /* Изменен градиент активной кнопки навигации */
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            color: white;
+            /* Градиент активной кнопки */
+            background: linear-gradient(45deg, #FF5722, #FF9800);
         }
         .refresh-btn {
-            /* Изменен цвет кнопки обновления */
-            background: #4ecdc4;
+            /* Акцентный цвет */
+            background: #009688;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -249,10 +236,10 @@
             cursor: pointer;
             font-size: 0.9rem;
             margin-left: 10px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
         .refresh-btn:hover {
-            background: #3db8b8;
+            background: #00796B;
         }
         .filters-container {
             display: flex;
@@ -368,7 +355,7 @@
                 </div>
                 <button class="refresh-btn" onclick="loadActiveBookings(currentBookingFilter)">Обновить</button>
             </div>
-            <h3 style="text-align: center; color: #ff6b6b; margin: 20px 0 10px;">Активные бронирования</h3>
+            <h3 style="text-align: center; color: #009688; margin: 20px 0 10px;">Активные бронирования</h3>
             <div id="activeBookingsLoading" class="loading">Загрузка активных бронирований...</div>
             <table id="activeBookingsTable" style="display: none;">
                 <thead>
@@ -388,7 +375,7 @@
             </table>
             <!-- Архивные бронирования (внизу) -->
             <div style="margin-top: 40px;">
-                <h3 style="text-align: center; color: #4ecdc4; margin: 20px 0 10px;">Архивные бронирования</h3>
+                <h3 style="text-align: center; color: #FF5722; margin: 20px 0 10px;">Архивные бронирования</h3>
                 <div id="archiveBookingsLoading" class="loading">Загрузка архивных бронирований...</div>
                 <table id="archiveBookingsTable" style="display: none;">
                     <thead>
@@ -565,16 +552,6 @@
         // Загрузка всех сеансов для проверки существования
         async function loadAllSeances() {
             try {
-                // Проверяем кэш
-                const cachedData = sessionStorage.getItem('allSeancesCache');
-                const cacheTime = sessionStorage.getItem('allSeancesCacheTime');
-                const now = new Date().getTime();
-                
-                if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 300000) { // 5 минут
-                    allSeances = JSON.parse(cachedData);
-                    return allSeances;
-                }
-                
                 const querySnapshot = await db.collection('seances').get();
                 allSeances = [];
                 querySnapshot.forEach((doc) => {
@@ -586,15 +563,9 @@
                         });
                     }
                 });
-                
-                // Сохраняем в кэш
-                sessionStorage.setItem('allSeancesCache', JSON.stringify(allSeances));
-                sessionStorage.setItem('allSeancesCacheTime', now.toString());
-                
                 return allSeances;
             } catch (error) {
                 console.error('Ошибка загрузки сеансов для проверки:', error);
-                showMessage('Ошибка загрузки сеансов для проверки: ' + error.message, 'error');
                 return [];
             }
         }
@@ -609,60 +580,31 @@
         // Загрузка фильмов
         async function loadMovies() {
             try {
-                // Проверяем кэш
-                const cachedData = sessionStorage.getItem('moviesCache');
-                const cacheTime = sessionStorage.getItem('moviesCacheTime');
-                const now = new Date().getTime();
-                
-                if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 300000) { // 5 минут
-                    const movies = JSON.parse(cachedData);
-                    renderMovies(movies);
-                    updateSeanceSelect(movies);
-                    return;
-                }
-                
                 document.getElementById('moviesLoading').style.display = 'block';
                 document.getElementById('moviesTable').style.display = 'none';
                 const querySnapshot = await db.collection('movies').get();
-                const movies = [];
+                const moviesTableBody = document.getElementById('moviesTableBody');
+                moviesTableBody.innerHTML = '';
                 querySnapshot.forEach((doc) => {
-                    movies.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
+                    const movie = doc.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${movie.name}</td>
+                        <td>${movie.description}</td>
+                        <td>${movie.age}</td>
+                        <td><button style="background: #FF5722; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteMovie('${doc.id}')">Удалить</button></td>
+                    `;
+                    moviesTableBody.appendChild(row);
                 });
-                
-                // Сохраняем в кэш
-                sessionStorage.setItem('moviesCache', JSON.stringify(movies));
-                sessionStorage.setItem('moviesCacheTime', now.toString());
-                
-                renderMovies(movies);
-                updateSeanceSelect(movies);
+                // Обновляем селект сеансов
+                updateSeanceSelect();
                 document.getElementById('moviesLoading').style.display = 'none';
                 document.getElementById('moviesTable').style.display = 'table';
             } catch (error) {
                 console.error('Ошибка загрузки фильмов:', error);
                 document.getElementById('moviesLoading').innerHTML = 'Ошибка загрузки';
-                showMessage('Ошибка загрузки фильмов: ' + error.message, 'error');
             }
         }
-        
-        // Функция для отображения фильмов
-        function renderMovies(movies) {
-            const moviesTableBody = document.getElementById('moviesTableBody');
-            moviesTableBody.innerHTML = '';
-            movies.forEach((movie) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${movie.name}</td>
-                    <td>${movie.description}</td>
-                    <td>${movie.age}</td>
-                    <td><button style="background: #ff6b6b; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteMovie('${movie.id}')">Удалить</button></td>
-                `;
-                moviesTableBody.appendChild(row);
-            });
-        }
-        
         // Добавление фильма
         async function addMovie() {
             const name = document.getElementById('movieName').value;
@@ -687,14 +629,11 @@
                     // Очищаем поля
                     document.getElementById('movieName').value = '';
                     document.getElementById('movieDesc').value = '';
-                    // Очищаем кэш
-                    sessionStorage.removeItem('moviesCache');
-                    sessionStorage.removeItem('moviesCacheTime');
                     // Перезагружаем список фильмов
                     loadMovies();
                 } catch (error) {
                     console.error('Ошибка добавления фильма:', error);
-                    showMessage('Ошибка добавления фильма', 'error');
+                    alert('Ошибка добавления фильма');
                 }
             } else {
                 // Показываем ошибку
@@ -709,34 +648,24 @@
             if (confirm('Удалить фильм?')) {
                 try {
                     await db.collection('movies').doc(movieId).delete();
-                    // Очищаем кэш
-                    sessionStorage.removeItem('moviesCache');
-                    sessionStorage.removeItem('moviesCacheTime');
                     loadMovies();
-                    showMessage('Фильм удален!', 'success');
+                    alert('Фильм удален!');
                 } catch (error) {
                     console.error('Ошибка удаления фильма:', error);
-                    showMessage('Ошибка удаления фильма', 'error');
+                    alert('Ошибка удаления фильма');
                 }
             }
         }
         // Обновление селекта сеансов
-        async function updateSeanceSelect(movies = null) {
+        async function updateSeanceSelect() {
             try {
-                let moviesData = movies;
-                if (!moviesData) {
-                    const querySnapshot = await db.collection('movies')
-                        .orderBy('name')
-                        .get();
-                    moviesData = [];
-                    querySnapshot.forEach((doc) => {
-                        moviesData.push(doc.data());
-                    });
-                }
-                
                 const seanceSelect = document.getElementById('seanceMovie');
                 seanceSelect.innerHTML = '<option value="">Выберите фильм</option>';
-                moviesData.forEach((movie) => {
+                const querySnapshot = await db.collection('movies')
+                    .orderBy('name')
+                    .get();
+                querySnapshot.forEach((doc) => {
+                    const movie = doc.data();
                     const option = document.createElement('option');
                     option.value = movie.name;
                     option.textContent = movie.name;
@@ -744,7 +673,6 @@
                 });
             } catch (error) {
                 console.error('Ошибка обновления селекта:', error);
-                showMessage('Ошибка обновления селекта: ' + error.message, 'error');
             }
         }
         // Загрузка сеансов с фильтрацией
@@ -752,20 +680,6 @@
             try {
                 document.getElementById('seancesLoading').style.display = 'block';
                 document.getElementById('seancesTable').style.display = 'none';
-                
-                // Проверяем кэш
-                const cacheKey = `seancesCache_${filter}`;
-                const cachedData = sessionStorage.getItem(cacheKey);
-                const cacheTime = sessionStorage.getItem(`${cacheKey}Time`);
-                const now = new Date().getTime();
-                
-                if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 300000) { // 5 минут
-                    renderSeances(JSON.parse(cachedData));
-                    document.getElementById('seancesLoading').style.display = 'none';
-                    document.getElementById('seancesTable').style.display = 'table';
-                    return;
-                }
-                
                 // Загружаем все сеансы и фильтруем на клиенте
                 const querySnapshot = await db.collection('seances').get();
                 // Преобразуем в массив для удобной фильтрации
@@ -782,8 +696,8 @@
                 });
                 // Фильтруем на клиенте
                 let filteredSeances = allSeances;
-                const nowDate = new Date();
-                const today = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate());
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 if (filter === 'today') {
                     const todayString = formatDateForComparison(today);
                     filteredSeances = allSeances.filter(seance => seance.date === todayString);
@@ -815,12 +729,22 @@
                     }
                     return 0;
                 });
-                
-                // Сохраняем в кэш
-                sessionStorage.setItem(cacheKey, JSON.stringify(filteredSeances));
-                sessionStorage.setItem(`${cacheKey}Time`, now.toString());
-                
-                renderSeances(filteredSeances);
+                const seancesTableBody = document.getElementById('seancesTableBody');
+                seancesTableBody.innerHTML = '';
+                if (filteredSeances.length === 0) {
+                    seancesTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Нет сеансов</td></tr>';
+                } else {
+                    filteredSeances.forEach((seance) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${seance.movie}</td>
+                            <td>${seance.date}</td>
+                            <td>${seance.time}</td>
+                            <td><button style="background: #FF5722; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteSeance('${seance.id}')">Удалить</button></td>
+                        `;
+                        seancesTableBody.appendChild(row);
+                    });
+                }
                 document.getElementById('seancesLoading').style.display = 'none';
                 document.getElementById('seancesTable').style.display = 'table';
                 // Обновляем кэш сеансов
@@ -828,30 +752,8 @@
             } catch (error) {
                 console.error('Ошибка загрузки сеансов:', error);
                 document.getElementById('seancesLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
-                showMessage('Ошибка загрузки сеансов: ' + error.message, 'error');
             }
         }
-        
-        // Функция для отображения сеансов
-        function renderSeances(seances) {
-            const seancesTableBody = document.getElementById('seancesTableBody');
-            seancesTableBody.innerHTML = '';
-            if (seances.length === 0) {
-                seancesTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Нет сеансов</td></tr>';
-            } else {
-                seances.forEach((seance) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${seance.movie}</td>
-                        <td>${seance.date}</td>
-                        <td>${seance.time}</td>
-                        <td><button style="background: #ff6b6b; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteSeance('${seance.id}')">Удалить</button></td>
-                    `;
-                    seancesTableBody.appendChild(row);
-                });
-            }
-        }
-        
         // Форматирование даты для сравнения (YYYY-MM-DD)
         function formatDateForComparison(date) {
             const year = date.getFullYear();
@@ -882,19 +784,11 @@
                     }, 3000);
                     // Очищаем поля времени
                     document.getElementById('seanceTime').value = '';
-                    // Очищаем кэши
-                    const cacheKeys = ['seancesCache_all', 'seancesCache_today', 'seancesCache_week', 'seancesCache_future'];
-                    cacheKeys.forEach(key => {
-                        sessionStorage.removeItem(key);
-                        sessionStorage.removeItem(`${key}Time`);
-                    });
-                    sessionStorage.removeItem('allSeancesCache');
-                    sessionStorage.removeItem('allSeancesCacheTime');
                     // Перезагружаем список сеансов
                     loadSeances(currentSeanceFilter);
                 } catch (error) {
                     console.error('Ошибка добавления сеанса:', error);
-                    showMessage('Ошибка добавления сеанса', 'error');
+                    alert('Ошибка добавления сеанса');
                 }
             } else {
                 // Показываем ошибку
@@ -909,19 +803,11 @@
             if (confirm('Удалить сеанс?')) {
                 try {
                     await db.collection('seances').doc(seanceId).delete();
-                    // Очищаем кэши
-                    const cacheKeys = ['seancesCache_all', 'seancesCache_today', 'seancesCache_week', 'seancesCache_future'];
-                    cacheKeys.forEach(key => {
-                        sessionStorage.removeItem(key);
-                        sessionStorage.removeItem(`${key}Time`);
-                    });
-                    sessionStorage.removeItem('allSeancesCache');
-                    sessionStorage.removeItem('allSeancesCacheTime');
                     loadSeances(currentSeanceFilter);
-                    showMessage('Сеанс удален!', 'success');
+                    alert('Сеанс удален!');
                 } catch (error) {
                     console.error('Ошибка удаления сеанса:', error);
-                    showMessage('Ошибка удаления сеанса', 'error');
+                    alert('Ошибка удаления сеанса');
                 }
             }
         }
@@ -975,37 +861,30 @@
                     }
                     return 0;
                 });
-                renderActiveBookings(filteredBookings);
+                const bookingsTableBody = document.getElementById('activeBookingsTableBody');
+                bookingsTableBody.innerHTML = '';
+                if (filteredBookings.length === 0) {
+                    bookingsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет активных бронирований</td></tr>';
+                } else {
+                    filteredBookings.forEach(booking => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${booking.film || '---'}</td>
+                            <td>${booking.date || '---'} ${booking.time || ''}</td>
+                            <td>${booking.seat || '---'}</td>
+                            <td>${booking.people || '---'}</td>
+                            <td>${booking.price || 0} руб.</td>
+                        `;
+                        bookingsTableBody.appendChild(row);
+                    });
+                }
                 document.getElementById('activeBookingsLoading').style.display = 'none';
                 document.getElementById('activeBookingsTable').style.display = 'table';
             } catch (error) {
                 console.error('Ошибка загрузки активных бронирований:', error);
                 document.getElementById('activeBookingsLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
-                showMessage('Ошибка загрузки активных бронирований: ' + error.message, 'error');
             }
         }
-        
-        // Функция для отображения активных бронирований
-        function renderActiveBookings(bookings) {
-            const bookingsTableBody = document.getElementById('activeBookingsTableBody');
-            bookingsTableBody.innerHTML = '';
-            if (bookings.length === 0) {
-                bookingsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет активных бронирований</td></tr>';
-            } else {
-                bookings.forEach(booking => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${booking.film || '---'}</td>
-                        <td>${booking.date || '---'} ${booking.time || ''}</td>
-                        <td>${booking.seat || '---'}</td>
-                        <td>${booking.people || '---'}</td>
-                        <td>${booking.price || 0} руб.</td>
-                    `;
-                    bookingsTableBody.appendChild(row);
-                });
-            }
-        }
-        
         // Загрузка архивных бронирований
         async function loadArchiveBookings() {
             try {
@@ -1040,65 +919,29 @@
                     }
                     return 0;
                 });
-                renderArchiveBookings(archiveBookings);
+                const archiveTableBody = document.getElementById('archiveBookingsTableBody');
+                archiveTableBody.innerHTML = '';
+                if (archiveBookings.length === 0) {
+                    archiveTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет архивных бронирований</td></tr>';
+                } else {
+                    archiveBookings.forEach(booking => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${booking.film || '---'}</td>
+                            <td>${booking.date || '---'} ${booking.time || ''}</td>
+                            <td>${booking.seat || '---'}</td>
+                            <td>${booking.people || '---'}</td>
+                            <td>${booking.price || 0} руб.</td>
+                        `;
+                        archiveTableBody.appendChild(row);
+                    });
+                }
                 document.getElementById('archiveBookingsLoading').style.display = 'none';
                 document.getElementById('archiveBookingsTable').style.display = 'table';
             } catch (error) {
                 console.error('Ошибка загрузки архивных бронирований:', error);
                 document.getElementById('archiveBookingsLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
-                showMessage('Ошибка загрузки архивных бронирований: ' + error.message, 'error');
             }
-        }
-        
-        // Функция для отображения архивных бронирований
-        function renderArchiveBookings(bookings) {
-            const archiveTableBody = document.getElementById('archiveBookingsTableBody');
-            archiveTableBody.innerHTML = '';
-            if (bookings.length === 0) {
-                archiveTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет архивных бронирований</td></tr>';
-            } else {
-                bookings.forEach(booking => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${booking.film || '---'}</td>
-                        <td>${booking.date || '---'} ${booking.time || ''}</td>
-                        <td>${booking.seat || '---'}</td>
-                        <td>${booking.people || '---'}</td>
-                        <td>${booking.price || 0} руб.</td>
-                    `;
-                    archiveTableBody.appendChild(row);
-                });
-            }
-        }
-        
-        // Централизованная функция для отображения сообщений
-        function showMessage(message, type = 'info') {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-            messageDiv.textContent = message;
-            messageDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                border-radius: 5px;
-                color: white;
-                font-weight: bold;
-                z-index: 10000;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                max-width: 300px;
-                ${type === 'error' ? 'background: #ff6b6b;' : 'background: #4ecdc4;'}
-            `;
-            
-            document.body.appendChild(messageDiv);
-            
-            setTimeout(() => {
-                messageDiv.style.opacity = '0';
-                messageDiv.style.transition = 'opacity 0.5s';
-                setTimeout(() => {
-                    document.body.removeChild(messageDiv);
-                }, 500);
-            }, 3000);
         }
     </script>
 </body>
