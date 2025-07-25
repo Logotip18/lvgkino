@@ -259,23 +259,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="movieRow1">
+                    <tr>
                         <td>Интерстеллар</td>
                         <td>Научная фантастика, 2014</td>
                         <td>16+</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('movieRow1')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;">Удалить</button></td>
                     </tr>
-                    <tr id="movieRow2">
+                    <tr>
                         <td>Начало</td>
                         <td>Триллер, 2010</td>
                         <td>16+</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('movieRow2')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;">Удалить</button></td>
                     </tr>
-                    <tr id="movieRow3">
+                    <tr>
                         <td>Матрица</td>
                         <td>Фантастика, 1999</td>
                         <td>16+</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('movieRow3')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;">Удалить</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -310,20 +310,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="seanceRow1">
+                    <tr>
                         <td>Интерстеллар</td>
                         <td>12:00</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('seanceRow1')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;">Удалить</button></td>
                     </tr>
-                    <tr id="seanceRow2">
+                    <tr>
                         <td>Интерстеллар</td>
                         <td>15:30</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('seanceRow2')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;">Удалить</button></td>
                     </tr>
-                    <tr id="seanceRow3">
+                    <tr>
                         <td>Интерстеллар</td>
                         <td>19:00</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('seanceRow3')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b;">Удалить</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -365,15 +365,11 @@
                 const table = document.getElementById('moviesTable').getElementsByTagName('tbody')[0];
                 const newRow = table.insertRow();
                 
-                // Генерируем уникальный ID
-                const rowId = 'movieRow' + Date.now();
-                newRow.id = rowId;
-                
                 newRow.innerHTML = `
                     <td>${name}</td>
                     <td>${desc}</td>
                     <td>${age}</td>
-                    <td><button style="background: #ff6b6b;" onclick="deleteMovie('${rowId}')">Удалить</button></td>
+                    <td><button style="background: #ff6b6b;" onclick="deleteMovie(this)">Удалить</button></td>
                 `;
                 
                 // Показываем сообщение об успехе
@@ -402,12 +398,10 @@
             }
         }
         
-        function deleteMovie(rowId) {
+        function deleteMovie(button) {
             if (confirm('Удалить фильм?')) {
-                const row = document.getElementById(rowId);
-                if (row) {
-                    row.remove();
-                }
+                const row = button.parentNode.parentNode;
+                row.remove();
             }
         }
         
@@ -424,14 +418,10 @@
                 const table = document.getElementById('seancesTable').getElementsByTagName('tbody')[0];
                 const newRow = table.insertRow();
                 
-                // Генерируем уникальный ID
-                const rowId = 'seanceRow' + Date.now();
-                newRow.id = rowId;
-                
                 newRow.innerHTML = `
                     <td>${movie}</td>
                     <td>${time}</td>
-                    <td><button style="background: #ff6b6b;" onclick="deleteSeance('${rowId}')">Удалить</button></td>
+                    <td><button style="background: #ff6b6b;" onclick="deleteSeance(this)">Удалить</button></td>
                 `;
                 
                 // Показываем сообщение об успехе
@@ -452,12 +442,10 @@
             }
         }
         
-        function deleteSeance(rowId) {
+        function deleteSeance(button) {
             if (confirm('Удалить сеанс?')) {
-                const row = document.getElementById(rowId);
-                if (row) {
-                    row.remove();
-                }
+                const row = button.parentNode.parentNode;
+                row.remove();
             }
         }
         
