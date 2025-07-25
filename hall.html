@@ -13,7 +13,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -21,12 +20,10 @@
             min-height: 100vh;
             padding: 15px;
         }
-        
         .container {
             max-width: 1000px;
             margin: 0 auto;
         }
-        
         .back-link {
             display: inline-block;
             margin-bottom: 15px;
@@ -38,23 +35,19 @@
             transition: all 0.3s;
             font-size: 0.9rem;
         }
-        
         .back-link:hover {
             background: rgba(78, 205, 196, 0.1);
         }
-        
         header {
             text-align: center;
             padding: 15px 0;
             margin-bottom: 15px;
         }
-        
         h1 {
             font-size: 1.8rem;
             margin-bottom: 10px;
             color: #4ecdc4;
         }
-        
         .film-info {
             background: rgba(255, 255, 255, 0.05);
             padding: 12px;
@@ -63,7 +56,6 @@
             margin-bottom: 15px;
             font-size: 0.9rem;
         }
-        
         .screen {
             background: linear-gradient(180deg, #4a90e2, #2c5aa0);
             height: 50px;
@@ -76,21 +68,18 @@
             box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
             font-size: 1rem;
         }
-        
         .hall-container {
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
         }
-        
         .row {
             display: flex;
             justify-content: center;
             margin-bottom: 10px;
             gap: 8px;
         }
-        
         .seat {
             background: #555;
             border: 1px solid #777;
@@ -104,27 +93,22 @@
             justify-content: center;
             user-select: none;
         }
-        
         .seat:hover {
             background: #666;
             transform: scale(1.05);
         }
-        
         .seat.booked {
             background: #ff4444;
             cursor: not-allowed;
             transform: none;
         }
-        
         .seat.selected {
             background: #4CAF50;
         }
-        
         /* Размеры мест */
         .single { width: 35px; height: 35px; }
         .double { width: 75px; height: 35px; }
         .quad { width: 155px; height: 35px; }
-        
         .row-label {
             width: 25px;
             height: 35px;
@@ -135,7 +119,6 @@
             color: #4ecdc4;
             font-size: 0.8rem;
         }
-        
         .legend {
             display: flex;
             justify-content: center;
@@ -143,20 +126,17 @@
             margin: 15px 0;
             flex-wrap: wrap;
         }
-        
         .legend-item {
             display: flex;
             align-items: center;
             gap: 5px;
             font-size: 0.8rem;
         }
-        
         .legend-color {
             width: 15px;
             height: 15px;
             border-radius: 3px;
         }
-        
         /* Модальное окно */
         .modal {
             display: none;
@@ -168,7 +148,6 @@
             height: 100%;
             background-color: rgba(0,0,0,0.8);
         }
-        
         .modal-content {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             margin: 20% auto;
@@ -178,7 +157,6 @@
             text-align: center;
             border: 1px solid #4ecdc4;
         }
-        
         .close {
             color: #aaa;
             float: right;
@@ -186,16 +164,13 @@
             font-weight: bold;
             cursor: pointer;
         }
-        
         .booking-info {
             margin: 15px 0;
         }
-        
         .booking-info p {
             margin: 8px 0;
             font-size: 0.9rem;
         }
-        
         button {
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             color: white;
@@ -209,11 +184,9 @@
             font-size: 0.9rem;
             min-height: 40px;
         }
-        
         button:hover {
             transform: translateY(-2px);
         }
-        
         select {
             padding: 8px;
             margin: 10px 0;
@@ -223,90 +196,72 @@
             border: 1px solid #4ecdc4;
             width: 100%;
         }
-        
         .loading {
             text-align: center;
             padding: 20px;
         }
-        
         /* Мобильная адаптация */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
             }
-            
             .container {
                 padding: 5px;
             }
-            
             h1 {
                 font-size: 1.5rem;
             }
-            
             .film-info {
                 font-size: 0.8rem;
                 padding: 10px;
             }
-            
             .screen {
                 height: 40px;
                 line-height: 40px;
                 font-size: 0.9rem;
             }
-            
             .seat {
                 font-size: 10px;
             }
-            
             .single { width: 30px; height: 30px; }
             .double { width: 65px; height: 30px; }
             .quad { width: 135px; height: 30px; }
-            
             .row-label {
                 width: 20px;
                 height: 30px;
                 font-size: 0.7rem;
             }
-            
             .legend {
                 gap: 10px;
             }
-            
             .legend-item {
                 font-size: 0.7rem;
             }
-            
             .modal-content {
                 width: 95%;
                 margin: 15% auto;
                 padding: 12px;
             }
-            
             .close {
                 font-size: 20px;
             }
         }
-        
         @media (max-width: 480px) {
             .seat {
                 transform: scale(0.9);
             }
-            
             .single { width: 25px; height: 25px; font-size: 8px; }
             .double { width: 55px; height: 25px; font-size: 8px; }
             .quad { width: 115px; height: 25px; font-size: 8px; }
-            
             .row-label {
                 width: 18px;
                 height: 25px;
                 font-size: 0.6rem;
             }
-            
             .legend {
                 flex-direction: column;
                 gap: 8px;
             }
-            
             .back-link {
                 font-size: 0.8rem;
                 padding: 6px 12px;
@@ -317,15 +272,14 @@
 <body>
     <div class="container">
         <a href="seances.html" class="back-link">← К сеансам</a>
-        
         <header>
             <h1>Зал кинотеатра</h1>
             <div class="film-info">
                 <p>Фильм: <span id="filmName">Загрузка...</span></p>
                 <p>Время: <span id="filmTime">Загрузка...</span></p>
+                <p>Дата: <span id="filmDate">Загрузка...</span></p>
             </div>
         </header>
-        
         <div class="legend">
             <div class="legend-item">
                 <div class="legend-color" style="background: #555;"></div>
@@ -340,10 +294,8 @@
                 <span>Забронировано</span>
             </div>
         </div>
-        
         <div class="hall-container">
             <div class="screen">ЭКРАН</div>
-            
             <!-- Ряд 1: 8 одноместных пуфиков -->
             <div class="row">
                 <div class="row-label">1</div>
@@ -356,7 +308,6 @@
                 <div class="seat single" data-seat="1-7" data-type="single">7</div>
                 <div class="seat single" data-seat="1-8" data-type="single">8</div>
             </div>
-            
             <!-- Ряд 2: 5 двухместных диванов -->
             <div class="row">
                 <div class="row-label">2</div>
@@ -366,7 +317,6 @@
                 <div class="seat double" data-seat="2-4" data-type="double">2-4</div>
                 <div class="seat double" data-seat="2-5" data-type="double">2-5</div>
             </div>
-            
             <!-- Ряд 3: 6 двухместных диванов -->
             <div class="row">
                 <div class="row-label">3</div>
@@ -377,7 +327,6 @@
                 <div class="seat double" data-seat="3-5" data-type="double">3-5</div>
                 <div class="seat double" data-seat="3-6" data-type="double">3-6</div>
             </div>
-            
             <!-- Ряд 4: 6 двухместных диванов -->
             <div class="row">
                 <div class="row-label">4</div>
@@ -388,7 +337,6 @@
                 <div class="seat double" data-seat="4-5" data-type="double">4-5</div>
                 <div class="seat double" data-seat="4-6" data-type="double">4-6</div>
             </div>
-            
             <!-- Ряд 5: 4хместные по краям, 2хместные в центре -->
             <div class="row">
                 <div class="row-label">5</div>
@@ -399,7 +347,6 @@
                 <div class="seat double" data-seat="5-5" data-type="double">5-5</div>
                 <div class="seat quad" data-seat="5-6" data-type="quad">5-6</div>
             </div>
-            
             <!-- Ряд 6: 4хместный по краям, 2хместные в центре -->
             <div class="row">
                 <div class="row-label">6</div>
@@ -411,7 +358,6 @@
             </div>
         </div>
     </div>
-    
     <!-- Модальное окно бронирования -->
     <div id="bookingModal" class="modal">
         <div class="modal-content">
@@ -419,6 +365,7 @@
             <h3>Бронирование места</h3>
             <div class="booking-info">
                 <p>Фильм: <span id="modalFilm"></span></p>
+                <p>Дата: <span id="modalDate"></span></p>
                 <p>Время: <span id="modalTime"></span></p>
                 <p>Место: <span id="modalSeat"></span></p>
                 <p>Тип: <span id="modalType"></span></p>
@@ -434,7 +381,6 @@
             <button onclick="closeModal()" style="background: #666;">Отмена</button>
         </div>
     </div>
-
     <script>
         // Инициализация Firebase
         const firebaseConfig = {
@@ -445,35 +391,33 @@
             messagingSenderId: "526810546839",
             appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
         };
-        
         // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        
         // Глобальные переменные
         let currentSeat = '';
         let currentType = '';
         let currentFilm = '';
         let currentTime = '';
+        let currentDate = '';
         const pricePerSeat = 400;
         const modal = document.getElementById('bookingModal');
-        
         // Получаем параметры из URL
         const urlParams = new URLSearchParams(window.location.search);
         currentFilm = decodeURIComponent(urlParams.get('film') || 'Неизвестный фильм');
         currentTime = decodeURIComponent(urlParams.get('time') || 'Неизвестное время');
-        
+        currentDate = decodeURIComponent(urlParams.get('date') || 'Неизвестная дата');
         // Отображаем информацию о фильме
         document.getElementById('filmName').textContent = currentFilm;
         document.getElementById('filmTime').textContent = currentTime;
+        document.getElementById('filmDate').textContent = currentDate;
         document.getElementById('modalFilm').textContent = currentFilm;
+        document.getElementById('modalDate').textContent = currentDate;
         document.getElementById('modalTime').textContent = currentTime;
-        
         // Загружаем забронированные места при открытии страницы
         document.addEventListener('DOMContentLoaded', function() {
             loadBookedSeats();
         });
-        
         // Загрузка забронированных мест из Firebase
         async function loadBookedSeats() {
             try {
@@ -481,7 +425,6 @@
                     .where('film', '==', currentFilm)
                     .where('time', '==', currentTime)
                     .get();
-                
                 querySnapshot.forEach((doc) => {
                     const booking = doc.data();
                     const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
@@ -490,12 +433,10 @@
                         seatElement.onclick = null;
                     }
                 });
-                
             } catch (error) {
                 console.error('Ошибка загрузки бронирований:', error);
             }
         }
-        
         // Обработчики кликов по местам
         document.querySelectorAll('.seat').forEach(seat => {
             if (!seat.classList.contains('booked')) {
@@ -504,20 +445,16 @@
                 });
             }
         });
-        
         function openBooking(seatElement) {
             currentSeat = seatElement.dataset.seat;
             currentType = seatElement.dataset.type;
-            
             document.getElementById('modalSeat').textContent = currentSeat;
             document.getElementById('modalType').textContent = 
                 currentType === 'single' ? 'Одноместный' :
                 currentType === 'double' ? 'Двухместный' : 'Четырехместный';
-            
             // Настраиваем селектор количества человек
             const peopleSelect = document.getElementById('peopleCount');
             peopleSelect.innerHTML = '';
-            
             let min = 1, max = 1;
             if (currentType === 'double') {
                 min = 2;
@@ -526,63 +463,54 @@
                 min = 4;
                 max = 6;
             }
-            
             for (let i = min; i <= max; i++) {
                 const option = document.createElement('option');
                 option.value = i;
                 option.textContent = i;
                 peopleSelect.appendChild(option);
             }
-            
             updatePrice();
             modal.style.display = 'block';
         }
-        
         function updatePrice() {
             const peopleCount = parseInt(document.getElementById('peopleCount').value);
             const totalPrice = peopleCount * pricePerSeat;
             document.getElementById('modalPrice').textContent = totalPrice;
         }
-        
         // Обновляем цену при изменении количества человек
         document.getElementById('peopleCount').addEventListener('change', updatePrice);
-        
         async function confirmBooking() {
             const people = document.getElementById('peopleCount').value;
             const price = document.getElementById('modalPrice').textContent;
-            
             try {
                 // Сохраняем бронирование в Firebase
                 await db.collection('bookings').add({
                     film: currentFilm,
                     time: currentTime,
+                    date: currentDate, // Используем дату из параметра URL
                     seat: currentSeat,
                     people: parseInt(people),
-                    price: parseInt(price),
-                    date: new Date().toLocaleString('ru-RU')
+                    price: parseInt(price)
                 });
-                
                 // Помечаем место как забронированное
                 const seatElement = document.querySelector(`[data-seat="${currentSeat}"]`);
                 if (seatElement) {
                     seatElement.classList.add('booked');
                     seatElement.onclick = null;
                 }
-                
-                alert(`Бронирование подтверждено!\nМесто: ${currentSeat}\nКоличество человек: ${people}\nСтоимость: ${price} руб.`);
-                
+                alert(`Бронирование подтверждено!
+Место: ${currentSeat}
+Количество человек: ${people}
+Стоимость: ${price} руб.`);
                 closeModal();
-                
             } catch (error) {
                 console.error('Ошибка бронирования:', error);
                 alert('Ошибка бронирования. Попробуйте еще раз.');
             }
         }
-        
         function closeModal() {
             modal.style.display = 'none';
         }
-        
         // Закрытие модального окна кликом вне его
         window.onclick = function(event) {
             if (event.target == modal) {
