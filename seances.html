@@ -15,9 +15,9 @@
         }
         body {
             font-family: 'Arial', sans-serif;
-            /* Изменен на более солнечный градиент */
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #fbc2eb 100%);
-            color: #333;
+            /* Морская лагуна */
+            background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
+            color: white;
             min-height: 100vh;
             padding: 15px;
         }
@@ -28,19 +28,18 @@
         .back-link {
             display: inline-block;
             margin-bottom: 15px;
-            /* Изменены цвета ссылки */
-            color: #ff6b6b;
+            /* Акцентный цвет */
+            color: #009688;
             text-decoration: none;
             padding: 8px 15px;
-            border: 1px solid #ff6b6b;
+            border: 1px solid #009688;
             border-radius: 5px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.05);
         }
         .back-link:hover {
-            /* Изменен фон при наведении */
-            background: rgba(255, 107, 107, 0.1);
+            background: rgba(0, 150, 136, 0.1);
         }
         header {
             text-align: center;
@@ -50,41 +49,39 @@
         h1 {
             font-size: 1.8rem;
             margin-bottom: 10px;
-            /* Изменен цвет заголовка */
-            color: #ff6b6b;
+            /* Акцентный цвет */
+            color: #009688;
         }
         .loading {
             text-align: center;
             padding: 30px;
             font-size: 1.1rem;
-            color: #555;
         }
         .movie-section {
-            /* Изменен фон секции */
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 20px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .movie-header {
-            /* Изменен цвет заголовка фильма */
-            color: #4ecdc4;
+            /* Цвет ошибок/важных элементов */
+            color: #FF5722;
             margin-bottom: 15px;
             font-size: 1.4rem;
             text-align: center;
         }
         .seance-date {
-            /* Изменен фон даты сеанса */
-            background: rgba(255, 107, 107, 0.1);
+            /* Акцентный цвет */
+            background: rgba(0, 150, 136, 0.1);
             padding: 12px;
             border-radius: 10px;
             margin-bottom: 15px;
         }
         .seance-date h3 {
-            /* Изменен цвет заголовка даты */
-            color: #ff6b6b;
+            /* Акцентный цвет */
+            color: #009688;
             margin-bottom: 10px;
             font-size: 1.1rem;
             text-align: center;
@@ -96,26 +93,26 @@
             justify-content: center;
         }
         .seance {
-            /* Изменен градиент кнопки сеанса */
-            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            /* Градиент кнопки сеанса */
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
             padding: 12px 15px;
             border-radius: 25px;
             text-decoration: none;
-            color: #333;
-            transition: all 0.3s ease;
+            color: white;
+            transition: all 0.3s;
             font-weight: bold;
             min-width: 80px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         .seance:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .no-seances {
             text-align: center;
             padding: 30px;
-            color: #777;
+            color: #aaa;
             font-size: 1.1rem;
         }
         .filter-buttons {
@@ -126,23 +123,22 @@
             justify-content: center;
         }
         .filter-button {
-            /* Изменен фон кнопки фильтра */
-            background: rgba(255, 107, 107, 0.2);
-            color: #333;
-            border: 1px solid #ff6b6b;
+            /* Акцентный цвет */
+            background: rgba(0, 150, 136, 0.2);
+            color: white;
+            border: 1px solid #009688;
             padding: 8px 15px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
         .filter-button:hover {
-            background: rgba(255, 107, 107, 0.3);
+            background: rgba(0, 150, 136, 0.3);
         }
         .filter-button.active {
-            /* Изменен градиент активной кнопки */
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            color: white;
+            /* Градиент активной кнопки */
+            background: linear-gradient(45deg, #FF5722, #FF9800);
         }
         /* Мобильная адаптация */
         @media (max-width: 768px) {
@@ -237,17 +233,6 @@
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('seancesContent').style.display = 'none';
                 document.getElementById('noSeances').style.display = 'none';
-                // Проверяем кэш
-                const cachedData = sessionStorage.getItem('seancesCache');
-                const cacheTime = sessionStorage.getItem('seancesCacheTime');
-                const now = new Date().getTime();
-                
-                if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 300000) { // 5 минут
-                    allSeances = JSON.parse(cachedData);
-                    displaySeances();
-                    return;
-                }
-                
                 // Получаем все сеансы
                 const seancesSnapshot = await db.collection('seances').get();
                 allSeances = [];
@@ -261,10 +246,6 @@
                         });
                     }
                 });
-                // Сохраняем в кэш
-                sessionStorage.setItem('seancesCache', JSON.stringify(allSeances));
-                sessionStorage.setItem('seancesCacheTime', now.toString());
-                
                 // Сортируем по дате и времени (с проверкой на undefined)
                 allSeances.sort((a, b) => {
                     if (a.date && b.date) {
@@ -280,7 +261,7 @@
                 displaySeances();
             } catch (error) {
                 console.error('Ошибка загрузки сеансов:', error);
-                showMessage('Ошибка загрузки сеансов: ' + error.message, 'error');
+                document.getElementById('loading').innerHTML = 'Ошибка загрузки сеансов: ' + error.message;
             }
         }
         // Отображение сеансов
@@ -336,7 +317,7 @@
                 document.getElementById('seancesContent').style.display = 'block';
             } catch (error) {
                 console.error('Ошибка отображения сеансов:', error);
-                showMessage('Ошибка отображения сеансов: ' + error.message, 'error');
+                document.getElementById('loading').innerHTML = 'Ошибка отображения сеансов: ' + error.message;
             }
         }
         // Фильтрация сеансов по дате
@@ -400,36 +381,6 @@
         function getWeekday(date) {
             const weekdays = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
             return weekdays[date.getDay()];
-        }
-        
-        // Централизованная функция для отображения сообщений
-        function showMessage(message, type = 'info') {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-            messageDiv.textContent = message;
-            messageDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                border-radius: 5px;
-                color: white;
-                font-weight: bold;
-                z-index: 10000;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                max-width: 300px;
-                ${type === 'error' ? 'background: #ff6b6b;' : 'background: #4ecdc4;'}
-            `;
-            
-            document.body.appendChild(messageDiv);
-            
-            setTimeout(() => {
-                messageDiv.style.opacity = '0';
-                messageDiv.style.transition = 'opacity 0.5s';
-                setTimeout(() => {
-                    document.body.removeChild(messageDiv);
-                }, 500);
-            }, 3000);
         }
     </script>
 </body>
