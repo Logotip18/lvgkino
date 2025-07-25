@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Зал - LVG Kino</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -49,6 +52,14 @@
             font-size: 2rem;
             margin-bottom: 10px;
             color: #4ecdc4;
+        }
+        
+        .film-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
         }
         
         .screen {
@@ -199,15 +210,23 @@
             color: white;
             border: 1px solid #4ecdc4;
         }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-link">← На главную</a>
+        <a href="seances.html" class="back-link">← К сеансам</a>
         
         <header>
             <h1>Зал кинотеатра</h1>
-            <p>Выберите удобное место для просмотра</p>
+            <div class="film-info">
+                <p>Фильм: <span id="filmName">Загрузка...</span></p>
+                <p>Время: <span id="filmTime">Загрузка...</span></p>
+            </div>
         </header>
         
         <div class="legend">
@@ -231,67 +250,67 @@
             <!-- Ряд 1: 8 одноместных пуфиков -->
             <div class="row">
                 <div class="row-label">1</div>
-                <div class="seat single" onclick="openBooking('1-1', 'single')">1</div>
-                <div class="seat single" onclick="openBooking('1-2', 'single')">2</div>
-                <div class="seat single" onclick="openBooking('1-3', 'single')">3</div>
-                <div class="seat single" onclick="openBooking('1-4', 'single')">4</div>
-                <div class="seat single" onclick="openBooking('1-5', 'single')">5</div>
-                <div class="seat single" onclick="openBooking('1-6', 'single')">6</div>
-                <div class="seat single" onclick="openBooking('1-7', 'single')">7</div>
-                <div class="seat single" onclick="openBooking('1-8', 'single')">8</div>
+                <div class="seat single" data-seat="1-1" data-type="single">1</div>
+                <div class="seat single" data-seat="1-2" data-type="single">2</div>
+                <div class="seat single" data-seat="1-3" data-type="single">3</div>
+                <div class="seat single" data-seat="1-4" data-type="single">4</div>
+                <div class="seat single" data-seat="1-5" data-type="single">5</div>
+                <div class="seat single" data-seat="1-6" data-type="single">6</div>
+                <div class="seat single" data-seat="1-7" data-type="single">7</div>
+                <div class="seat single" data-seat="1-8" data-type="single">8</div>
             </div>
             
             <!-- Ряд 2: 5 двухместных диванов -->
             <div class="row">
                 <div class="row-label">2</div>
-                <div class="seat double" onclick="openBooking('2-1', 'double')">2-1</div>
-                <div class="seat double" onclick="openBooking('2-2', 'double')">2-2</div>
-                <div class="seat double" onclick="openBooking('2-3', 'double')">2-3</div>
-                <div class="seat double" onclick="openBooking('2-4', 'double')">2-4</div>
-                <div class="seat double" onclick="openBooking('2-5', 'double')">2-5</div>
+                <div class="seat double" data-seat="2-1" data-type="double">2-1</div>
+                <div class="seat double" data-seat="2-2" data-type="double">2-2</div>
+                <div class="seat double" data-seat="2-3" data-type="double">2-3</div>
+                <div class="seat double" data-seat="2-4" data-type="double">2-4</div>
+                <div class="seat double" data-seat="2-5" data-type="double">2-5</div>
             </div>
             
             <!-- Ряд 3: 6 двухместных диванов -->
             <div class="row">
                 <div class="row-label">3</div>
-                <div class="seat double" onclick="openBooking('3-1', 'double')">3-1</div>
-                <div class="seat double" onclick="openBooking('3-2', 'double')">3-2</div>
-                <div class="seat double" onclick="openBooking('3-3', 'double')">3-3</div>
-                <div class="seat double" onclick="openBooking('3-4', 'double')">3-4</div>
-                <div class="seat double" onclick="openBooking('3-5', 'double')">3-5</div>
-                <div class="seat double" onclick="openBooking('3-6', 'double')">3-6</div>
+                <div class="seat double" data-seat="3-1" data-type="double">3-1</div>
+                <div class="seat double" data-seat="3-2" data-type="double">3-2</div>
+                <div class="seat double" data-seat="3-3" data-type="double">3-3</div>
+                <div class="seat double" data-seat="3-4" data-type="double">3-4</div>
+                <div class="seat double" data-seat="3-5" data-type="double">3-5</div>
+                <div class="seat double" data-seat="3-6" data-type="double">3-6</div>
             </div>
             
             <!-- Ряд 4: 6 двухместных диванов -->
             <div class="row">
                 <div class="row-label">4</div>
-                <div class="seat double" onclick="openBooking('4-1', 'double')">4-1</div>
-                <div class="seat double" onclick="openBooking('4-2', 'double')">4-2</div>
-                <div class="seat double" onclick="openBooking('4-3', 'double')">4-3</div>
-                <div class="seat double" onclick="openBooking('4-4', 'double')">4-4</div>
-                <div class="seat double" onclick="openBooking('4-5', 'double')">4-5</div>
-                <div class="seat double" onclick="openBooking('4-6', 'double')">4-6</div>
+                <div class="seat double" data-seat="4-1" data-type="double">4-1</div>
+                <div class="seat double" data-seat="4-2" data-type="double">4-2</div>
+                <div class="seat double" data-seat="4-3" data-type="double">4-3</div>
+                <div class="seat double" data-seat="4-4" data-type="double">4-4</div>
+                <div class="seat double" data-seat="4-5" data-type="double">4-5</div>
+                <div class="seat double" data-seat="4-6" data-type="double">4-6</div>
             </div>
             
             <!-- Ряд 5: 4хместные по краям, 2хместные в центре -->
             <div class="row">
                 <div class="row-label">5</div>
-                <div class="seat quad" onclick="openBooking('5-1', 'quad')">5-1</div>
-                <div class="seat double" onclick="openBooking('5-2', 'double')">5-2</div>
-                <div class="seat double" onclick="openBooking('5-3', 'double')">5-3</div>
-                <div class="seat double" onclick="openBooking('5-4', 'double')">5-4</div>
-                <div class="seat double" onclick="openBooking('5-5', 'double')">5-5</div>
-                <div class="seat quad" onclick="openBooking('5-6', 'quad')">5-6</div>
+                <div class="seat quad" data-seat="5-1" data-type="quad">5-1</div>
+                <div class="seat double" data-seat="5-2" data-type="double">5-2</div>
+                <div class="seat double" data-seat="5-3" data-type="double">5-3</div>
+                <div class="seat double" data-seat="5-4" data-type="double">5-4</div>
+                <div class="seat double" data-seat="5-5" data-type="double">5-5</div>
+                <div class="seat quad" data-seat="5-6" data-type="quad">5-6</div>
             </div>
             
             <!-- Ряд 6: 4хместный по краям, 2хместные в центре -->
             <div class="row">
                 <div class="row-label">6</div>
-                <div class="seat quad" onclick="openBooking('6-1', 'quad')">6-1</div>
-                <div class="seat double" onclick="openBooking('6-2', 'double')">6-2</div>
-                <div class="seat double" onclick="openBooking('6-3', 'double')">6-3</div>
-                <div class="seat double" onclick="openBooking('6-4', 'double')">6-4</div>
-                <div class="seat quad" onclick="openBooking('6-5', 'quad')">6-5</div>
+                <div class="seat quad" data-seat="6-1" data-type="quad">6-1</div>
+                <div class="seat double" data-seat="6-2" data-type="double">6-2</div>
+                <div class="seat double" data-seat="6-3" data-type="double">6-3</div>
+                <div class="seat double" data-seat="6-4" data-type="double">6-4</div>
+                <div class="seat quad" data-seat="6-5" data-type="quad">6-5</div>
             </div>
         </div>
     </div>
@@ -302,6 +321,8 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <h3>Бронирование места</h3>
             <div class="booking-info">
+                <p>Фильм: <span id="modalFilm"></span></p>
+                <p>Время: <span id="modalTime"></span></p>
                 <p>Место: <span id="modalSeat"></span></p>
                 <p>Тип: <span id="modalType"></span></p>
                 <div id="peopleSelector">
@@ -318,29 +339,93 @@
     </div>
 
     <script>
+        // Инициализация Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
+            authDomain: "lvgkino.firebaseapp.com",
+            projectId: "lvgkino",
+            storageBucket: "lvgkino.firebasestorage.app",
+            messagingSenderId: "526810546839",
+            appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
+        };
+        
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Глобальные переменные
         let currentSeat = '';
         let currentType = '';
+        let currentFilm = '';
+        let currentTime = '';
         const pricePerSeat = 400;
         const modal = document.getElementById('bookingModal');
         
-        function openBooking(seat, type) {
-            currentSeat = seat;
-            currentType = type;
+        // Получаем параметры из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        currentFilm = decodeURIComponent(urlParams.get('film') || 'Неизвестный фильм');
+        currentTime = decodeURIComponent(urlParams.get('time') || 'Неизвестное время');
+        
+        // Отображаем информацию о фильме
+        document.getElementById('filmName').textContent = currentFilm;
+        document.getElementById('filmTime').textContent = currentTime;
+        document.getElementById('modalFilm').textContent = currentFilm;
+        document.getElementById('modalTime').textContent = currentTime;
+        
+        // Загружаем забронированные места при открытии страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookedSeats();
+        });
+        
+        // Загрузка забронированных мест из Firebase
+        async function loadBookedSeats() {
+            try {
+                const querySnapshot = await db.collection('bookings')
+                    .where('film', '==', currentFilm)
+                    .where('time', '==', currentTime)
+                    .get();
+                
+                querySnapshot.forEach((doc) => {
+                    const booking = doc.data();
+                    const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
+                    if (seatElement) {
+                        seatElement.classList.add('booked');
+                        seatElement.onclick = null;
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Ошибка загрузки бронирований:', error);
+            }
+        }
+        
+        // Обработчики кликов по местам
+        document.querySelectorAll('.seat').forEach(seat => {
+            if (!seat.classList.contains('booked')) {
+                seat.addEventListener('click', function() {
+                    openBooking(this);
+                });
+            }
+        });
+        
+        function openBooking(seatElement) {
+            currentSeat = seatElement.dataset.seat;
+            currentType = seatElement.dataset.type;
             
-            document.getElementById('modalSeat').textContent = seat;
+            document.getElementById('modalSeat').textContent = currentSeat;
             document.getElementById('modalType').textContent = 
-                type === 'single' ? 'Одноместный' :
-                type === 'double' ? 'Двухместный' : 'Четырехместный';
+                currentType === 'single' ? 'Одноместный' :
+                currentType === 'double' ? 'Двухместный' : 'Четырехместный';
             
             // Настраиваем селектор количества человек
             const peopleSelect = document.getElementById('peopleCount');
             peopleSelect.innerHTML = '';
             
             let min = 1, max = 1;
-            if (type === 'double') {
+            if (currentType === 'double') {
                 min = 2;
                 max = 3;
-            } else if (type === 'quad') {
+            } else if (currentType === 'quad') {
                 min = 4;
                 max = 6;
             }
@@ -362,21 +447,39 @@
             document.getElementById('modalPrice').textContent = totalPrice;
         }
         
-        function confirmBooking() {
+        // Обновляем цену при изменении количества человек
+        document.getElementById('peopleCount').addEventListener('change', updatePrice);
+        
+        async function confirmBooking() {
             const people = document.getElementById('peopleCount').value;
             const price = document.getElementById('modalPrice').textContent;
             
-            alert(`Бронирование подтверждено!\nМесто: ${currentSeat}\nКоличество человек: ${people}\nСтоимость: ${price} руб.`);
-            
-            // Помечаем место как забронированное
-            const seatElement = Array.from(document.querySelectorAll('.seat')).find(seat => 
-                seat.textContent.trim() === currentSeat);
-            if (seatElement) {
-                seatElement.classList.add('booked');
-                seatElement.onclick = null;
+            try {
+                // Сохраняем бронирование в Firebase
+                await db.collection('bookings').add({
+                    film: currentFilm,
+                    time: currentTime,
+                    seat: currentSeat,
+                    people: parseInt(people),
+                    price: parseInt(price),
+                    date: new Date().toLocaleString('ru-RU')
+                });
+                
+                // Помечаем место как забронированное
+                const seatElement = document.querySelector(`[data-seat="${currentSeat}"]`);
+                if (seatElement) {
+                    seatElement.classList.add('booked');
+                    seatElement.onclick = null;
+                }
+                
+                alert(`Бронирование подтверждено!\nМесто: ${currentSeat}\nКоличество человек: ${people}\nСтоимость: ${price} руб.`);
+                
+                closeModal();
+                
+            } catch (error) {
+                console.error('Ошибка бронирования:', error);
+                alert('Ошибка бронирования. Попробуйте еще раз.');
             }
-            
-            closeModal();
         }
         
         function closeModal() {
@@ -389,9 +492,6 @@
                 closeModal();
             }
         }
-        
-        // Обновляем цену при изменении количества человек
-        document.getElementById('peopleCount').addEventListener('change', updatePrice);
     </script>
 </body>
 </html>
