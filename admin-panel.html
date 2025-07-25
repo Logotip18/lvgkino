@@ -641,47 +641,63 @@
                 document.getElementById('seancesLoading').style.display = 'block';
                 document.getElementById('seancesTable').style.display = 'none';
                 
-                let query = db.collection('seances');
+                // Загружаем все сеансы и фильтруем на клиенте
+                const querySnapshot = await db.collection('seances').get();
                 
-                // Применяем фильтр
+                // Преобразуем в массив для удобной фильтрации
+                const allSeances = [];
+                querySnapshot.forEach((doc) => {
+                    const seance = doc.data();
+                    allSeances.push({
+                        id: doc.id,
+                        ...seance
+                    });
+                });
+                
+                // Фильтруем на клиенте
+                let filteredSeances = allSeances;
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 
                 if (filter === 'today') {
                     const todayString = today.toISOString().split('T')[0];
-                    query = query.where('date', '==', todayString);
+                    filteredSeances = allSeances.filter(seance => seance.date === todayString);
                 } else if (filter === 'week') {
                     const nextWeek = new Date(today);
                     nextWeek.setDate(today.getDate() + 7);
                     const todayString = today.toISOString().split('T')[0];
                     const nextWeekString = nextWeek.toISOString().split('T')[0];
-                    query = query
-                        .where('date', '>=', todayString)
-                        .where('date', '<=', nextWeekString);
+                    filteredSeances = allSeances.filter(seance => 
+                        seance.date >= todayString && seance.date <= nextWeekString
+                    );
                 } else if (filter === 'future') {
                     const tomorrow = new Date(today);
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     const tomorrowString = tomorrow.toISOString().split('T')[0];
-                    query = query.where('date', '>=', tomorrowString);
+                    filteredSeances = allSeances.filter(seance => seance.date >= tomorrowString);
                 }
                 
-                query = query.orderBy('date').orderBy('time');
+                // Сортируем
+                filteredSeances.sort((a, b) => {
+                    if (a.date !== b.date) {
+                        return a.date.localeCompare(b.date);
+                    }
+                    return a.time.localeCompare(b.time);
+                });
                 
-                const querySnapshot = await query.get();
                 const seancesTableBody = document.getElementById('seancesTableBody');
                 seancesTableBody.innerHTML = '';
                 
-                if (querySnapshot.empty) {
+                if (filteredSeances.length === 0) {
                     seancesTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Нет сеансов</td></tr>';
                 } else {
-                    querySnapshot.forEach((doc) => {
-                        const seance = doc.data();
+                    filteredSeances.forEach((seance) => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${seance.movie}</td>
                             <td>${seance.date}</td>
                             <td>${seance.time}</td>
-                            <td><button style="background: #ff6b6b; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteSeance('${doc.id}')">Удалить</button></td>
+                            <td><button style="background: #ff6b6b; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteSeance('${seance.id}')">Удалить</button></td>
                         `;
                         seancesTableBody.appendChild(row);
                     });
@@ -760,34 +776,61 @@
                 document.getElementById('bookingsLoading').style.display = 'block';
                 document.getElementById('bookingsTable').style.display = 'none';
                 
-                // Загружаем все бронирования без сложной фильтрации
+                // Загружаем все бронирования и фильтруем на клиенте
                 const querySnapshot = await db.collection('bookings').get();
+                
+                // Преобразуем в массив для удобной фильтрации
+                const allBookings = [];
+                querySnapshot.forEach((doc) => {
+                    const booking = doc.data();
+                    allBookings.push({
+                        id: doc.id,
+                        ...booking
+                    });
+                });
+                
+                // Фильтруем на клиенте
+                let filteredBookings = allBookings;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (filter === 'today') {
+                    const todayString = today.toLocaleDateString('ru-RU');
+                    filteredBookings = allBookings.filter(booking => booking.date === todayString);
+                } else if (filter === 'week') {
+                    const nextWeek = new Date(today);
+                    nextWeek.setDate(today.getDate() + 7);
+                    const todayString = today.toLocaleDateString('ru-RU');
+                    const nextWeekString = nextWeek.toLocaleDateString('ru-RU');
+                    filteredBookings = allBookings.filter(booking => {
+                        // Для простоты показываем все бронирования (без сложной фильтрации по датам)
+                        return true;
+                    });
+                }
+                
+                // Сортируем
+                filteredBookings.sort((a, b) => {
+                    if (a.film !== b.film) {
+                        return a.film.localeCompare(b.film);
+                    }
+                    if (a.date && b.date) {
+                        if (a.date !== b.date) {
+                            return a.date.localeCompare(b.date);
+                        }
+                    }
+                    if (a.time && b.time) {
+                        return a.time.localeCompare(b.time);
+                    }
+                    return 0;
+                });
+                
                 const bookingsTable = document.getElementById('bookingsTable').getElementsByTagName('tbody')[0];
                 bookingsTable.innerHTML = '';
                 
-                if (querySnapshot.empty) {
+                if (filteredBookings.length === 0) {
                     bookingsTable.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет бронирований</td></tr>';
                 } else {
-                    // Преобразуем QuerySnapshot в массив и сортируем
-                    const bookings = [];
-                    querySnapshot.forEach((doc) => {
-                        const booking = doc.data();
-                        bookings.push({
-                            id: doc.id,
-                            ...booking
-                        });
-                    });
-                    
-                    // Сортируем по фильму и дате
-                    bookings.sort((a, b) => {
-                        if (a.film !== b.film) {
-                            return a.film.localeCompare(b.film);
-                        }
-                        return (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || '');
-                    });
-                    
-                    // Отображаем бронирования
-                    bookings.forEach(booking => {
+                    filteredBookings.forEach(booking => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${booking.film || '---'}</td>
