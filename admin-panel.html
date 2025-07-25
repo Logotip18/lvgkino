@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Панель управления - LVG Kino</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -19,7 +19,7 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: white;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
         
         .container {
@@ -29,13 +29,14 @@
         
         .back-link {
             display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #4ecdc4;
             text-decoration: none;
-            padding: 10px 20px;
+            padding: 8px 15px;
             border: 1px solid #4ecdc4;
             border-radius: 5px;
             transition: all 0.3s;
+            font-size: 0.9rem;
         }
         
         .back-link:hover {
@@ -44,30 +45,35 @@
         
         header {
             text-align: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            position: relative;
         }
         
         h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 10px;
             color: #4ecdc4;
         }
         
         .admin-menu {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
         .menu-item {
             background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .menu-item:hover {
@@ -77,14 +83,20 @@
         
         .menu-item h3 {
             color: #ff6b6b;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .menu-item p {
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
         
         .section {
             background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             display: none;
         }
         
@@ -94,33 +106,39 @@
         
         .section h2 {
             color: #4ecdc4;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 15px 0;
+            font-size: 0.9rem;
         }
         
         th, td {
-            padding: 12px;
+            padding: 10px;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         th {
             background: rgba(78, 205, 196, 0.2);
+            font-size: 0.9rem;
         }
         
         .logout-btn {
             background: #ff6b6b;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
-            float: right;
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0.9rem;
         }
         
         .logout-btn:hover {
@@ -135,15 +153,17 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            font-size: 0.9rem;
         }
         
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #4ecdc4;
             background: rgba(0, 0, 0, 0.3);
             color: white;
+            font-size: 0.9rem;
         }
         
         button {
@@ -155,6 +175,8 @@
             cursor: pointer;
             font-weight: bold;
             margin: 5px;
+            font-size: 0.9rem;
+            min-height: 40px;
         }
         
         button:hover {
@@ -167,6 +189,7 @@
             border-radius: 5px;
             margin: 10px 0;
             display: none;
+            font-size: 0.9rem;
         }
         
         .error-message {
@@ -175,11 +198,112 @@
             border-radius: 5px;
             margin: 10px 0;
             display: none;
+            font-size: 0.9rem;
         }
         
         .loading {
             text-align: center;
             padding: 20px;
+            font-size: 1rem;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-button {
+            background: rgba(78, 205, 196, 0.2);
+            color: white;
+            border: 1px solid #4ecdc4;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .nav-button.active {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+        
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 5px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .admin-menu {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .menu-item {
+                padding: 12px;
+                min-height: 70px;
+            }
+            
+            .menu-item h3 {
+                font-size: 1.1rem;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            input, select, textarea, button {
+                font-size: 0.85rem;
+                padding: 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .section h2 {
+                font-size: 1.2rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+            
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -212,21 +336,25 @@
         <!-- Секция бронирований -->
         <div id="bookings" class="section active">
             <h2>Все бронирования</h2>
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="filterBookings('all')" id="allBtn">Все</button>
+                <button class="nav-button" onclick="filterBookings('today')" id="todayBtn">Сегодня</button>
+                <button class="nav-button" onclick="filterBookings('week')" id="weekBtn">Неделя</button>
+            </div>
             <div id="bookingsLoading" class="loading">Загрузка бронирований...</div>
             <table id="bookingsTable" style="display: none;">
                 <thead>
                     <tr>
                         <th>Фильм</th>
-                        <th>Время</th>
+                        <th>Дата/Время</th>
                         <th>Место</th>
                         <th>Человек</th>
                         <th>Стоимость</th>
-                        <th>Дата</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="6" style="text-align: center;">Нет бронирований</td>
+                        <td colspan="5" style="text-align: center;">Нет бронирований</td>
                     </tr>
                 </tbody>
             </table>
@@ -241,7 +369,7 @@
             </div>
             <div class="form-group">
                 <label>Описание:</label>
-                <input type="text" id="movieDesc" placeholder="Введите описание">
+                <textarea id="movieDesc" placeholder="Введите описание" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label>Возрастное ограничение:</label>
@@ -257,7 +385,7 @@
             <div id="movieSuccess" class="success-message">Фильм успешно добавлен!</div>
             <div id="movieError" class="error-message">Заполните все поля!</div>
             
-            <h3 style="margin-top: 30px;">Список фильмов</h3>
+            <h3 style="margin-top: 25px;">Список фильмов</h3>
             <div id="moviesLoading" class="loading">Загрузка фильмов...</div>
             <table id="moviesTable" style="display: none;">
                 <thead>
@@ -282,19 +410,30 @@
                 </select>
             </div>
             <div class="form-group">
+                <label>Дата сеанса:</label>
+                <input type="date" id="seanceDate">
+            </div>
+            <div class="form-group">
                 <label>Время сеанса:</label>
                 <input type="time" id="seanceTime">
             </div>
             <button onclick="addSeance()">Добавить сеанс</button>
             <div id="seanceSuccess" class="success-message">Сеанс успешно добавлен!</div>
-            <div id="seanceError" class="error-message">Выберите фильм и время!</div>
+            <div id="seanceError" class="error-message">Заполните все поля!</div>
             
-            <h3 style="margin-top: 30px;">Список сеансов</h3>
+            <h3 style="margin-top: 25px;">Список сеансов</h3>
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="filterSeances('all')" id="allSeancesBtn">Все</button>
+                <button class="nav-button" onclick="filterSeances('today')" id="todaySeancesBtn">Сегодня</button>
+                <button class="nav-button" onclick="filterSeances('week')" id="weekSeancesBtn">Неделя</button>
+                <button class="nav-button" onclick="filterSeances('future')" id="futureSeancesBtn">Будущие</button>
+            </div>
             <div id="seancesLoading" class="loading">Загрузка сеансов...</div>
             <table id="seancesTable" style="display: none;">
                 <thead>
                     <tr>
                         <th>Фильм</th>
+                        <th>Дата</th>
                         <th>Время</th>
                         <th>Действия</th>
                     </tr>
@@ -325,8 +464,12 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
-        // Загружаем данные при открытии страницы
+        // Устанавливаем сегодняшнюю дату по умолчанию
         document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            document.getElementById('seanceDate').value = dateString;
+            
             loadMovies();
             loadSeances();
         });
@@ -355,6 +498,28 @@
             }
         }
         
+        // Навигация по бронированиям
+        function filterBookings(filter) {
+            // Обновляем активные кнопки
+            document.querySelectorAll('#bookings .nav-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(filter + 'Btn').classList.add('active');
+            
+            loadBookings(filter);
+        }
+        
+        // Навигация по сеансам
+        function filterSeances(filter) {
+            // Обновляем активные кнопки
+            document.querySelectorAll('#seances .nav-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(filter + 'SeancesBtn').classList.add('active');
+            
+            loadSeances(filter);
+        }
+        
         // Загрузка фильмов
         async function loadMovies() {
             try {
@@ -372,7 +537,7 @@
                         <td>${movie.name}</td>
                         <td>${movie.description}</td>
                         <td>${movie.age}</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteMovie('${doc.id}')">Удалить</button></td>
+                        <td><button style="background: #ff6b6b; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteMovie('${doc.id}')">Удалить</button></td>
                     `;
                     moviesTableBody.appendChild(row);
                 });
@@ -452,9 +617,12 @@
         async function updateSeanceSelect() {
             try {
                 const seanceSelect = document.getElementById('seanceMovie');
-                seanceSelect.innerHTML = '';
+                seanceSelect.innerHTML = '<option value="">Выберите фильм</option>';
                 
-                const querySnapshot = await db.collection('movies').get();
+                const querySnapshot = await db.collection('movies')
+                    .orderBy('name')
+                    .get();
+                
                 querySnapshot.forEach((doc) => {
                     const movie = doc.data();
                     const option = document.createElement('option');
@@ -467,26 +635,61 @@
             }
         }
         
-        // Загрузка сеансов
-        async function loadSeances() {
+        // Загрузка сеансов с фильтрацией
+        async function loadSeances(filter = 'all') {
             try {
                 document.getElementById('seancesLoading').style.display = 'block';
                 document.getElementById('seancesTable').style.display = 'none';
                 
-                const querySnapshot = await db.collection('seances').get();
+                let query = db.collection('seances');
+                
+                // Применяем фильтр
+                if (filter === 'today') {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    
+                    query = query
+                        .where('date', '>=', today.toISOString().split('T')[0])
+                        .where('date', '<', tomorrow.toISOString().split('T')[0]);
+                } else if (filter === 'week') {
+                    const today = new Date();
+                    const nextWeek = new Date();
+                    nextWeek.setDate(today.getDate() + 7);
+                    
+                    query = query
+                        .where('date', '>=', today.toISOString().split('T')[0])
+                        .where('date', '<=', nextWeek.toISOString().split('T')[0]);
+                } else if (filter === 'future') {
+                    const today = new Date();
+                    today.setDate(today.getDate() + 1);
+                    
+                    query = query
+                        .where('date', '>=', today.toISOString().split('T')[0]);
+                }
+                
+                query = query.orderBy('date').orderBy('time');
+                
+                const querySnapshot = await query.get();
                 const seancesTableBody = document.getElementById('seancesTableBody');
                 seancesTableBody.innerHTML = '';
                 
-                querySnapshot.forEach((doc) => {
-                    const seance = doc.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${seance.movie}</td>
-                        <td>${seance.time}</td>
-                        <td><button style="background: #ff6b6b;" onclick="deleteSeance('${doc.id}')">Удалить</button></td>
-                    `;
-                    seancesTableBody.appendChild(row);
-                });
+                if (querySnapshot.empty) {
+                    seancesTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Нет сеансов</td></tr>';
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const seance = doc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${seance.movie}</td>
+                            <td>${seance.date}</td>
+                            <td>${seance.time}</td>
+                            <td><button style="background: #ff6b6b; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteSeance('${doc.id}')">Удалить</button></td>
+                        `;
+                        seancesTableBody.appendChild(row);
+                    });
+                }
                 
                 document.getElementById('seancesLoading').style.display = 'none';
                 document.getElementById('seancesTable').style.display = 'table';
@@ -500,16 +703,18 @@
         // Добавление сеанса
         async function addSeance() {
             const movie = document.getElementById('seanceMovie').value;
+            const date = document.getElementById('seanceDate').value;
             const time = document.getElementById('seanceTime').value;
             
             // Скрываем сообщения
             document.getElementById('seanceSuccess').style.display = 'none';
             document.getElementById('seanceError').style.display = 'none';
             
-            if (movie && time) {
+            if (movie && date && time) {
                 try {
                     await db.collection('seances').add({
                         movie: movie,
+                        date: date,
                         time: time,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
@@ -520,7 +725,7 @@
                         document.getElementById('seanceSuccess').style.display = 'none';
                     }, 3000);
                     
-                    // Очищаем поле времени
+                    // Очищаем поля
                     document.getElementById('seanceTime').value = '';
                     
                     // Перезагружаем список сеансов
@@ -553,29 +758,52 @@
             }
         }
         
-        // Загрузка бронирований
-        async function loadBookings() {
+        // Загрузка бронирований с фильтрацией
+        async function loadBookings(filter = 'all') {
             try {
                 document.getElementById('bookingsLoading').style.display = 'block';
                 document.getElementById('bookingsTable').style.display = 'none';
                 
-                const querySnapshot = await db.collection('bookings').get();
+                let query = db.collection('bookings');
+                
+                // Применяем фильтр
+                if (filter === 'today') {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    
+                    query = query
+                        .where('date', '>=', today.toLocaleDateString('ru-RU'))
+                        .where('date', '<', tomorrow.toLocaleDateString('ru-RU'));
+                } else if (filter === 'week') {
+                    const today = new Date();
+                    const nextWeek = new Date();
+                    nextWeek.setDate(today.getDate() + 7);
+                    
+                    query = query
+                        .where('date', '>=', today.toLocaleDateString('ru-RU'))
+                        .where('date', '<=', nextWeek.toLocaleDateString('ru-RU'));
+                }
+                
+                query = query.orderBy('film').orderBy('time');
+                
+                const querySnapshot = await query.get();
                 const bookingsTable = document.getElementById('bookingsTable').getElementsByTagName('tbody')[0];
                 bookingsTable.innerHTML = '';
                 
                 if (querySnapshot.empty) {
-                    bookingsTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет бронирований</td></tr>';
+                    bookingsTable.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет бронирований</td></tr>';
                 } else {
                     querySnapshot.forEach((doc) => {
                         const booking = doc.data();
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${booking.film}</td>
-                            <td>${booking.time}</td>
+                            <td>${booking.date || '---'} ${booking.time || ''}</td>
                             <td>${booking.seat}</td>
                             <td>${booking.people}</td>
                             <td>${booking.price} руб.</td>
-                            <td>${booking.date || '---'}</td>
                         `;
                         bookingsTable.appendChild(row);
                     });
