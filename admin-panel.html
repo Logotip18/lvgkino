@@ -648,10 +648,13 @@
                 const allSeances = [];
                 querySnapshot.forEach((doc) => {
                     const seance = doc.data();
-                    allSeances.push({
-                        id: doc.id,
-                        ...seance
-                    });
+                    // Проверяем, что у сеанса есть все необходимые данные
+                    if (seance.movie && seance.date && seance.time) {
+                        allSeances.push({
+                            id: doc.id,
+                            ...seance
+                        });
+                    }
                 });
                 
                 // Фильтруем на клиенте
@@ -677,12 +680,19 @@
                     filteredSeances = allSeances.filter(seance => seance.date >= tomorrowString);
                 }
                 
-                // Сортируем
+                // Сортируем с проверкой на undefined
                 filteredSeances.sort((a, b) => {
-                    if (a.date !== b.date) {
-                        return a.date.localeCompare(b.date);
+                    // Проверяем существование дат
+                    if (a.date && b.date) {
+                        if (a.date !== b.date) {
+                            return a.date.localeCompare(b.date);
+                        }
                     }
-                    return a.time.localeCompare(b.time);
+                    // Проверяем существование времени
+                    if (a.time && b.time) {
+                        return a.time.localeCompare(b.time);
+                    }
+                    return 0;
                 });
                 
                 const seancesTableBody = document.getElementById('seancesTableBody');
@@ -783,10 +793,13 @@
                 const allBookings = [];
                 querySnapshot.forEach((doc) => {
                     const booking = doc.data();
-                    allBookings.push({
-                        id: doc.id,
-                        ...booking
-                    });
+                    // Проверяем, что у бронирования есть все необходимые данные
+                    if (booking.film) {
+                        allBookings.push({
+                            id: doc.id,
+                            ...booking
+                        });
+                    }
                 });
                 
                 // Фильтруем на клиенте
@@ -798,26 +811,24 @@
                     const todayString = today.toLocaleDateString('ru-RU');
                     filteredBookings = allBookings.filter(booking => booking.date === todayString);
                 } else if (filter === 'week') {
-                    const nextWeek = new Date(today);
-                    nextWeek.setDate(today.getDate() + 7);
-                    const todayString = today.toLocaleDateString('ru-RU');
-                    const nextWeekString = nextWeek.toLocaleDateString('ru-RU');
-                    filteredBookings = allBookings.filter(booking => {
-                        // Для простоты показываем все бронирования (без сложной фильтрации по датам)
-                        return true;
-                    });
+                    // Для простоты показываем все бронирования
                 }
                 
-                // Сортируем
+                // Сортируем с проверкой на undefined
                 filteredBookings.sort((a, b) => {
-                    if (a.film !== b.film) {
-                        return a.film.localeCompare(b.film);
+                    // Проверяем существование фильма
+                    if (a.film && b.film) {
+                        if (a.film !== b.film) {
+                            return a.film.localeCompare(b.film);
+                        }
                     }
+                    // Проверяем существование дат
                     if (a.date && b.date) {
                         if (a.date !== b.date) {
                             return a.date.localeCompare(b.date);
                         }
                     }
+                    // Проверяем существование времени
                     if (a.time && b.time) {
                         return a.time.localeCompare(b.time);
                     }
