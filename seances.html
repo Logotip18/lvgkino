@@ -257,31 +257,43 @@
         // Загрузка сеансов из Firebase
         async function loadSeances() {
             try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('seancesContent').style.display = 'none';
+                document.getElementById('noSeances').style.display = 'none';
+                
                 // Получаем все сеансы
                 const seancesSnapshot = await db.collection('seances').get();
                 
                 allSeances = [];
                 seancesSnapshot.forEach((doc) => {
                     const seance = doc.data();
-                    allSeances.push({
-                        id: doc.id,
-                        ...seance
-                    });
+                    // Проверяем, что у сеанса есть все необходимые данные
+                    if (seance.movie && seance.date && seance.time) {
+                        allSeances.push({
+                            id: doc.id,
+                            ...seance
+                        });
+                    }
                 });
                 
-                // Сортируем по дате и времени
+                // Сортируем по дате и времени (с проверкой на undefined)
                 allSeances.sort((a, b) => {
-                    if (a.date !== b.date) {
-                        return a.date.localeCompare(b.date);
+                    if (a.date && b.date) {
+                        if (a.date !== b.date) {
+                            return a.date.localeCompare(b.date);
+                        }
                     }
-                    return a.time.localeCompare(b.time);
+                    if (a.time && b.time) {
+                        return a.time.localeCompare(b.time);
+                    }
+                    return 0;
                 });
                 
                 displaySeances();
                 
             } catch (error) {
                 console.error('Ошибка загрузки сеансов:', error);
-                document.getElementById('loading').innerHTML = 'Ошибка загрузки сеансов';
+                document.getElementById('loading').innerHTML = 'Ошибка загрузки сеансов: ' + error.message;
             }
         }
         
@@ -356,7 +368,7 @@
                 
             } catch (error) {
                 console.error('Ошибка отображения сеансов:', error);
-                document.getElementById('loading').innerHTML = 'Ошибка отображения сеансов';
+                document.getElementById('loading').innerHTML = 'Ошибка отображения сеансов: ' + error.message;
             }
         }
         
