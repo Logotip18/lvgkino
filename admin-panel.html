@@ -108,16 +108,15 @@
             -webkit-overflow-scrolling: touch;
         }
         th, td {
-            padding: 10px;
+            padding: 8px 5px; /* Уменьшаем padding по бокам */
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            /* Фиксированная таблица позволяет лучше контролировать ширины */
-            table-layout: fixed;
-            word-wrap: break-word;
+            white-space: nowrap; /* Предотвращаем перенос текста внутри ячейки */
         }
         th {
             background: rgba(78, 205, 196, 0.2);
-            font-size: 0.9rem;
+            font-size: 0.85rem; /* Немного уменьшаем шрифт заголовка */
+            padding: 8px 5px; /* Уменьшаем padding по бокам у заголовка */
         }
         /* --- Конец исправлений для мобильной адаптации таблиц --- */
         .logout-btn {
@@ -261,7 +260,7 @@
                 font-size: 0.8rem;
             }
             th, td {
-                padding: 8px;
+                padding: 6px 4px; /* Еще меньше padding на мобильных */
             }
             .form-group {
                 margin-bottom: 12px;
@@ -285,13 +284,18 @@
             .section h2 {
                 font-size: 1.2rem;
             }
-            /* Таблицы уже адаптированы выше */
+            /* Таблицы уже адаптированы выше с display: block и overflow-x */
             .nav-buttons {
                 flex-direction: column;
             }
             .logout-btn {
                 padding: 6px 12px;
                 font-size: 0.8rem;
+            }
+             /* Кнопка удаления бронирования - еще меньше на мобильных */
+            .delete-booking-btn {
+                padding: 2px 5px;
+                font-size: 0.7rem;
             }
         }
         /* Модальное окно схемы зала */
@@ -470,10 +474,10 @@
             background: #ff6b6b;
             color: white;
             border: none;
-            padding: 4px 8px;
+            padding: 4px 8px; /* Уменьшаем padding */
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.8rem; /* Уменьшаем шрифт */
         }
         .delete-booking-btn:hover {
             background: #ff5252;
@@ -523,12 +527,14 @@
                         <th>Место</th>
                         <th>Человек</th>
                         <th>Стоимость</th>
+                        <th>Имя</th> <!-- НОВЫЙ СТОЛБЕЦ -->
+                        <th>Телефон</th> <!-- НОВЫЙ СТОЛБЕЦ -->
                         <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody id="activeBookingsTableBody">
                     <tr>
-                        <td colspan="6" style="text-align: center;">Нет активных бронирований</td>
+                        <td colspan="8" style="text-align: center;">Нет активных бронирований</td> <!-- Обновлен colspan -->
                     </tr>
                 </tbody>
             </table>
@@ -548,12 +554,14 @@
                             <th>Место</th>
                             <th>Человек</th>
                             <th>Стоимость</th>
+                            <th>Имя</th> <!-- НОВЫЙ СТОЛБЕЦ -->
+                            <th>Телефон</th> <!-- НОВЫЙ СТОЛБЕЦ -->
                             <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody id="archiveBookingsTableBody">
                         <tr>
-                            <td colspan="6" style="text-align: center;">Нет архивных бронирований</td>
+                            <td colspan="8" style="text-align: center;">Нет архивных бронирований</td> <!-- Обновлен colspan -->
                         </tr>
                     </tbody>
                 </table>
@@ -763,7 +771,7 @@
             }
         }
 
-        // --- Исправленная функция seanceExists ---
+        // --- Исправленная и обновленная функция seanceExists ---
         // Проверка, существует ли сеанс и не прошла ли его дата
         function seanceExists(film, date, time) {
             // Проверяем, существует ли сеанс с такими параметрами
@@ -1054,7 +1062,7 @@
                 // Обновляем кэш сеансов
                 await loadAllSeances();
                 // Загружаем все бронирования
-                const querySnapshot = await db.collection('bookings').get();
+                const querySnapshot = await db.collection('bookings').orderBy('bookingTimestamp', 'desc').get(); // Сортировка по времени бронирования
                 // Фильтруем только активные бронирования (существующие сеансы)
                 const activeBookings = [];
                 for (const doc of querySnapshot.docs) {
@@ -1079,38 +1087,43 @@
                     filteredBookings = activeBookings.filter(booking => booking.date === todayString);
                 } else if (filter === 'week') {
                     const nextWeek = new Date(today);
-                    nextWeek.setDate(today.getDate() + 7);
+                    nextWeek.setDate(nextWeek.getDate() + 7);
                     const todayString = formatDateForComparison(today);
                     const nextWeekString = formatDateForComparison(nextWeek);
                     filteredBookings = activeBookings.filter(booking =>
                         booking.date >= todayString && booking.date <= nextWeekString
                     );
                 }
-                // Сортируем по дате и времени
-                filteredBookings.sort((a, b) => {
-                    if (a.date !== b.date) {
-                        return a.date.localeCompare(b.date);
-                    }
-                    if (a.time && b.time) {
-                        return a.time.localeCompare(b.time);
-                    }
-                    return 0;
-                });
+                // Сортируем по дате и времени (уже по времени бронирования выше)
+                // filteredBookings.sort((a, b) => {
+                //     if (a.date !== b.date) {
+                //         return a.date.localeCompare(b.date);
+                //     }
+                //     if (a.time && b.time) {
+                //         return a.time.localeCompare(b.time);
+                //     }
+                //     return 0;
+                // });
                 const bookingsTableBody = document.getElementById('activeBookingsTableBody');
                 bookingsTableBody.innerHTML = '';
                 if (filteredBookings.length === 0) {
-                    bookingsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет активных бронирований</td></tr>';
+                    bookingsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Нет активных бронирований</td></tr>'; // Обновлен colspan
                 } else {
                     filteredBookings.forEach(booking => {
                         // Создаем уникальный ID для строки
                         const rowId = `booking-${booking.id}`;
                         const row = document.createElement('tr');
+                        // --- ФОРМАТИРОВАНИЕ ДАТЫ ---
+                        const [year, month, day] = booking.date.split('-');
+                        const formattedDate = `${day}.${month}.${year}`;
                         row.innerHTML = `
                             <td>${booking.film || '---'}</td>
-                            <td>${booking.date || '---'} ${booking.time || ''}</td>
+                            <td>${formattedDate || '---'} ${booking.time || ''}</td>
                             <td>${booking.seat || '---'}</td>
                             <td>${booking.people || '---'}</td>
                             <td>${booking.price || 0} руб.</td>
+                            <td>${booking.customerName || '---'}</td> <!-- НОВЫЙ СТОЛБЕЦ -->
+                            <td>${booking.customerPhone || '---'}</td> <!-- НОВЫЙ СТОЛБЕЦ -->
                             <td>
                                 <button class="delete-booking-btn" onclick="deleteBooking('${booking.id}', true)">Удалить</button>
                             </td>
@@ -1146,7 +1159,7 @@
                 // Обновляем кэш сеансов
                 await loadAllSeances();
                 // Загружаем все бронирования
-                const querySnapshot = await db.collection('bookings').get();
+                const querySnapshot = await db.collection('bookings').orderBy('bookingTimestamp', 'desc').get(); // Сортировка по времени бронирования
                 // Фильтруем только архивные бронирования (несуществующие сеансы)
                 const archiveBookings = [];
                 for (const doc of querySnapshot.docs) {
@@ -1162,31 +1175,36 @@
                         }
                     }
                 }
-                // Сортируем по дате и времени
-                archiveBookings.sort((a, b) => {
-                    if (a.date !== b.date) {
-                        return a.date.localeCompare(b.date);
-                    }
-                    if (a.time && b.time) {
-                        return a.time.localeCompare(b.time);
-                    }
-                    return 0;
-                });
+                // Сортируем по дате и времени (уже по времени бронирования выше)
+                // archiveBookings.sort((a, b) => {
+                //     if (a.date !== b.date) {
+                //         return a.date.localeCompare(b.date);
+                //     }
+                //     if (a.time && b.time) {
+                //         return a.time.localeCompare(b.time);
+                //     }
+                //     return 0;
+                // });
                 const archiveTableBody = document.getElementById('archiveBookingsTableBody');
                 archiveTableBody.innerHTML = '';
                 if (archiveBookings.length === 0) {
-                    archiveTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет архивных бронирований</td></tr>';
+                    archiveTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Нет архивных бронирований</td></tr>'; // Обновлен colspan
                 } else {
                     archiveBookings.forEach(booking => {
                         // Создаем уникальный ID для строки
                         const rowId = `booking-${booking.id}`;
                         const row = document.createElement('tr');
+                         // --- ФОРМАТИРОВАНИЕ ДАТЫ ---
+                        const [year, month, day] = booking.date.split('-');
+                        const formattedDate = `${day}.${month}.${year}`;
                         row.innerHTML = `
                             <td>${booking.film || '---'}</td>
-                            <td>${booking.date || '---'} ${booking.time || ''}</td>
+                            <td>${formattedDate || '---'} ${booking.time || ''}</td>
                             <td>${booking.seat || '---'}</td>
                             <td>${booking.people || '---'}</td>
                             <td>${booking.price || 0} руб.</td>
+                            <td>${booking.customerName || '---'}</td> <!-- НОВЫЙ СТОЛБЕЦ -->
+                            <td>${booking.customerPhone || '---'}</td> <!-- НОВЫЙ СТОЛБЕЦ -->
                             <td>
                                 <button class="delete-booking-btn" onclick="deleteBooking('${booking.id}', false)">Удалить</button>
                             </td>
@@ -1294,8 +1312,11 @@
             const info = document.getElementById('hallModalInfo');
             // Очищаем контейнер
             container.innerHTML = '<p>Загрузка схемы зала...</p>';
+             // --- ФОРМАТИРОВАНИЕ ДАТЫ ---
+            const [year, month, day] = date.split('-');
+            const formattedDate = `${day}.${month}.${year}`;
             // Отображаем информацию о сеансе
-            info.textContent = `Фильм: ${film} | Дата: ${date} | Время: ${time}`;
+            info.textContent = `Фильм: ${film} | Дата: ${formattedDate} | Время: ${time}`;
             // Показываем модальное окно
             modal.style.display = 'block';
             try {
@@ -1419,10 +1440,16 @@
                         console.error("Ошибка форматирования даты бронирования:", e);
                     }
                 }
+                 // --- ФОРМАТИРОВАНИЕ ДАТЫ СЕАНСА ---
+                let sessionDateStr = '---';
+                if (booking.date) {
+                     const [year, month, day] = booking.date.split('-');
+                     sessionDateStr = `${day}.${month}.${year}`;
+                }
                 // Отображаем информацию
                 infoContent.innerHTML = `
                     <p><strong>Фильм:</strong> ${booking.film || '---'}</p>
-                    <p><strong>Дата/Время:</strong> ${booking.date || '---'} ${booking.time || ''}</p>
+                    <p><strong>Дата/Время сеанса:</strong> ${sessionDateStr || '---'} ${booking.time || ''}</p>
                     <p><strong>Место:</strong> ${booking.seat || '---'}</p>
                     <p><strong>Количество человек:</strong> ${booking.people || '---'}</p>
                     <p><strong>Стоимость:</strong> ${booking.price || 0} руб.</p>
