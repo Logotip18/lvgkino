@@ -97,27 +97,41 @@
             text-align: center;
         }
         /* --- Исправления для мобильной адаптации таблиц --- */
+        /* Новый оберточный div для таблицы */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto; /* Горизонтальная прокрутка для обертки */
+            -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
+            margin: 15px 0; /* Отступы сверху и снизу */
+            /* Минимальная ширина, чтобы таблица не сжималась слишком сильно */
+            /* min-width: 600px; */ /* Можно попробовать, если таблицы очень узкие */
+        }
+
         table {
             width: 100%;
+            /* Ширина таблицы будет определяться её содержимым */
+            /* width: max-content; */ /* Альтернатива, если min-width у .table-wrapper не помогает */
             border-collapse: collapse;
-            margin: 15px 0;
-            font-size: 0.9rem;
-            /* Добавляем прокрутку для таблиц на маленьких экранах */
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            /* Убираем margin, так как он теперь у .table-wrapper */
+            /* margin: 15px 0; */
+            font-size: 0.85rem; /* Немного уменьшаем шрифт */
         }
+
         th, td {
-            padding: 10px;
+            /* Уменьшаем padding, особенно по горизонтали */
+            padding: 6px 4px;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            /* Фиксированная таблица позволяет лучше контролировать ширины */
-            table-layout: fixed;
-            word-wrap: break-word;
+            /* Предотвращаем перенос текста внутри ячейки, если это мешает ширине */
+            white-space: nowrap;
+            /* Позволяем длинному тексту переноситься, если необходимо */
+            /* word-wrap: break-word; */
         }
+
         th {
             background: rgba(78, 205, 196, 0.2);
-            font-size: 0.9rem;
+            font-size: 0.8rem; /* Немного уменьшаем шрифт заголовка */
+            /* padding: 6px 4px; */ /* Уже задано выше */
         }
         /* --- Конец исправлений для мобильной адаптации таблиц --- */
         .logout-btn {
@@ -257,12 +271,12 @@
             .section {
                 padding: 15px;
             }
-            table {
+            /* table {
                 font-size: 0.8rem;
             }
             th, td {
                 padding: 8px;
-            }
+            } */
             .form-group {
                 margin-bottom: 12px;
             }
@@ -285,7 +299,7 @@
             .section h2 {
                 font-size: 1.2rem;
             }
-            /* Таблицы уже адаптированы выше */
+            /* Таблицы уже адаптированы выше с .table-wrapper */
             .nav-buttons {
                 flex-direction: column;
             }
@@ -515,34 +529,9 @@
             </div>
             <h3 style="text-align: center; color: #4ecdc4; margin: 20px 0 10px;">Активные бронирования</h3>
             <div id="activeBookingsLoading" class="loading">Загрузка активных бронирований...</div>
-            <table id="activeBookingsTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Фильм</th>
-                        <th>Дата/Время</th>
-                        <th>Место</th>
-                        <th>Человек</th>
-                        <th>Стоимость</th>
-                        <th>Имя</th> <!-- НОВЫЙ СТОЛБЕЦ -->
-                        <th>Телефон</th> <!-- НОВЫЙ СТОЛБЕЦ -->
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="activeBookingsTableBody">
-                    <tr>
-                        <td colspan="8" style="text-align: center;">Нет активных бронирований</td>
-                    </tr>
-                </tbody>
-            </table>
-            <!-- Архивные бронирования (внизу) -->
-            <div style="margin-top: 40px;">
-                <h3 style="text-align: center; color: #ff6b6b; margin: 20px 0 10px;">Архивные бронирования</h3>
-                <div class="filters-container">
-                    <button class="refresh-btn" onclick="loadArchiveBookings()">Обновить</button>
-                    <button class="clear-archive-btn" onclick="clearArchive()">Очистить архив</button>
-                </div>
-                <div id="archiveBookingsLoading" class="loading">Загрузка архивных бронирований...</div>
-                <table id="archiveBookingsTable" style="display: none;">
+            <!-- Оберточный div для обеспечения прокрутки -->
+            <div class="table-wrapper">
+                <table id="activeBookingsTable" style="display: none;">
                     <thead>
                         <tr>
                             <th>Фильм</th>
@@ -555,12 +544,43 @@
                             <th>Действия</th>
                         </tr>
                     </thead>
-                    <tbody id="archiveBookingsTableBody">
+                    <tbody id="activeBookingsTableBody">
                         <tr>
-                            <td colspan="8" style="text-align: center;">Нет архивных бронирований</td>
+                            <td colspan="8" style="text-align: center;">Нет активных бронирований</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <!-- Архивные бронирования (внизу) -->
+            <div style="margin-top: 40px;">
+                <h3 style="text-align: center; color: #ff6b6b; margin: 20px 0 10px;">Архивные бронирования</h3>
+                <div class="filters-container">
+                    <button class="refresh-btn" onclick="loadArchiveBookings()">Обновить</button>
+                    <button class="clear-archive-btn" onclick="clearArchive()">Очистить архив</button>
+                </div>
+                <div id="archiveBookingsLoading" class="loading">Загрузка архивных бронирований...</div>
+                <!-- Оберточный div для обеспечения прокрутки -->
+                <div class="table-wrapper">
+                    <table id="archiveBookingsTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Фильм</th>
+                                <th>Дата/Время</th>
+                                <th>Место</th>
+                                <th>Человек</th>
+                                <th>Стоимость</th>
+                                <th>Имя</th> <!-- НОВЫЙ СТОЛБЕЦ -->
+                                <th>Телефон</th> <!-- НОВЫЙ СТОЛБЕЦ -->
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archiveBookingsTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center;">Нет архивных бронирований</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <!-- Секция фильмов -->
@@ -589,18 +609,21 @@
             <div id="movieError" class="error-message">Заполните все поля!</div>
             <h3 style="margin-top: 25px; text-align: center;">Список фильмов</h3>
             <div id="moviesLoading" class="loading">Загрузка фильмов...</div>
-            <table id="moviesTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Название</th>
-                        <th>Описание</th>
-                        <th>Возраст</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="moviesTableBody">
-                </tbody>
-            </table>
+            <!-- Оберточный div для обеспечения прокрутки -->
+            <div class="table-wrapper">
+                <table id="moviesTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Описание</th>
+                            <th>Возраст</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="moviesTableBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
         <!-- Секция сеансов -->
         <div id="seances" class="section">
@@ -632,18 +655,21 @@
                 <button class="refresh-btn" onclick="loadSeances(currentSeanceFilter)">Обновить</button>
             </div>
             <div id="seancesLoading" class="loading">Загрузка сеансов...</div>
-            <table id="seancesTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Фильм</th>
-                        <th>Дата</th>
-                        <th>Время</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="seancesTableBody">
-                </tbody>
-            </table>
+            <!-- Оберточный div для обеспечения прокрутки -->
+            <div class="table-wrapper">
+                <table id="seancesTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Фильм</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="seancesTableBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <!-- Модальное окно схемы зала -->
@@ -712,12 +738,10 @@
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
-            // Проверяем существование элемента перед добавлением класса
+            // Показываем выбранную секцию
             const sectionElement = document.getElementById(sectionId);
             if (sectionElement) {
-                sectionElement.classList.add('active');
-            } else {
-                console.warn(`Секция с id '${sectionId}' не найдена`);
+                 sectionElement.classList.add('active');
             }
             // Загружаем данные для активной секции
             if (sectionId === 'movies') {
@@ -738,8 +762,6 @@
             const filterButton = document.getElementById(filter + 'Btn');
             if (filterButton) {
                 filterButton.classList.add('active');
-            } else {
-                console.warn(`Кнопка фильтра с id '${filter}Btn' не найдена`);
             }
             currentBookingFilter = filter;
             loadActiveBookings(filter);
@@ -754,8 +776,6 @@
             const filterButton = document.getElementById(filter + 'SeancesBtn');
             if (filterButton) {
                 filterButton.classList.add('active');
-            } else {
-                console.warn(`Кнопка фильтра сеансов с id '${filter}SeancesBtn' не найдена`);
             }
             currentSeanceFilter = filter;
             loadSeances(filter);
@@ -827,24 +847,21 @@
         async function loadMovies() {
             try {
                 const moviesLoadingElement = document.getElementById('moviesLoading');
-                const moviesTableElement = document.getElementById('moviesTable');
+                const moviesTableWrapper = document.querySelector('#movies .table-wrapper');
+                const moviesTableElement = moviesTableWrapper ? moviesTableWrapper.querySelector('table') : null;
 
                 if (moviesLoadingElement) {
                     moviesLoadingElement.style.display = 'block';
-                } else {
-                    console.warn("Элемент с id 'moviesLoading' не найден");
                 }
                 if (moviesTableElement) {
                     moviesTableElement.style.display = 'none';
-                } else {
-                    console.warn("Элемент с id 'moviesTable' не найден");
                 }
 
                 const querySnapshot = await db.collection('movies').get();
                 const moviesTableBody = document.getElementById('moviesTableBody');
                 if (!moviesTableBody) {
-                    console.error("Элемент с id 'moviesTableBody' не найден");
-                    return;
+                     console.error("Элемент с id 'moviesTableBody' не найден");
+                     return;
                 }
                 moviesTableBody.innerHTML = '';
                 querySnapshot.forEach((doc) => {
@@ -943,8 +960,8 @@
             try {
                 const seanceSelect = document.getElementById('seanceMovie');
                 if (!seanceSelect) {
-                    console.error("Элемент с id 'seanceMovie' не найден");
-                    return;
+                     console.error("Элемент с id 'seanceMovie' не найден");
+                     return;
                 }
                 seanceSelect.innerHTML = '<option value="">Выберите фильм</option>';
                 const querySnapshot = await db.collection('movies')
@@ -966,17 +983,14 @@
         async function loadSeances(filter = 'all') {
             try {
                 const seancesLoadingElement = document.getElementById('seancesLoading');
-                const seancesTableElement = document.getElementById('seancesTable');
+                const seancesTableWrapper = document.querySelector('#seances .table-wrapper');
+                const seancesTableElement = seancesTableWrapper ? seancesTableWrapper.querySelector('table') : null;
 
                 if (seancesLoadingElement) {
                     seancesLoadingElement.style.display = 'block';
-                } else {
-                    console.warn("Элемент с id 'seancesLoading' не найден");
                 }
                 if (seancesTableElement) {
                     seancesTableElement.style.display = 'none';
-                } else {
-                    console.warn("Элемент с id 'seancesTable' не найден");
                 }
 
                 // Загружаем все сеансы и фильтруем на клиенте
@@ -1030,8 +1044,8 @@
                 });
                 const seancesTableBody = document.getElementById('seancesTableBody');
                 if (!seancesTableBody) {
-                    console.error("Элемент с id 'seancesTableBody' не найден");
-                    return;
+                     console.error("Элемент с id 'seancesTableBody' не найден");
+                     return;
                 }
                 seancesTableBody.innerHTML = '';
                 if (filteredSeances.length === 0) {
@@ -1138,17 +1152,14 @@
         async function loadActiveBookings(filter = 'all') {
             try {
                 const activeBookingsLoadingElement = document.getElementById('activeBookingsLoading');
-                const activeBookingsTableElement = document.getElementById('activeBookingsTable');
+                const activeBookingsTableWrapper = document.querySelector('#bookings .table-wrapper');
+                const activeBookingsTableElement = activeBookingsTableWrapper ? activeBookingsTableWrapper.querySelector('table') : null;
 
                 if (activeBookingsLoadingElement) {
                     activeBookingsLoadingElement.style.display = 'block';
-                } else {
-                    console.warn("Элемент с id 'activeBookingsLoading' не найден");
                 }
                 if (activeBookingsTableElement) {
                     activeBookingsTableElement.style.display = 'none';
-                } else {
-                    console.warn("Элемент с id 'activeBookingsTable' не найден");
                 }
 
                 // Обновляем кэш сеансов
@@ -1198,8 +1209,8 @@
                 });
                 const bookingsTableBody = document.getElementById('activeBookingsTableBody');
                 if (!bookingsTableBody) {
-                    console.error("Элемент с id 'activeBookingsTableBody' не найден");
-                    return;
+                     console.error("Элемент с id 'activeBookingsTableBody' не найден");
+                     return;
                 }
                 bookingsTableBody.innerHTML = '';
                 if (filteredBookings.length === 0) {
@@ -1256,17 +1267,14 @@
         async function loadArchiveBookings() {
             try {
                 const archiveBookingsLoadingElement = document.getElementById('archiveBookingsLoading');
-                const archiveBookingsTableElement = document.getElementById('archiveBookingsTable');
+                const archiveBookingsTableWrapper = document.querySelector('#bookings .table-wrapper ~ .table-wrapper'); // Вторая таблица
+                const archiveBookingsTableElement = archiveBookingsTableWrapper ? archiveBookingsTableWrapper.querySelector('table') : null;
 
                 if (archiveBookingsLoadingElement) {
                     archiveBookingsLoadingElement.style.display = 'block';
-                } else {
-                    console.warn("Элемент с id 'archiveBookingsLoading' не найден");
                 }
                 if (archiveBookingsTableElement) {
                     archiveBookingsTableElement.style.display = 'none';
-                } else {
-                    console.warn("Элемент с id 'archiveBookingsTable' не найден");
                 }
 
                 // Обновляем кэш сеансов
@@ -1300,8 +1308,8 @@
                 });
                 const archiveTableBody = document.getElementById('archiveBookingsTableBody');
                 if (!archiveTableBody) {
-                    console.error("Элемент с id 'archiveBookingsTableBody' не найден");
-                    return;
+                     console.error("Элемент с id 'archiveBookingsTableBody' не найден");
+                     return;
                 }
                 archiveTableBody.innerHTML = '';
                 if (archiveBookings.length === 0) {
@@ -1433,8 +1441,8 @@
             const container = document.getElementById('hallSchemeContainer');
             const info = document.getElementById('hallModalInfo');
             if (!modal || !container || !info) {
-                console.error("Один или несколько элементов модального окна схемы зала не найдены");
-                return;
+                 console.error("Один или несколько элементов модального окна схемы зала не найдены");
+                 return;
             }
             // Очищаем контейнер
             container.innerHTML = '<p>Загрузка схемы зала...</p>';
@@ -1548,8 +1556,8 @@
             const infoModal = document.getElementById('bookingInfoModal');
             const infoContent = document.getElementById('bookingInfoContent');
             if (!infoModal || !infoContent) {
-                console.error("Один или несколько элементов модального окна информации о бронировании не найдены");
-                return;
+                 console.error("Один или несколько элементов модального окна информации о бронировании не найдены");
+                 return;
             }
             try {
                 // Загружаем данные бронирования из Firestore
