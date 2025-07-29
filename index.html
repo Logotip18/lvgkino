@@ -4,117 +4,196 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LVG Kino - Кинотеатр</title>
-    <!-- Подключение Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Подключение Google Fonts Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            /* Морская лагуна из других страниц */
+            background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
             color: white;
             min-height: 100vh;
             padding: 15px;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif; /* Базовый шрифт */
         }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
             padding: 20px;
+            position: relative; /* Для позиционирования ссылок */
         }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 15px;
-            color: #4ecdc4;
+
+        /* Ссылки в углу */
+        .corner-links {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .corner-link {
+            /* Акцентный цвет из других страниц */
+            color: #009688;
             text-decoration: none;
             padding: 8px 15px;
-            border: 1px solid #4ecdc4;
-            border-radius: 5px;
+            border: 1px solid #009688;
+            border-radius: 20px;
             transition: all 0.3s;
             font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.05);
         }
-        .back-link:hover {
-            background: rgba(78, 205, 196, 0.1);
+
+        .corner-link:hover {
+            background: rgba(0, 150, 136, 0.1);
+            transform: translateY(-2px);
         }
+
         header {
-            text-align: center;
-            padding: 40px 20px;
+            /* Убираем фоновый блок для минимализма */
+            padding: 20px;
             margin-bottom: 30px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
         }
+
         h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            color: #ff6b6b;
+            font-family: 'Montserrat', sans-serif; /* Современный шрифт для заголовка */
+            font-size: 4rem;
+            margin-bottom: 20px;
+            /* Градиентный текст для заголовка */
+            background: linear-gradient(45deg, #009688, #4CAF50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             opacity: 0.9;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            font-weight: 300;
         }
+
         .main-button {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            /* Градиент кнопки из seances.html */
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
             color: white;
             border: none;
-            padding: 25px 50px;
-            border-radius: 35px;
-            font-size: 1.5rem;
-            font-weight: bold;
+            padding: 25px 60px;
+            border-radius: 40px;
+            font-size: 1.6rem;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 30px;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
         }
+
         .main-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.6);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(33, 150, 243, 0.7);
         }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.8;
+            margin-top: auto; /* Прижимает футер вниз */
+            width: 100%;
+            font-size: 1rem;
+        }
+
         /* Мобильная адаптация */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
             }
+
             .container {
-                padding: 5px;
+                padding: 15px;
             }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .main-button {
+                padding: 20px 45px;
+                font-size: 1.4rem;
+                border-radius: 30px;
+            }
+
+            .corner-links {
+                top: 10px;
+                right: 10px;
+            }
+
+            .corner-link {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
             h1 {
                 font-size: 2.5rem;
             }
+
             .subtitle {
                 font-size: 1.1rem;
             }
-            .main-button {
-                padding: 20px 40px;
-                font-size: 1.3rem;
-            }
-        }
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2rem;
-            }
+
             .main-button {
                 padding: 18px 35px;
-                font-size: 1.1rem;
+                font-size: 1.2rem;
+            }
+
+            header {
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="admin.html" class="back-link">🔒 Админка</a>
-        <a href="contact.html" class="back-link">📞 Контакты</a>
+        <!-- Ссылки в правом верхнем углу -->
+        <div class="corner-links">
+            <a href="contact.html" class="corner-link">📞 Контакты</a>
+            <a href="admin.html" class="corner-link">🔐 Админка</a>
+        </div>
+
         <header>
             <h1>LVG Kino</h1>
             <p class="subtitle">Кинотеатр на берегу моря в городе Новороссийск</p>
             <a href="seances.html" class="main-button">Выбрать сеанс</a>
         </header>
+
+        <footer>
+            <p>© 2025 LVG Kino Новороссийск</p>
+        </footer>
     </div>
 </body>
 </html>
