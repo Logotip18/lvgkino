@@ -727,13 +727,43 @@
                 return [];
             }
         }
-        // Проверка, существует ли сеанс
+        // Проверка, существует ли сеанс и не прошла ли его дата
         function seanceExists(film, date, time) {
-            return allSeances.some(seance => 
+            // Проверяем, существует ли сеанс с такими параметрами
+            const exists = allSeances.some(seance => 
                 seance.movie === film && 
                 seance.date === date && 
                 seance.time === time
             );
+
+            if (!exists) {
+                // Если сеанс не существует в списке, считаем его архивным
+                return false; 
+            }
+
+            // Если сеанс существует, проверяем дату
+            try {
+                // Получаем текущую дату без времени
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                // Преобразуем строку даты сеанса в объект Date
+                // Предполагаем, что формат date - 'YYYY-MM-DD'
+                const [year, month, day] = date.split('-').map(Number);
+                const seanceDate = new Date(year, month - 1, day); // Месяцы в JS 0-11
+
+                // Сравниваем даты
+                // Если дата сеанса раньше сегодняшней, то он прошёл и бронирования архивные
+                if (seanceDate < today) {
+                    return false; // Считаем архивным, даже если документ существует
+                } else {
+                    return true; // Активный
+                }
+            } catch (e) {
+                console.error("Ошибка при парсинге даты сеанса для проверки актуальности:", date, e);
+                // В случае ошибки лучше перестраховаться и считать существующий сеанс активным
+                return true; 
+            }
         }
         // Загрузка фильмов
         async function loadMovies() {
