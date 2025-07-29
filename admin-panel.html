@@ -970,15 +970,17 @@
                             </td>
                         `;
                         
-                        // Добавляем обработчик клика на всю строку для открытия модального окна
+                        // --- Исправленный обработчик клика ---
+                        // Добавляем обработчик клика на всю строку для открытия модального окна ИНФОРМАЦИИ
                         row.addEventListener('click', async (e) => {
                             // Игнорируем клик, если он был по кнопке удаления
                             if (e.target.classList.contains('delete-booking-btn')) {
                                 return;
                             }
-                            // Передаем ID бронирования для выделения места
-                            showHallScheme(booking.film, booking.date, booking.time, booking.id);
+                            // Открываем модальное окно с информацией о бронировании
+                            showBookingInfoModal(booking.id); // Передаем ID бронирования
                         });
+                        // --- Конец исправленного обработчика ---
                         
                         bookingsTableBody.appendChild(row);
                     });
@@ -1102,15 +1104,17 @@
                             </td>
                         `;
                         
-                        // Добавляем обработчик клика на всю строку для открытия модального окна
+                        // --- Исправленный обработчик клика ---
+                        // Добавляем обработчик клика на всю строку для открытия модального окна ИНФОРМАЦИИ
                         row.addEventListener('click', async (e) => {
                             // Игнорируем клик, если он был по кнопке удаления
                             if (e.target.classList.contains('delete-booking-btn')) {
                                 return;
                             }
-                            // Передаем ID бронирования для выделения места
-                            showHallScheme(booking.film, booking.date, booking.time, booking.id);
+                            // Открываем модальное окно с информацией о бронировании
+                            showBookingInfoModal(booking.id); // Передаем ID бронирования
                         });
+                        // --- Конец исправленного обработчика ---
                         
                         archiveTableBody.appendChild(row);
                     });
@@ -1348,11 +1352,9 @@
             currentHighlightedBookingId = null;
         }
 
-        // Функция для отображения информации о бронировании
-        async function showBookingInfo(seatElement) {
-            const bookingId = seatElement.dataset.bookingId;
-            if (!bookingId) return;
-
+        // --- Новая функция для отображения информации о бронировании в модальном окне ---
+        // Открывает модальное окно с деталями бронирования по ID
+        async function showBookingInfoModal(bookingId) {
             const infoModal = document.getElementById('bookingInfoModal');
             const infoContent = document.getElementById('bookingInfoContent');
 
@@ -1362,16 +1364,19 @@
             }
 
             try {
+                // Показываем модальное окно сразу, чтобы пользователь видел, что что-то происходит
+                infoModal.style.display = 'block';
+                infoContent.innerHTML = '<p>Загрузка информации...</p>';
+
                 // Загружаем данные бронирования из Firestore
                 const doc = await db.collection('bookings').doc(bookingId).get();
                 if (!doc.exists) {
                     infoContent.innerHTML = '<p style="color: #ff6b6b;">Бронирование не найдено</p>';
-                    infoModal.style.display = 'block';
                     return;
                 }
 
                 const booking = doc.data();
-                
+
                 // Форматируем дату и время бронирования
                 let bookingTimeStr = 'Неизвестно';
                 if (booking.bookingTimestamp) {
@@ -1383,6 +1388,9 @@
                     }
                 }
 
+                 // Определяем, активное ли бронирование (для кнопки удаления)
+                const wasActive = await isBookingActive(booking);
+
                 // Отображаем информацию
                 infoContent.innerHTML = `
                     <p><strong>Фильм:</strong> ${booking.film || '-'}</p>
@@ -1393,26 +1401,27 @@
                     <p><strong>Имя:</strong> ${booking.customerName || '-'}</p>
                     <p><strong>Телефон:</strong> ${booking.customerPhone || '-'}</p>
                     <p><strong>Время бронирования:</strong> ${bookingTimeStr}</p>
-                    <button class="delete-booking-btn" style="margin-top: 15px;" onclick="deleteBookingFromModal('${bookingId}')">Удалить бронирование</button>
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="delete-booking-btn" onclick="deleteBookingFromModal('${bookingId}', ${wasActive})">Удалить бронирование</button>
+                        <button style="background: linear-gradient(45deg, #4ecdc4, #4CAF50);" onclick="showHallScheme('${booking.film}', '${booking.date}', '${booking.time}', '${bookingId}')">Показать схему зала</button>
+                    </div>
                 `;
 
-                // Показываем модальное окно
-                infoModal.style.display = 'block';
             } catch (error) {
                 console.error('Ошибка загрузки информации о бронировании:', error);
                 infoContent.innerHTML = '<p style="color: #ff6b6b;">Ошибка загрузки информации: ' + error.message + '</p>';
-                infoModal.style.display = 'block';
             }
         }
+        // --- Конец новой функции ---
 
         // Функция для удаления бронирования из модального окна информации
-        async function deleteBookingFromModal(bookingId) {
-            closeBookingInfoModal();
-            closeHallSchemeModal();
-            // Предполагаем, что это активное бронирование для перезагрузки правильной таблицы
-            // В реальном приложении лучше передавать тип бронирования
-            await deleteBooking(bookingId, true); 
+        async function deleteBookingFromModal(bookingId, wasActive) {
+            closeBookingInfoModal(); // Закрываем модалку информации
+            // closeHallSchemeModal(); // Не закрываем схему, если она была открыта отдельно
+            // Удаляем бронирование (логика внутри deleteBooking определит актуальность)
+            await deleteBooking(bookingId, wasActive);
         }
+
 
         // Функция для закрытия модального окна информации о бронировании
         function closeBookingInfoModal() {
