@@ -26,55 +26,27 @@
 
         .container {
             max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: center; /* Центрирование по вертикали */
             align-items: center;
             text-align: center;
             padding: 20px;
-            position: relative; /* Для позиционирования ссылок */
-        }
-
-        /* Ссылки в углу */
-        .corner-links {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .corner-link {
-            /* Акцентный цвет из других страниц */
-            color: #009688;
-            text-decoration: none;
-            padding: 8px 15px;
-            border: 1px solid #009688;
-            border-radius: 20px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .corner-link:hover {
-            background: rgba(0, 150, 136, 0.1);
-            transform: translateY(-2px);
         }
 
         header {
-            /* Убираем фоновый блок для минимализма */
-            padding: 20px;
-            margin-bottom: 30px;
             width: 100%;
             max-width: 800px;
+            padding: 30px;
+            margin-bottom: 20px;
         }
 
         h1 {
             font-family: 'Montserrat', sans-serif; /* Современный шрифт для заголовка */
-            font-size: 4rem;
+            font-size: 3.5rem;
             margin-bottom: 20px;
             /* Градиентный текст для заголовка */
             background: linear-gradient(45deg, #009688, #4CAF50);
@@ -84,7 +56,7 @@
         }
 
         .subtitle {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             opacity: 0.9;
             margin-bottom: 30px;
             font-weight: 300;
@@ -95,9 +67,9 @@
             background: linear-gradient(45deg, #2196F3, #21CBF3);
             color: white;
             border: none;
-            padding: 25px 60px;
+            padding: 22px 55px;
             border-radius: 40px;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
@@ -113,13 +85,41 @@
             box-shadow: 0 12px 25px rgba(33, 150, 243, 0.7);
         }
 
+        /* Ссылки внизу страницы */
+        .bottom-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+            align-items: center;
+        }
+
+        .bottom-link {
+            /* Акцентный цвет из других страниц */
+            color: #009688;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid #009688;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .bottom-link:hover {
+            background: rgba(0, 150, 136, 0.1);
+            transform: translateY(-2px);
+        }
+
         footer {
             text-align: center;
             padding: 20px;
             opacity: 0.8;
-            margin-top: auto; /* Прижимает футер вниз */
             width: 100%;
             font-size: 1rem;
+            margin-top: auto; /* Прижимает футер вниз, если контента мало */
         }
 
         /* Мобильная адаптация */
@@ -133,33 +133,7 @@
             }
 
             h1 {
-                font-size: 3rem;
-            }
-
-            .subtitle {
-                font-size: 1.2rem;
-            }
-
-            .main-button {
-                padding: 20px 45px;
-                font-size: 1.4rem;
-                border-radius: 30px;
-            }
-
-            .corner-links {
-                top: 10px;
-                right: 10px;
-            }
-
-            .corner-link {
-                font-size: 0.8rem;
-                padding: 6px 12px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
             }
 
             .subtitle {
@@ -167,29 +141,52 @@
             }
 
             .main-button {
-                padding: 18px 35px;
-                font-size: 1.2rem;
+                padding: 18px 40px;
+                font-size: 1.3rem;
+                border-radius: 30px;
+            }
+
+            .bottom-link {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .main-button {
+                padding: 15px 30px;
+                font-size: 1.1rem;
             }
 
             header {
-                padding: 15px;
+                padding: 20px 10px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Ссылки в правом верхнем углу -->
-        <div class="corner-links">
-            <a href="contact.html" class="corner-link">📞 Контакты</a>
-            <a href="admin.html" class="corner-link">🔐 Админка</a>
-        </div>
-
         <header>
             <h1>LVG Kino</h1>
             <p class="subtitle">Кинотеатр на берегу моря в городе Новороссийск</p>
             <a href="seances.html" class="main-button">Выбрать сеанс</a>
         </header>
+
+        <!-- Ссылки внизу страницы -->
+        <div class="bottom-links">
+            <a href="contact.html" class="bottom-link">📞 Контакты</a>
+            <a href="admin.html" class="bottom-link">🔐 Админка</a>
+            <!-- Дублируем Telegram -->
+            <a href="https://t.me/lydivgolivyde" target="_blank" class="bottom-link">💬 Наш Telegram</a>
+        </div>
 
         <footer>
             <p>© 2025 LVG Kino Новороссийск</p>
