@@ -262,7 +262,7 @@
         /* Модальные окна */
         .hall-modal, .booking-info-modal {
             display: none;
-            position: fixed; /* Изменено с absolute на fixed */
+            position: fixed; /* Исправлено с absolute на fixed */
             z-index: 1000;
             left: 0;
             top: 0;
@@ -306,15 +306,8 @@
             color: #4ecdc4;
         }
 
-        /* Стили для схемы зала внутри модального окна (идентичны hall.html) */
-        .hall-container {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .screen {
+        /* Стили для схемы зала внутри модального окна (Оригинальные из admin-panel.html) */
+        .hall-modal-screen {
             background: linear-gradient(180deg, #4a90e2, #2c5aa0);
             height: 50px;
             width: 95%;
@@ -327,14 +320,14 @@
             font-size: 1rem;
         }
 
-        .row {
+        .hall-modal-row {
             display: flex;
             justify-content: center;
             margin-bottom: 10px;
             gap: 8px;
         }
 
-        .seat {
+        .hall-modal-seat {
             background: #555;
             border: 1px solid #777;
             border-radius: 5px;
@@ -348,38 +341,27 @@
             user-select: none;
         }
 
-        .seat:hover {
+        .hall-modal-seat:hover {
             background: #666;
             transform: scale(1.05);
         }
 
-        .seat.booked {
+        .hall-modal-seat.booked {
             background: #ff4444;
             cursor: not-allowed;
             transform: none;
         }
 
-        .seat.selected {
+        .hall-modal-seat.selected {
             background: #4CAF50;
         }
 
-        /* Размеры мест */
-        .single {
-            width: 35px;
-            height: 35px;
-        }
+        /* Размеры мест в модальном окне */
+        .hall-modal-single { width: 35px; height: 35px; }
+        .hall-modal-double { width: 75px; height: 35px; }
+        .hall-modal-quad { width: 155px; height: 35px; }
 
-        .double {
-            width: 75px;
-            height: 35px;
-        }
-
-        .quad {
-            width: 155px;
-            height: 35px;
-        }
-
-        .row-label {
+        .hall-modal-row-label {
             width: 25px;
             height: 35px;
             display: flex;
@@ -390,7 +372,7 @@
             font-size: 0.8rem;
         }
 
-        .legend {
+        .hall-modal-legend {
             display: flex;
             justify-content: center;
             gap: 15px;
@@ -398,27 +380,40 @@
             flex-wrap: wrap;
         }
 
-        .legend-item {
+        .hall-modal-legend-item {
             display: flex;
             align-items: center;
             gap: 5px;
             font-size: 0.8rem;
         }
 
-        .legend-color {
+        .hall-modal-legend-color {
             width: 15px;
             height: 15px;
             border-radius: 3px;
         }
 
-        /* Анимация подсветки */
-        @keyframes highlightPulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        /* - Стили для выделенного места - */
+        .hall-modal-seat.highlighted {
+            box-shadow: 0 0 0 3px #FFD700, 0 0 15px #FFD700;
+            position: relative;
+            z-index: 10;
         }
-        .highlight-pulse {
-            animation: highlightPulse 1s 2; /* 2 раза по 1 секунде */
+
+        .hall-modal-seat.highlighted::after {
+            content: "📍";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            animation: pulseHighlight 1.5s infinite;
+        }
+
+        @keyframes pulseHighlight {
+            0% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+            100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
         }
 
         /* Мобильная адаптация */
@@ -444,38 +439,15 @@
                 padding: 15px;
             }
 
-            .seat {
+            .hall-modal-seat {
                 transform: scale(0.9);
             }
-            .single {
-                width: 25px;
-                height: 25px;
-                font-size: 8px;
-            }
-            .double {
-                width: 55px;
-                height: 25px;
-                font-size: 8px;
-            }
-            .quad {
-                width: 115px;
-                height: 25px;
-                font-size: 8px;
-            }
-            .row-label {
-                width: 18px;
-                height: 25px;
-                font-size: 0.6rem;
-            }
-            .legend {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .screen {
-                height: 40px;
-                line-height: 40px;
-                font-size: 0.9rem;
-            }
+            .hall-modal-single { width: 25px; height: 25px; font-size: 8px; }
+            .hall-modal-double { width: 55px; height: 25px; font-size: 8px; }
+            .hall-modal-quad { width: 115px; height: 25px; font-size: 8px; }
+            .hall-modal-row-label { width: 18px; height: 25px; font-size: 0.6rem; }
+            .hall-modal-legend { flex-direction: column; gap: 8px; }
+            .hall-modal-screen { height: 40px; line-height: 40px; font-size: 0.9rem; }
         }
 
         @media (max-width: 480px) {
@@ -491,34 +463,14 @@
                 padding: 10px;
             }
 
-            .seat {
+            .hall-modal-seat {
                 transform: scale(0.8);
             }
-            .single {
-                width: 20px;
-                height: 20px;
-                font-size: 7px;
-            }
-            .double {
-                width: 45px;
-                height: 20px;
-                font-size: 7px;
-            }
-            .quad {
-                width: 95px;
-                height: 20px;
-                font-size: 7px;
-            }
-            .row-label {
-                width: 15px;
-                height: 20px;
-                font-size: 0.5rem;
-            }
-            .screen {
-                height: 30px;
-                line-height: 30px;
-                font-size: 0.8rem;
-            }
+            .hall-modal-single { width: 20px; height: 20px; font-size: 7px; }
+            .hall-modal-double { width: 45px; height: 20px; font-size: 7px; }
+            .hall-modal-quad { width: 95px; height: 20px; font-size: 7px; }
+            .hall-modal-row-label { width: 15px; height: 20px; font-size: 0.5rem; }
+            .hall-modal-screen { height: 30px; line-height: 30px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -1251,7 +1203,7 @@
         }
 
         // - Обновленная функция для отображения схемы зала с выделением места -
-        // Создает схему зала, идентичную той, что на странице бронирования (hall.html)
+        // Создает схему зала, идентичную той, что в оригинальном admin-panel.html
         // и подсвечивает место, соответствующее bookingIdToHighlight
         async function showHallScheme(film, date, time, bookingIdToHighlight = null) {
             // Сохраняем ID бронирования для выделения
@@ -1272,123 +1224,105 @@
             // Отображаем информацию о сеансе
             info.textContent = `Фильм: ${film} | Дата: ${date} | Время: ${time}`;
 
-            // Показываем модальное окно
+            // Показываем модальное окно (позиционирование fixed центрирует его)
             modal.style.display = 'block';
 
             try {
-                // Создаем схему зала (идентичную hall.html)
-                let html = `
-                    <div class="hall-container">
-                        <div class="screen">ЭКРАН</div>
-                        <div class="seats">
-                `;
-
-                // Генерируем места (идентично hall.html)
-                const rows = ['A', 'B', 'C', 'D', 'E'];
-                const seatsPerRow = 12;
-
-                for (let i = 0; i < rows.length; i++) {
-                    html += `<div class="row">`;
-                    html += `<div class="row-label">${rows[i]}</div>`;
-                    
-                    for (let j = 1; j <= seatsPerRow; j++) {
-                        const seatNumber = `${rows[i]}${j}`;
-                        let seatClass = 'seat';
-                        
-                        // Определяем тип места (идентично hall.html)
-                        if (j === 1 || j === seatsPerRow) {
-                            seatClass += ' single';
-                        } else if (j % 2 === 1) {
-                            seatClass += ' double';
-                        } else if (j % 4 === 0) {
-                            seatClass += ' quad';
-                        }
-                        
-                        html += `<div class="${seatClass}" data-seat="${seatNumber}">${seatNumber}</div>`;
-                    }
-                    html += `</div>`;
-                }
-
-                html += `
-                        </div>
-                        <div class="legend">
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #4CAF50;"></div>
-                                <span>Свободно</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #ff6b6b;"></div>
-                                <span>Забронировано</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background: #FFD700;"></div>
-                                <span>Выбрано</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                container.innerHTML = html;
-
-                // Загружаем забронированные места для этого сеанса
-                const bookedSeatsSnapshot = await db.collection('bookings')
+                // Загружаем все бронирования для этого сеанса
+                const bookingsSnapshot = await db.collection('bookings')
                     .where('film', '==', film)
                     .where('date', '==', date)
                     .where('time', '==', time)
                     .get();
 
-                const bookedSeats = [];
-                const bookingSeatMap = {}; // Карта seatId -> bookingId для быстрого поиска
-                bookedSeatsSnapshot.forEach(doc => {
-                    const booking = doc.data();
-                    if (booking.seat) {
-                        bookedSeats.push(booking.seat);
-                        bookingSeatMap[booking.seat] = doc.id; // Сохраняем ID бронирования
-                    }
+                const bookings = [];
+                bookingsSnapshot.forEach(doc => {
+                    bookings.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Помечаем забронированные места
-                bookedSeats.forEach(seat => {
-                    const seatElement = document.querySelector(`.seat[data-seat="${seat}"]`);
-                    if (seatElement) {
-                        seatElement.classList.add('booked');
-                        // Сохраняем ID бронирования в dataset для возможного использования
-                        seatElement.dataset.bookingId = bookingSeatMap[seat];
-                        seatElement.onclick = null; // Убираем обработчик клика
-                        seatElement.style.cursor = 'not-allowed'; // Меняем курсор
-                    }
-                });
+                // Создаем схему зала
+                let hallHTML = `<div class="hall-modal-screen">ЭКРАН</div>`;
 
-                // Выделяем место, если передан ID бронирования (подсветка)
-                if (currentHighlightedBookingId) {
-                    // Находим бронирование по ID, чтобы получить номер места
-                    // (Можно оптимизировать, если передавать seat напрямую)
-                    const bookingDoc = await db.collection('bookings').doc(currentHighlightedBookingId).get();
-                    if (bookingDoc.exists) {
-                        const bookingData = bookingDoc.data();
-                        const seatToHighlight = bookingData.seat;
-                        if (seatToHighlight) {
-                            const seatElement = document.querySelector(`.seat[data-seat="${seatToHighlight}"]`);
-                            if (seatElement && !seatElement.classList.contains('booked')) {
-                                // Если место не забронировано (странный случай, но на всякий), подсвечиваем
-                                seatElement.classList.add('selected');
-                            } else if (seatElement) {
-                                // Если место забронировано, просто убеждаемся, что оно видно
-                                // Можно добавить визуальный эффект, например, мигание или рамку
-                                seatElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                // Добавим временный класс для визуального выделения
-                                seatElement.classList.add('highlight-pulse');
-                                setTimeout(() => {
-                                    seatElement.classList.remove('highlight-pulse');
-                                }, 2000); // Убираем класс через 2 секунды
+                // Определяем структуру зала (такая же, как в hall.html)
+                const hallStructure = [
+                    { row: 'A', seats: 12 },
+                    { row: 'B', seats: 12 },
+                    { row: 'C', seats: 12 },
+                    { row: 'D', seats: 12 },
+                    { row: 'E', seats: 12 }
+                ];
+
+                // Проходим по каждой строке
+                hallStructure.forEach(rowData => {
+                    hallHTML += `<div class="hall-modal-row">`;
+                    hallHTML += `<div class="hall-modal-row-label">${rowData.row}</div>`;
+                    
+                    // Проходим по каждому месту в строке
+                    for (let index = 0; index < rowData.seats; index++) {
+                        const seatId = `${rowData.row}${index + 1}`;
+                        
+                        // Проверяем, забронировано ли это место
+                        let isBooked = false;
+                        let booking = null;
+                        for (let b of bookings) {
+                            if (b.seat === seatId) {
+                                isBooked = true;
+                                booking = b;
+                                break;
                             }
                         }
-                    }
-                }
 
+                        // Определяем тип места
+                        let seatTypeClass = 'hall-modal-single';
+                        if (index === 0 || index === rowData.seats - 1) {
+                            seatTypeClass = 'hall-modal-single';
+                        } else if (index % 2 === 1) {
+                            seatTypeClass = 'hall-modal-double';
+                        } else if (index % 4 === 0) {
+                            seatTypeClass = 'hall-modal-quad';
+                        }
+
+                        // Собираем классы для места
+                        let seatClasses = `hall-modal-seat ${seatTypeClass}`;
+                        if (isBooked) {
+                            seatClasses += ' booked';
+                        }
+
+                        // Проверяем, нужно ли выделить это место
+                        let isHighlighted = false;
+                        if (bookingIdToHighlight && booking && booking.id === bookingIdToHighlight) {
+                            isHighlighted = true;
+                            seatClasses += ' highlighted';
+                        }
+
+                        // Добавляем место в HTML
+                        hallHTML += `<div class="${seatClasses}" data-seat="${seatId}" ${isBooked ? `data-booking-id="${booking.id}"` : ''} ${isBooked ? 'onclick="showBookingInfo(this)"' : ''} ${isBooked ? 'title="Забронировано"' : ''} ${isBooked ? 'style="background-color: #ff4444;"' : ''}>${rowData.row}-${index + 1}</div>`;
+                    }
+                    hallHTML += `</div>`;
+                });
+
+                container.innerHTML = hallHTML;
+
+                // Добавляем легенду
+                container.innerHTML += `
+                    <div class="hall-modal-legend">
+                        <div class="hall-modal-legend-item">
+                            <div class="hall-modal-legend-color" style="background: #555;"></div>
+                            <span>Свободно</span>
+                        </div>
+                        <div class="hall-modal-legend-item">
+                            <div class="hall-modal-legend-color" style="background: #ff4444;"></div>
+                            <span>Забронировано</span>
+                        </div>
+                        <div class="hall-modal-legend-item">
+                            <div class="hall-modal-legend-color" style="background: #FFD700; border: 1px solid #000;"></div>
+                            <span>Выбрано</span>
+                        </div>
+                    </div>
+                `;
             } catch (error) {
-                console.error("Ошибка при загрузке схемы зала:", error);
-                container.innerHTML = '<p style="color: #ff6b6b;">Ошибка загрузки схемы зала</p>';
+                console.error('Ошибка загрузки схемы зала:', error);
+                container.innerHTML = '<p style="color: #ff6b6b;">Ошибка загрузки схемы зала: ' + error.message + '</p>';
             }
         }
         // - Конец обновленной функции для отображения схемы зала -
@@ -1473,6 +1407,17 @@
             await deleteBooking(bookingId, wasActive);
         }
 
+        // Функция для отображения информации о бронировании (из схемы зала)
+        async function showBookingInfo(seatElement) {
+            const bookingId = seatElement.dataset.bookingId;
+            if (!bookingId) return;
+
+            // Закрываем схему зала
+            closeHallSchemeModal();
+
+            // Открываем модальное окно с информацией о бронировании
+            showBookingInfoModal(bookingId);
+        }
 
         // Функция для закрытия модального окна информации о бронировании
         function closeBookingInfoModal() {
