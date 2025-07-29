@@ -14,90 +14,67 @@
         }
         body {
             font-family: 'Poppins', sans-serif;
-            background-image: url('beach-sunset.jpg'); /* Укажите правильный путь к вашему изображению */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: white;
             min-height: 100vh;
             padding: 15px;
-            overflow-x: hidden;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            position: relative;
-            z-index: 1;
         }
-        .top-links {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            gap: 15px;
+        .back-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #4ecdc4;
+            text-decoration: none;
+            padding: 8px 15px;
+            border: 1px solid #4ecdc4;
+            border-radius: 5px;
+            transition: all 0.3s;
             font-size: 0.9rem;
         }
-        .top-links a {
-            color: rgba(255, 255, 255, 0.85); /* Светлее основного текста */
-            text-decoration: none;
-            transition: color 0.3s, transform 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .top-links a:hover {
-            color: white;
-            transform: translateY(-2px);
+        .back-link:hover {
+            background: rgba(78, 205, 196, 0.1);
         }
         header {
             text-align: center;
             padding: 40px 20px;
-            background: rgba(255, 255, 255, 0.08); /* Прозрачный фон */
-            border-radius: 20px;
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
             width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         h1 {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
+            font-size: 3rem;
+            margin-bottom: 10px;
             color: #ff6b6b;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .subtitle {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             opacity: 0.9;
-            margin-bottom: 30px;
-            font-weight: 300;
+            margin-bottom: 20px;
         }
         .main-button {
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             color: white;
             border: none;
-            padding: 25px 50px; /* Больше padding */
+            padding: 25px 50px;
             border-radius: 35px;
-            font-size: 1.5rem; /* Более крупный шрифт */
+            font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-decoration: none;
-            display: inline-block;
             margin-top: 30px;
             box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .main-button:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(255, 107, 107, 0.6);
-        }
-        footer {
-            text-align: center;
-            padding: 25px;
-            opacity: 0.8;
-            margin-top: 40px;
-            font-size: 1rem;
         }
         /* Мобильная адаптация */
         @media (max-width: 768px) {
@@ -105,19 +82,13 @@
                 padding: 10px;
             }
             .container {
-                padding: 15px;
+                padding: 5px;
             }
             h1 {
                 font-size: 2.5rem;
             }
             .subtitle {
                 font-size: 1.1rem;
-            }
-            .top-links {
-                top: 10px;
-                right: 10px;
-                gap: 10px;
-                font-size: 0.8rem;
             }
             .main-button {
                 padding: 20px 40px;
@@ -128,9 +99,6 @@
             h1 {
                 font-size: 2rem;
             }
-            .subtitle {
-                font-size: 1rem;
-            }
             .main-button {
                 padding: 18px 35px;
                 font-size: 1.1rem;
@@ -140,18 +108,13 @@
 </head>
 <body>
     <div class="container">
-        <div class="top-links">
-            <a href="contact.html"><i class="fas fa-phone-alt"></i> Контакты</a>
-            <a href="admin.html"><i class="fas fa-lock"></i> Админка</a>
-        </div>
+        <a href="admin.html" class="back-link">🔒 Админка</a>
+        <a href="contact.html" class="back-link">📞 Контакты</a>
         <header>
             <h1>LVG Kino</h1>
             <p class="subtitle">Кинотеатр на берегу моря в городе Новороссийск</p>
             <a href="seances.html" class="main-button">Выбрать сеанс</a>
         </header>
-        <footer>
-            <p>© 2025 LVG Kino Новороссийск</p>
-        </footer>
     </div>
 </body>
 </html>
