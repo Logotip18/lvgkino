@@ -447,6 +447,14 @@
                     <input type="tel" id="customerPhone" placeholder="+7 (XXX) XXX-XXXX" required maxlength="12">
                     <div id="phoneError" class="error">Неверный формат телефона. Пример: +79998887766</div>
                 </div>
+                 <!-- Чекбокс согласия на оферту -->
+                <div class="form-group" style="text-align: left; margin-top: 15px;">
+                    <label style="display: flex; align-items: flex-start; cursor: pointer;">
+                        <input type="checkbox" id="offerAgreement" style="margin-right: 10px; margin-top: 3px;" required>
+                        <span>Я согласен с <a href="#" onclick="alert('Договор оферты будет добавлен позже'); return false;" style="color: #4ecdc4;">договором оферты</a></span>
+                    </label>
+                    <div id="offerError" class="error">Необходимо согласиться с договором оферты</div>
+                </div>
                 <p>Стоимость: <span id="modalPrice">400</span> руб.</p>
             </div>
             <button onclick="confirmBooking()">Забронировать</button>
@@ -525,7 +533,6 @@
             if (seatElement.classList.contains('booked')) {
                 return; // Не открываем модальное окно для забронированных мест
             }
-            
             currentSeat = seatElement.dataset.seat;
             currentType = seatElement.dataset.type;
             document.getElementById('modalSeat').textContent = currentSeat;
@@ -558,6 +565,9 @@
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '+7';
             document.getElementById('phoneError').style.display = 'none';
+            // Сбрасываем чекбокс и ошибку
+            document.getElementById('offerAgreement').checked = false;
+            document.getElementById('offerError').style.display = 'none';
         }
         function updatePrice() {
             const peopleCount = parseInt(document.getElementById('peopleCount').value);
@@ -575,12 +585,10 @@
             if (input.startsWith('8')) {
                 input = input.substring(1); // Удаляем первую 8, если она есть
             }
-            
             // Ограничиваем длину до 10 цифр
             if (input.length > 10) {
                 input = input.substring(0, 10);
             }
-            
             // Форматируем номер
             let formatted = '+7';
             if (input.length > 0) {
@@ -595,7 +603,6 @@
             if (input.length > 8) {
                 formatted += input.substring(8, 10);
             }
-            
             e.target.value = formatted;
         }
         // Разрешаем только цифры и управляющие клавиши
@@ -622,27 +629,33 @@
             const phoneRegex = /^\+7\d{10}$/;
             return phoneRegex.test(phone);
         }
+        // Обновленная функция confirmBooking с проверкой чекбокса
         async function confirmBooking() {
             const people = document.getElementById('peopleCount').value;
             const price = document.getElementById('modalPrice').textContent;
             // Получаем данные клиента
             const customerName = document.getElementById('customerName').value.trim();
             const customerPhone = document.getElementById('customerPhone').value.trim();
-            
-            // Скрываем сообщение об ошибке
+            // Получаем чекбокс согласия
+            const offerCheckbox = document.getElementById('offerAgreement');
+            const offerError = document.getElementById('offerError');
+            // Скрываем сообщения об ошибках
             document.getElementById('phoneError').style.display = 'none';
-
+            offerError.style.display = 'none';
             // Валидация
             if (!customerName) {
                 alert('Пожалуйста, введите имя.');
                 return;
             }
-            
             if (!validatePhone(customerPhone)) {
                 document.getElementById('phoneError').style.display = 'block';
                 return;
             }
-
+            // Проверка согласия на оферту
+            if (!offerCheckbox.checked) {
+                offerError.style.display = 'block';
+                return;
+            }
             try {
                 // Сохраняем бронирование в Firebase
                 await db.collection('bookings').add({
@@ -677,6 +690,8 @@
                 // Очищаем поля формы
                 document.getElementById('customerName').value = '';
                 document.getElementById('customerPhone').value = '+7';
+                // Сбрасываем чекбокс
+                document.getElementById('offerAgreement').checked = false;
             } catch (error) {
                 console.error('Ошибка бронирования:', error);
                 alert('Ошибка бронирования. Попробуйте еще раз.');
@@ -691,7 +706,6 @@
                 closeModal();
             }
         }
-        
         // Функция для отображения уведомления об успешном бронировании
         function showNotification(message) {
             const notification = document.createElement('div');
@@ -702,7 +716,6 @@
                 <button onclick="this.parentElement.style.display='none'" style="margin-top: 15px; background: linear-gradient(45deg, #4ecdc4, #ff6b6b);">Закрыть</button>
             `;
             document.body.appendChild(notification);
-            
             // Автоматически закрываем уведомление через 5 секунд
             setTimeout(() => {
                 if (notification.parentElement) {
