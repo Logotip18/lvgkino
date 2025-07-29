@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админка - LVG Kino</title>
-     <!-- Firebase SDK -->
-     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -273,7 +273,7 @@
         }
 
         .hall-modal-content, .booking-info-modal-content {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             margin: 5% auto; /* Центрирование по вертикали и горизонтали */
             padding: 20px;
             border: 1px solid #4ecdc4;
@@ -306,109 +306,119 @@
             color: #4ecdc4;
         }
 
-        /* Стили для схемы зала внутри модального окна */
+        /* Стили для схемы зала внутри модального окна (идентичны hall.html) */
         .hall-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
         }
 
         .screen {
-            width: 80%;
-            height: 30px;
-            background: linear-gradient(90deg, #4ecdc4, #4CAF50);
+            background: linear-gradient(180deg, #4a90e2, #2c5aa0);
+            height: 50px;
+            width: 95%;
+            margin: 0 auto 20px;
             border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
+            line-height: 50px;
             font-weight: bold;
-            box-shadow: 0 2px 10px rgba(78, 205, 196, 0.5);
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+            font-size: 1rem;
         }
 
-        .seats {
+        .row {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-        }
-
-        .seat-row {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .seat-label {
-            font-size: 0.8rem;
-            opacity: 0.7;
+            margin-bottom: 10px;
+            gap: 8px;
         }
 
         .seat {
-            width: 40px;
-            height: 40px;
-            background: #4CAF50;
+            background: #555;
+            border: 1px solid #777;
             border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 11px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .seat:hover {
+            background: #666;
+            transform: scale(1.05);
+        }
+
+        .seat.booked {
+            background: #ff4444;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .seat.selected {
+            background: #4CAF50;
+        }
+
+        /* Размеры мест */
+        .single {
+            width: 35px;
+            height: 35px;
+        }
+
+        .double {
+            width: 75px;
+            height: 35px;
+        }
+
+        .quad {
+            width: 155px;
+            height: 35px;
+        }
+
+        .row-label {
+            width: 25px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            color: #4ecdc4;
             font-size: 0.8rem;
-        }
-
-        .seat:hover {
-            transform: scale(1.1);
-        }
-
-        .seat.booked {
-            background: #ff6b6b;
-            cursor: not-allowed;
-        }
-
-        .seat.selected {
-            background: #FFD700;
-            transform: scale(1.1);
-        }
-
-        .seat.single {
-            width: 40px;
-        }
-
-        .seat.double {
-            width: 85px; /* 40*2 + 5 gap */
-        }
-
-        .seat.quad {
-            width: 175px; /* 40*4 + 5*3 gap */
         }
 
         .legend {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .legend-color {
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            height: 15px;
             border-radius: 3px;
+        }
+
+        /* Анимация подсветки */
+        @keyframes highlightPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+        .highlight-pulse {
+            animation: highlightPulse 1s 2; /* 2 раза по 1 секунде */
         }
 
         /* Мобильная адаптация */
@@ -435,22 +445,35 @@
             }
 
             .seat {
-                width: 30px;
-                height: 30px;
-                font-size: 0.7rem;
+                transform: scale(0.9);
             }
-
-            .seat.double {
-                width: 65px; /* 30*2 + 5 gap */
-            }
-
-            .seat.quad {
-                width: 135px; /* 30*4 + 5*3 gap */
-            }
-
-            .screen {
-                width: 95%;
+            .single {
+                width: 25px;
                 height: 25px;
+                font-size: 8px;
+            }
+            .double {
+                width: 55px;
+                height: 25px;
+                font-size: 8px;
+            }
+            .quad {
+                width: 115px;
+                height: 25px;
+                font-size: 8px;
+            }
+            .row-label {
+                width: 18px;
+                height: 25px;
+                font-size: 0.6rem;
+            }
+            .legend {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .screen {
+                height: 40px;
+                line-height: 40px;
                 font-size: 0.9rem;
             }
         }
@@ -469,21 +492,31 @@
             }
 
             .seat {
-                width: 25px;
-                height: 25px;
-                font-size: 0.6rem;
+                transform: scale(0.8);
             }
-
-            .seat.double {
-                width: 55px; /* 25*2 + 5 gap */
-            }
-
-            .seat.quad {
-                width: 115px; /* 25*4 + 5*3 gap */
-            }
-
-            .screen {
+            .single {
+                width: 20px;
                 height: 20px;
+                font-size: 7px;
+            }
+            .double {
+                width: 45px;
+                height: 20px;
+                font-size: 7px;
+            }
+            .quad {
+                width: 95px;
+                height: 20px;
+                font-size: 7px;
+            }
+            .row-label {
+                width: 15px;
+                height: 20px;
+                font-size: 0.5rem;
+            }
+            .screen {
+                height: 30px;
+                line-height: 30px;
                 font-size: 0.8rem;
             }
         }
@@ -1218,6 +1251,8 @@
         }
 
         // - Обновленная функция для отображения схемы зала с выделением места -
+        // Создает схему зала, идентичную той, что на странице бронирования (hall.html)
+        // и подсвечивает место, соответствующее bookingIdToHighlight
         async function showHallScheme(film, date, time, bookingIdToHighlight = null) {
             // Сохраняем ID бронирования для выделения
             currentHighlightedBookingId = bookingIdToHighlight;
@@ -1237,30 +1272,30 @@
             // Отображаем информацию о сеансе
             info.textContent = `Фильм: ${film} | Дата: ${date} | Время: ${time}`;
 
-            // Показываем модальное окно (позиционирование fixed центрирует его)
+            // Показываем модальное окно
             modal.style.display = 'block';
 
             try {
-                // Создаем схему зала (как в hall.html)
+                // Создаем схему зала (идентичную hall.html)
                 let html = `
                     <div class="hall-container">
                         <div class="screen">ЭКРАН</div>
                         <div class="seats">
                 `;
 
-                // Генерируем места
+                // Генерируем места (идентично hall.html)
                 const rows = ['A', 'B', 'C', 'D', 'E'];
                 const seatsPerRow = 12;
 
                 for (let i = 0; i < rows.length; i++) {
-                    html += `<div class="seat-row">`;
-                    html += `<div class="seat-label">${rows[i]}</div>`;
+                    html += `<div class="row">`;
+                    html += `<div class="row-label">${rows[i]}</div>`;
                     
                     for (let j = 1; j <= seatsPerRow; j++) {
                         const seatNumber = `${rows[i]}${j}`;
                         let seatClass = 'seat';
                         
-                        // Определяем тип места
+                        // Определяем тип места (идентично hall.html)
                         if (j === 1 || j === seatsPerRow) {
                             seatClass += ' single';
                         } else if (j % 2 === 1) {
@@ -1303,10 +1338,12 @@
                     .get();
 
                 const bookedSeats = [];
+                const bookingSeatMap = {}; // Карта seatId -> bookingId для быстрого поиска
                 bookedSeatsSnapshot.forEach(doc => {
                     const booking = doc.data();
                     if (booking.seat) {
                         bookedSeats.push(booking.seat);
+                        bookingSeatMap[booking.seat] = doc.id; // Сохраняем ID бронирования
                     }
                 });
 
@@ -1315,14 +1352,17 @@
                     const seatElement = document.querySelector(`.seat[data-seat="${seat}"]`);
                     if (seatElement) {
                         seatElement.classList.add('booked');
+                        // Сохраняем ID бронирования в dataset для возможного использования
+                        seatElement.dataset.bookingId = bookingSeatMap[seat];
                         seatElement.onclick = null; // Убираем обработчик клика
                         seatElement.style.cursor = 'not-allowed'; // Меняем курсор
                     }
                 });
 
-                // Выделяем место, если передан ID бронирования
+                // Выделяем место, если передан ID бронирования (подсветка)
                 if (currentHighlightedBookingId) {
                     // Находим бронирование по ID, чтобы получить номер места
+                    // (Можно оптимизировать, если передавать seat напрямую)
                     const bookingDoc = await db.collection('bookings').doc(currentHighlightedBookingId).get();
                     if (bookingDoc.exists) {
                         const bookingData = bookingDoc.data();
@@ -1330,7 +1370,17 @@
                         if (seatToHighlight) {
                             const seatElement = document.querySelector(`.seat[data-seat="${seatToHighlight}"]`);
                             if (seatElement && !seatElement.classList.contains('booked')) {
+                                // Если место не забронировано (странный случай, но на всякий), подсвечиваем
                                 seatElement.classList.add('selected');
+                            } else if (seatElement) {
+                                // Если место забронировано, просто убеждаемся, что оно видно
+                                // Можно добавить визуальный эффект, например, мигание или рамку
+                                seatElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                // Добавим временный класс для визуального выделения
+                                seatElement.classList.add('highlight-pulse');
+                                setTimeout(() => {
+                                    seatElement.classList.remove('highlight-pulse');
+                                }, 2000); // Убираем класс через 2 секунды
                             }
                         }
                     }
@@ -1341,6 +1391,7 @@
                 container.innerHTML = '<p style="color: #ff6b6b;">Ошибка загрузки схемы зала</p>';
             }
         }
+        // - Конец обновленной функции для отображения схемы зала -
 
         // Функция для закрытия модального окна схемы зала
         function closeHallSchemeModal() {
