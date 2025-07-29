@@ -455,7 +455,8 @@
                     </label>
                     <div id="offerError" class="error">Необходимо согласиться с договором оферты</div>
                 </div>
-                <p>Стоимость: <span id="modalPrice">400</span> руб.</p>
+                <!-- УВЕЛИЧЕННАЯ стоимость -->
+                <p>Стоимость: <span id="modalPrice" style="font-size: 1.4rem; font-weight: bold; color: #4ecdc4;">400</span> руб.</p>
             </div>
             <button onclick="confirmBooking()">Забронировать</button>
             <button onclick="closeModal()" style="background: #666;">Отмена</button>
@@ -487,12 +488,15 @@
         currentFilm = decodeURIComponent(urlParams.get('film') || 'Неизвестный фильм');
         currentTime = decodeURIComponent(urlParams.get('time') || 'Неизвестное время');
         currentDate = decodeURIComponent(urlParams.get('date') || 'Неизвестная дата');
+        // --- ФОРМАТИРОВАНИЕ ДАТЫ ---
+        const [year, month, day] = currentDate.split('-');
+        const formattedDate = `${day}.${month}.${year}`;
         // Отображаем информацию о фильме
         document.getElementById('filmName').textContent = currentFilm;
         document.getElementById('filmTime').textContent = currentTime;
-        document.getElementById('filmDate').textContent = currentDate;
+        document.getElementById('filmDate').textContent = formattedDate; // Используем отформатированную дату
         document.getElementById('modalFilm').textContent = currentFilm;
-        document.getElementById('modalDate').textContent = currentDate;
+        document.getElementById('modalDate').textContent = formattedDate; // Используем отформатированную дату
         document.getElementById('modalTime').textContent = currentTime;
         // Загружаем забронированные места при открытии страницы
         document.addEventListener('DOMContentLoaded', function() {
@@ -536,7 +540,7 @@
             currentSeat = seatElement.dataset.seat;
             currentType = seatElement.dataset.type;
             document.getElementById('modalSeat').textContent = currentSeat;
-            document.getElementById('modalType').textContent = 
+            document.getElementById('modalType').textContent =
                 currentType === 'single' ? 'Одноместный' :
                 currentType === 'double' ? 'Двухместный' : 'Четырехместный';
             // Настраиваем селектор количества человек
@@ -572,7 +576,11 @@
         function updatePrice() {
             const peopleCount = parseInt(document.getElementById('peopleCount').value);
             const totalPrice = peopleCount * pricePerSeat;
+            // УВЕЛИЧЕННАЯ стоимость
             document.getElementById('modalPrice').textContent = totalPrice;
+            document.getElementById('modalPrice').style.fontSize = '1.4rem';
+            document.getElementById('modalPrice').style.fontWeight = 'bold';
+            document.getElementById('modalPrice').style.color = '#4ecdc4';
         }
         // Обновляем цену при изменении количества человек
         document.getElementById('peopleCount').addEventListener('change', updatePrice);
