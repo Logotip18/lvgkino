@@ -384,7 +384,6 @@
         .hall-modal-single { width: 30px; height: 30px; }
         .hall-modal-double { width: 65px; height: 30px; }
         .hall-modal-quad { width: 135px; height: 30px; }
-        
         /* Модальное окно информации о бронировании */
         .booking-info-modal {
             display: none;
@@ -616,7 +615,6 @@
             </table>
         </div>
     </div>
-    
     <!-- Модальное окно схемы зала -->
     <div id="hallSchemeModal" class="hall-modal">
         <div class="hall-modal-content">
@@ -628,7 +626,6 @@
             <div id="hallSchemeContainer"></div>
         </div>
     </div>
-
     <!-- Модальное окно информации о бронировании -->
     <div id="bookingInfoModal" class="booking-info-modal">
         <div class="booking-info-modal-content">
@@ -637,7 +634,6 @@
             <div id="bookingInfoContent"></div>
         </div>
     </div>
-    
     <script>
         // Проверка авторизации
         if (localStorage.getItem('adminLoggedIn') !== 'true') {
@@ -1137,14 +1133,12 @@
                 document.getElementById('archiveBookingsLoading').innerHTML = 'Ошибка загрузки: ' + error.message;
             }
         }
-        
         // Функция для удаления бронирования
         async function deleteBooking(bookingId, isActive) {
             if (confirm('Вы уверены, что хотите удалить это бронирование?')) {
                 try {
                     await db.collection('bookings').doc(bookingId).delete();
                     alert('Бронирование удалено!');
-                    
                     // Перезагружаем соответствующую таблицу
                     if (isActive) {
                         loadActiveBookings(currentBookingFilter);
@@ -1157,7 +1151,6 @@
                 }
             }
         }
-        
         // Функция для очистки архива
         async function clearArchive() {
             if (confirm('Вы уверены, что хотите удалить все архивные бронирования? Это действие нельзя отменить.')) {
@@ -1178,12 +1171,10 @@
                             }
                         }
                     }
-                    
                     // Удаляем архивные бронирования
                     for (const bookingId of archiveBookingIds) {
                         await db.collection('bookings').doc(bookingId).delete();
                     }
-                    
                     alert(`Архив очищен. Удалено ${archiveBookingIds.length} записей.`);
                     // Перезагружаем архивные бронирования
                     loadArchiveBookings();
@@ -1193,22 +1184,17 @@
                 }
             }
         }
-        
         // Функция для отображения схемы зала
         async function showHallScheme(film, date, time) {
             const modal = document.getElementById('hallSchemeModal');
             const container = document.getElementById('hallSchemeContainer');
             const info = document.getElementById('hallModalInfo');
-            
             // Очищаем контейнер
             container.innerHTML = '<p>Загрузка схемы зала...</p>';
-            
             // Отображаем информацию о сеансе
             info.textContent = `Фильм: ${film} | Дата: ${date} | Время: ${time}`;
-            
             // Показываем модальное окно
             modal.style.display = 'block';
-            
             try {
                 // Загружаем все бронирования для этого сеанса
                 const bookingsSnapshot = await db.collection('bookings')
@@ -1216,17 +1202,14 @@
                     .where('date', '==', date)
                     .where('time', '==', time)
                     .get();
-                
                 const bookings = [];
                 bookingsSnapshot.forEach(doc => {
                     bookings.push({ id: doc.id, ...doc.data() });
                 });
-                
                 // Создаем схему зала
                 let hallHTML = `
                     <div class="hall-modal-screen">ЭКРАН</div>
                 `;
-                
                 // Определяем структуру зала (такая же, как в hall.html)
                 const hallStructure = [
                     { row: 1, seats: 8, type: 'single' },
@@ -1236,11 +1219,9 @@
                     { row: 5, seats: 6, type: 'mixed', details: ['quad', 'double', 'double', 'double', 'double', 'quad'] },
                     { row: 6, seats: 5, type: 'mixed', details: ['quad', 'double', 'double', 'double', 'quad'] }
                 ];
-                
                 hallStructure.forEach(rowData => {
                     hallHTML += `<div class="hall-modal-row">`;
                     hallHTML += `<div class="hall-modal-row-label">${rowData.row}</div>`;
-                    
                     if (rowData.type === 'single') {
                         for (let i = 1; i <= rowData.seats; i++) {
                             const seatId = `${rowData.row}-${i}`;
@@ -1269,30 +1250,24 @@
                             }
                         });
                     }
-                    
                     hallHTML += `</div>`;
                 });
-                
                 container.innerHTML = hallHTML;
             } catch (error) {
                 console.error('Ошибка загрузки схемы зала:', error);
                 container.innerHTML = '<p style="color: #ff6b6b;">Ошибка загрузки схемы зала</p>';
             }
         }
-        
         // Функция для закрытия модального окна схемы зала
         function closeHallSchemeModal() {
             document.getElementById('hallSchemeModal').style.display = 'none';
         }
-        
         // Функция для отображения информации о бронировании
         async function showBookingInfo(seatElement) {
             const bookingId = seatElement.dataset.bookingId;
             if (!bookingId) return;
-            
             const infoModal = document.getElementById('bookingInfoModal');
             const infoContent = document.getElementById('bookingInfoContent');
-            
             try {
                 // Загружаем данные бронирования из Firestore
                 const bookingDoc = await db.collection('bookings').doc(bookingId).get();
@@ -1301,9 +1276,7 @@
                     infoModal.style.display = 'block';
                     return;
                 }
-                
                 const booking = bookingDoc.data();
-                
                 // Форматируем дату и время бронирования, если есть
                 let bookingTimeStr = 'Неизвестно';
                 if (booking.bookingTimestamp) {
@@ -1314,7 +1287,6 @@
                         console.error("Ошибка форматирования даты бронирования:", e);
                     }
                 }
-                
                 // Отображаем информацию
                 infoContent.innerHTML = `
                     <p><strong>Фильм:</strong> ${booking.film || '---'}</p>
@@ -1327,7 +1299,6 @@
                     <p><strong>Время бронирования:</strong> ${bookingTimeStr}</p>
                     <button class="delete-booking-btn" style="margin-top: 15px;" onclick="deleteBookingFromModal('${bookingId}')">Удалить бронирование</button>
                 `;
-                
                 // Показываем модальное окно
                 infoModal.style.display = 'block';
             } catch (error) {
@@ -1336,24 +1307,20 @@
                 infoModal.style.display = 'block';
             }
         }
-        
         // Функция для удаления бронирования из модального окна информации
         async function deleteBookingFromModal(bookingId) {
             closeBookingInfoModal();
             closeHallSchemeModal();
             await deleteBooking(bookingId, true); // Предполагаем, что это активное бронирование
         }
-        
         // Функция для закрытия модального окна информации о бронировании
         function closeBookingInfoModal() {
             document.getElementById('bookingInfoModal').style.display = 'none';
         }
-        
         // Закрытие модальных окон кликом вне их
         window.onclick = function(event) {
             const hallModal = document.getElementById('hallSchemeModal');
             const infoModal = document.getElementById('bookingInfoModal');
-            
             if (event.target === hallModal) {
                 closeHallSchemeModal();
             }
