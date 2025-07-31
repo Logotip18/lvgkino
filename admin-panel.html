@@ -7,43 +7,9 @@
     <!-- Подключение Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script>
-        // Инициализация Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
-            authDomain: "lvgkino.firebaseapp.com",
-            projectId: "lvgkino",
-            storageBucket: "lvgkino.firebasestorage.app",
-            messagingSenderId: "526810546839",
-            appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
-        };
-
-        // Проверяем, что Firebase SDK загружен
-        if (typeof firebase === 'undefined') {
-            console.error('Firebase SDK не загружен');
-            alert('Ошибка: Не удалось загрузить Firebase SDK. Проверьте подключение к интернету.');
-        } else {
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                    console.log('Firebase успешно инициализирован');
-                }
-            } catch (error) {
-                console.error('Ошибка инициализации Firebase:', error);
-                alert('Ошибка инициализации Firebase: ' + error.message);
-            }
-        }
-
-        // Инициализация Firestore
-        let db = null;
-        try {
-            db = firebase.firestore();
-            console.log('Firestore успешно инициализирован');
-        } catch (error) {
-            console.error('Ошибка получения Firestore:', error);
-            alert('Ошибка Firestore: ' + error.message);
-        }
-    </script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/favicon.png">
     <style>
         * {
             margin: 0;
@@ -52,14 +18,30 @@
         }
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: url('/images/cinema-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-blend-mode: darken;
             color: white;
             min-height: 100vh;
             padding: 15px;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Тёмный оверлей */
+            z-index: -1;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон */
+            border-radius: 15px;
+            padding: 15px;
         }
         .back-link {
             display: inline-block;
@@ -266,59 +248,27 @@
             flex-wrap: wrap;
             justify-content: center;
         }
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 5px;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            .admin-menu {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .menu-item {
-                padding: 12px;
-                min-height: 70px;
-            }
-            .menu-item h3 {
-                font-size: 1.1rem;
-            }
-            .section {
-                padding: 15px;
-            }
-            .form-group {
-                margin-bottom: 12px;
-            }
-            input, select, textarea, button {
-                font-size: 0.85rem;
-                padding: 8px;
-            }
-            .filters-container {
-                flex-direction: column;
-                gap: 10px;
-            }
+        /* Стили для списка сеансов */
+        .seance-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        @media (max-width: 480px) {
-            body {
-                padding: 8px;
-            }
-            h1 {
-                font-size: 1.3rem;
-            }
-            .section h2 {
-                font-size: 1.2rem;
-            }
-            .nav-buttons {
-                flex-direction: column;
-            }
-            .logout-btn {
-                padding: 6px 12px;
-                font-size: 0.8rem;
-            }
+        .seance-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .seance-item h3 {
+            color: #4ecdc4;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .seance-item p {
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
         /* Модальное окно схемы зала */
         .hall-modal {
@@ -434,7 +384,8 @@
             50% { opacity: 1; }
             100% { opacity: 0.5; }
         }
-        .booking-info-modal {
+        /* Модальное окно бронирований */
+        .bookings-modal {
             display: none;
             position: fixed;
             z-index: 3000;
@@ -443,35 +394,44 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.7);
+            overflow: auto;
         }
-        .booking-info-modal-content {
+        .bookings-modal-content {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            margin: 15% auto;
+            margin: 5% auto;
             padding: 20px;
             border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
+            width: 95%;
+            max-width: 800px;
             text-align: center;
             border: 1px solid #4ecdc4;
         }
-        .booking-info-modal-close {
+        .bookings-modal-close {
             color: #aaa;
             float: right;
             font-size: 24px;
             font-weight: bold;
             cursor: pointer;
         }
-        .booking-info-modal-close:hover,
-        .booking-info-modal-close:focus {
+        .bookings-modal-close:hover,
+        .bookings-modal-close:focus {
             color: #4ecdc4;
         }
-        .booking-info-modal p {
-            margin: 10px 0;
-            font-size: 1rem;
-        }
-        .booking-info-modal h3 {
+        .bookings-modal h3 {
             color: #4ecdc4;
-            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .delete-booking-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .delete-booking-btn:hover {
+            background: #ff5252;
         }
         .clear-archive-btn {
             background: linear-gradient(45deg, #ff6b6b, #ff8e53);
@@ -486,17 +446,76 @@
         .clear-archive-btn:hover {
             background: linear-gradient(45deg, #ff5252, #ff7b38);
         }
-        .delete-booking-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 5px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .admin-menu {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .menu-item {
+                padding: 12px;
+                min-height: 70px;
+            }
+            .menu-item h3 {
+                font-size: 1.1rem;
+            }
+            .section {
+                padding: 15px;
+            }
+            .form-group {
+                margin-bottom: 12px;
+            }
+            input, select, textarea, button {
+                font-size: 0.85rem;
+                padding: 8px;
+            }
+            .filters-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .seance-item {
+                padding: 12px;
+            }
+            .hall-modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+            .bookings-modal-content {
+                width: 95%;
+                margin: 15% auto;
+            }
         }
-        .delete-booking-btn:hover {
-            background: #ff5252;
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+            .section h2 {
+                font-size: 1.2rem;
+            }
+            .nav-buttons {
+                flex-direction: column;
+            }
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            .seance-item h3 {
+                font-size: 1rem;
+            }
+            .seance-item p {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -510,7 +529,7 @@
         <div class="admin-menu">
             <div class="menu-item" onclick="showSection('bookings')">
                 <h3>🎟️ Бронирования</h3>
-                <p>Просмотр всех бронирований</p>
+                <p>Просмотр бронирований по сеансам</p>
             </div>
             <div class="menu-item" onclick="showSection('movies')">
                 <h3>🎬 Фильмы</h3>
@@ -526,64 +545,16 @@
             <h2>Бронирования</h2>
             <div class="filters-container">
                 <div class="filter-group">
-                    <button class="nav-button active" onclick="filterBookings('all')" id="allBtn">Все</button>
-                    <button class="nav-button" onclick="filterBookings('today')" id="todayBtn">Сегодня</button>
-                    <button class="nav-button" onclick="filterBookings('week')" id="weekBtn">Неделя</button>
+                    <button class="nav-button active" onclick="filterSeancesWithBookings('all')" id="allBtn">Все</button>
+                    <button class="nav-button" onclick="filterSeancesWithBookings('today')" id="todayBtn">Сегодня</button>
+                    <button class="nav-button" onclick="filterSeancesWithBookings('week')" id="weekBtn">Неделя</button>
+                    <button class="nav-button" onclick="filterSeancesWithBookings('future')" id="futureBtn">Будущие</button>
                 </div>
-                <button class="refresh-btn" onclick="loadActiveBookings(currentBookingFilter)">Обновить</button>
+                <button class="refresh-btn" onclick="loadSeancesWithBookings(currentBookingFilter)">Обновить</button>
+                <button class="clear-archive-btn" onclick="clearArchive()">Очистить архив</button>
             </div>
-            <h3 style="text-align: center; color: #4ecdc4; margin: 20px 0 10px;">Активные бронирования</h3>
-            <div id="activeBookingsLoading" class="loading">Загрузка активных бронирований...</div>
-            <div class="table-wrapper">
-                <table id="activeBookingsTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Фильм</th>
-                            <th>Дата/Время</th>
-                            <th>Место</th>
-                            <th>Человек</th>
-                            <th>Стоимость</th>
-                            <th>Имя</th>
-                            <th>Телефон</th>
-                            <th>Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="activeBookingsTableBody">
-                        <tr>
-                            <td colspan="8" style="text-align: center;">Нет активных бронирований</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div style="margin-top: 40px;">
-                <h3 style="text-align: center; color: #ff6b6b; margin: 20px 0 10px;">Архивные бронирования</h3>
-                <div class="filters-container">
-                    <button class="refresh-btn" onclick="loadArchiveBookings()">Обновить</button>
-                    <button class="clear-archive-btn" onclick="clearArchive()">Очистить архив</button>
-                </div>
-                <div id="archiveBookingsLoading" class="loading">Загрузка архивных бронирований...</div>
-                <div class="table-wrapper">
-                    <table id="archiveBookingsTable" style="display: none;">
-                        <thead>
-                            <tr>
-                                <th>Фильм</th>
-                                <th>Дата/Время</th>
-                                <th>Место</th>
-                                <th>Человек</th>
-                                <th>Стоимость</th>
-                                <th>Имя</th>
-                                <th>Телефон</th>
-                                <th>Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody id="archiveBookingsTableBody">
-                            <tr>
-                                <td colspan="8" style="text-align: center;">Нет архивных бронирований</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div id="bookingsLoading" class="loading">Загрузка сеансов с бронированиями...</div>
+            <div id="seancesWithBookingsContainer"></div>
         </div>
         <!-- Секция фильмов -->
         <div id="movies" class="section">
@@ -670,6 +641,15 @@
                 </table>
             </div>
         </div>
+        <!-- Модальное окно бронирований -->
+        <div id="bookingsModal" class="bookings-modal">
+            <div class="bookings-modal-content">
+                <span class="bookings-modal-close" onclick="closeBookingsModal()">&times;</span>
+                <h3>Бронирования сеанса</h3>
+                <p id="bookingsModalInfo"></p>
+                <div id="bookingsModalTableContainer" class="table-wrapper"></div>
+            </div>
+        </div>
         <!-- Модальное окно схемы зала -->
         <div id="hallSchemeModal" class="hall-modal">
             <div class="hall-modal-content">
@@ -681,82 +661,102 @@
                 <div id="hallSchemeContainer"></div>
             </div>
         </div>
-        <!-- Модальное окно информации о бронировании -->
-        <div id="bookingInfoModal" class="booking-info-modal">
-            <div class="booking-info-modal-content">
-                <span class="booking-info-modal-close" onclick="closeBookingInfoModal()">&times;</span>
-                <h3>Информация о бронировании</h3>
-                <div id="bookingInfoContent"></div>
-            </div>
-        </div>
     </div>
     <script>
+        // Инициализация Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
+            authDomain: "lvgkino.firebaseapp.com",
+            projectId: "lvgkino",
+            storageBucket: "lvgkino.firebasestorage.app",
+            messagingSenderId: "526810546839",
+            appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
+        };
+        if (typeof firebase === 'undefined') {
+            console.error('Firebase SDK не загружен');
+            alert('Ошибка: Не удалось загрузить Firebase SDK. Проверьте подключение к интернету.');
+        } else {
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                    console.log('Firebase успешно инициализирован');
+                }
+            } catch (error) {
+                console.error('Ошибка инициализации Firebase:', error);
+                alert('Ошибка инициализации Firebase: ' + error.message);
+            }
+        }
+        let db = null;
+        try {
+            db = firebase.firestore();
+            console.log('Firestore успешно инициализирован');
+        } catch (error) {
+            console.error('Ошибка получения Firestore:', error);
+            alert('Ошибка Firestore: ' + error.message);
+        }
         // Глобальные переменные
         let currentBookingFilter = 'all';
         let currentSeanceFilter = 'all';
         let allSeances = [];
         let currentHighlightedBookingId = null;
-
         // Проверка авторизации и загрузка данных
         window.onload = function() {
             if (localStorage.getItem('adminLoggedIn') !== 'true') {
                 window.location.href = 'admin.html';
                 return;
             }
-
-            // Убедимся, что db инициализирован
             if (!db) {
                 console.error('Firestore не инициализирован в window.onload');
                 alert('Ошибка: Firestore не доступен. Проверьте подключение к Firebase.');
                 return;
             }
-
-            // Устанавливаем сегодняшнюю дату по умолчанию
             const today = new Date();
             const dateString = today.toISOString().split('T')[0];
             const seanceDateInput = document.getElementById('seanceDate');
             if (seanceDateInput) seanceDateInput.value = dateString;
-
-            // Загружаем данные
             loadMovies();
             loadSeances();
             loadAllSeances();
-            loadActiveBookings(currentBookingFilter);
-            loadArchiveBookings();
+            loadSeancesWithBookings(currentBookingFilter);
         };
-
+        /**
+         * Выполняет выход из админ-панели.
+         */
         function logout() {
             localStorage.removeItem('adminLoggedIn');
             window.location.href = 'admin.html';
         }
-
+        /**
+         * Переключает видимость секций админ-панели.
+         * @param {string} sectionId - ID секции для отображения.
+         */
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             const sectionElement = document.getElementById(sectionId);
-            if (sectionElement) {
-                sectionElement.classList.add('active');
-            }
-            if (sectionId === 'movies') {
-                loadMovies();
-            } else if (sectionId === 'seances') {
-                loadSeances(currentSeanceFilter);
-            } else if (sectionId === 'bookings') {
-                // Бронирования уже загружены
-            }
+            if (sectionElement) sectionElement.classList.add('active');
+            if (sectionId === 'movies') loadMovies();
+            else if (sectionId === 'seances') loadSeances(currentSeanceFilter);
+            else if (sectionId === 'bookings') loadSeancesWithBookings(currentBookingFilter);
         }
-
-        function filterBookings(filter) {
+        /**
+         * Фильтрует сеансы с бронированиями по заданному фильтру.
+         * @param {string} filter - Тип фильтра ('all', 'today', 'week', 'future').
+         */
+        function filterSeancesWithBookings(filter) {
             document.querySelectorAll('#bookings .nav-button').forEach(btn => {
                 btn.classList.remove('active');
             });
             const filterButton = document.getElementById(filter + 'Btn');
             if (filterButton) filterButton.classList.add('active');
             currentBookingFilter = filter;
-            loadActiveBookings(filter);
+            loadSeancesWithBookings(filter);
         }
-
+        /**
+         * Фильтрует сеансы по заданному фильтру.
+         * @param {string} filter - Тип фильтра ('all', 'today', 'week', 'future').
+         */
         function filterSeances(filter) {
             document.querySelectorAll('#seances .nav-button').forEach(btn => {
                 btn.classList.remove('active');
@@ -766,11 +766,14 @@
             currentSeanceFilter = filter;
             loadSeances(filter);
         }
-
+        /**
+         * Загружает все сеансы из Firestore.
+         * @returns {Promise<Array>} Список сеансов.
+         */
         async function loadAllSeances() {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                document.getElementById('activeBookingsLoading').innerHTML = 'Ошибка: Firestore не доступен';
+                document.getElementById('bookingsLoading').innerHTML = 'Ошибка: Firestore не доступен';
                 return [];
             }
             try {
@@ -785,7 +788,13 @@
                 return [];
             }
         }
-
+        /**
+         * Проверяет, существует ли сеанс и является ли он активным.
+         * @param {string} film - Название фильма.
+         * @param {string} date - Дата сеанса (YYYY-MM-DD).
+         * @param {string} time - Время сеанса (HH:MM).
+         * @returns {boolean} True, если сеанс активен.
+         */
         function seanceExists(film, date, time) {
             const exists = allSeances.some(seance =>
                 seance.movie === film &&
@@ -804,7 +813,9 @@
                 return true;
             }
         }
-
+        /**
+         * Загружает фильмы из Firestore и обновляет таблицу.
+         */
         async function loadMovies() {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -815,10 +826,8 @@
                 const moviesLoadingElement = document.getElementById('moviesLoading');
                 const moviesTableWrapper = document.querySelector('#movies .table-wrapper');
                 const moviesTableElement = moviesTableWrapper?.querySelector('table');
-
                 if (moviesLoadingElement) moviesLoadingElement.style.display = 'block';
                 if (moviesTableElement) moviesTableElement.style.display = 'none';
-
                 const querySnapshot = await db.collection('movies').orderBy('name').get();
                 const moviesTableBody = document.getElementById('moviesTableBody');
                 if (!moviesTableBody) throw new Error("Элемент 'moviesTableBody' не найден");
@@ -833,7 +842,7 @@
                             <td>${movie.name}</td>
                             <td>${movie.description}</td>
                             <td>${movie.age}</td>
-                            <td><button style="background: #ff6b6b; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteMovie('${doc.id}')">Удалить</button></td>
+                            <td><button class="delete-booking-btn" onclick="deleteMovie('${doc.id}')">Удалить</button></td>
                         `;
                         moviesTableBody.appendChild(row);
                     });
@@ -847,7 +856,9 @@
                 if (moviesLoadingElement) moviesLoadingElement.innerHTML = `Ошибка загрузки: ${error.message}`;
             }
         }
-
+        /**
+         * Добавляет новый фильм в Firestore.
+         */
         async function addMovie() {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -861,7 +872,6 @@
             const movieErrorElement = document.getElementById('movieError');
             if (movieSuccessElement) movieSuccessElement.style.display = 'none';
             if (movieErrorElement) movieErrorElement.style.display = 'none';
-
             if (name && desc) {
                 try {
                     await db.collection('movies').add({
@@ -888,7 +898,10 @@
                 }
             }
         }
-
+        /**
+         * Удаляет фильм из Firestore.
+         * @param {string} movieId - ID фильма.
+         */
         async function deleteMovie(movieId) {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -906,7 +919,9 @@
                 }
             }
         }
-
+        /**
+         * Обновляет выпадающий список фильмов для добавления сеансов.
+         */
         async function updateSeanceSelect() {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -928,7 +943,10 @@
                 console.error('Ошибка обновления селекта:', error);
             }
         }
-
+        /**
+         * Загружает сеансы из Firestore с фильтрацией.
+         * @param {string} filter - Тип фильтра ('all', 'today', 'week', 'future').
+         */
         async function loadSeances(filter = 'all') {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -939,16 +957,13 @@
                 const seancesLoadingElement = document.getElementById('seancesLoading');
                 const seancesTableWrapper = document.querySelector('#seances .table-wrapper');
                 const seancesTableElement = seancesTableWrapper?.querySelector('table');
-
                 if (seancesLoadingElement) seancesLoadingElement.style.display = 'block';
                 if (seancesTableElement) seancesTableElement.style.display = 'none';
-
                 const querySnapshot = await db.collection('seances').get();
                 let filteredSeances = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 })).filter(seance => seance.movie && seance.date && seance.time);
-
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 if (filter === 'today') {
@@ -968,12 +983,10 @@
                     const tomorrowString = formatDateForComparison(tomorrow);
                     filteredSeances = filteredSeances.filter(seance => seance.date >= tomorrowString);
                 }
-
                 filteredSeances.sort((a, b) => {
                     if (a.date !== b.date) return a.date.localeCompare(b.date);
                     return a.time?.localeCompare(b.time) || 0;
                 });
-
                 const seancesTableBody = document.getElementById('seancesTableBody');
                 if (!seancesTableBody) throw new Error("Элемент 'seancesTableBody' не найден");
                 seancesTableBody.innerHTML = '';
@@ -986,12 +999,11 @@
                             <td>${seance.movie}</td>
                             <td>${seance.date}</td>
                             <td>${seance.time}</td>
-                            <td><button style="background: #ff6b6b; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteSeance('${seance.id}')">Удалить</button></td>
+                            <td><button class="delete-booking-btn" onclick="deleteSeance('${seance.id}')">Удалить</button></td>
                         `;
                         seancesTableBody.appendChild(row);
                     });
                 }
-
                 if (seancesLoadingElement) seancesLoadingElement.style.display = 'none';
                 if (seancesTableElement) seancesTableElement.style.display = 'table';
                 loadAllSeances();
@@ -1001,14 +1013,20 @@
                 if (seancesLoadingElement) seancesLoadingElement.innerHTML = `Ошибка загрузки: ${error.message}`;
             }
         }
-
+        /**
+         * Форматирует дату для сравнения.
+         * @param {Date} date - Дата для форматирования.
+         * @returns {string} Форматированная дата (YYYY-MM-DD).
+         */
         function formatDateForComparison(date) {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
-
+        /**
+         * Добавляет новый сеанс в Firestore.
+         */
         async function addSeance() {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -1022,7 +1040,6 @@
             const seanceErrorElement = document.getElementById('seanceError');
             if (seanceSuccessElement) seanceSuccessElement.style.display = 'none';
             if (seanceErrorElement) seanceErrorElement.style.display = 'none';
-
             if (movie && date && time) {
                 try {
                     await db.collection('seances').add({
@@ -1048,7 +1065,10 @@
                 }
             }
         }
-
+        /**
+         * Удаляет сеанс из Firestore.
+         * @param {string} seanceId - ID сеанса.
+         */
         async function deleteSeance(seanceId) {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -1066,155 +1086,154 @@
                 }
             }
         }
-
-        async function loadActiveBookings(filter = 'all') {
+        /**
+         * Загружает сеансы с бронированиями.
+         * @param {string} filter - Тип фильтра ('all', 'today', 'week', 'future').
+         */
+        async function loadSeancesWithBookings(filter = 'all') {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                document.getElementById('activeBookingsLoading').innerHTML = 'Ошибка: Firestore не доступен';
+                document.getElementById('bookingsLoading').innerHTML = 'Ошибка: Firestore не доступен';
                 return;
             }
             try {
-                const activeBookingsLoadingElement = document.getElementById('activeBookingsLoading');
-                const activeBookingsTableWrapper = document.querySelector('#bookings .table-wrapper');
-                const activeBookingsTableElement = activeBookingsTableWrapper?.querySelector('table');
-
-                if (activeBookingsLoadingElement) activeBookingsLoadingElement.style.display = 'block';
-                if (activeBookingsTableElement) activeBookingsTableElement.style.display = 'none';
-
+                const bookingsLoadingElement = document.getElementById('bookingsLoading');
+                const seancesContainer = document.getElementById('seancesWithBookingsContainer');
+                if (bookingsLoadingElement) bookingsLoadingElement.style.display = 'block';
+                if (seancesContainer) seancesContainer.innerHTML = '';
                 await loadAllSeances();
                 const querySnapshot = await db.collection('bookings').get();
-                const activeBookings = querySnapshot.docs
-                    .map(doc => ({ id: doc.id, ...doc.data() }))
-                    .filter(booking => booking.film && booking.date && booking.time && seanceExists(booking.film, booking.date, booking.time));
-
-                let filteredBookings = activeBookings;
+                const bookings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const seanceGroups = {};
+                bookings.forEach(booking => {
+                    if (booking.film && booking.date && booking.time) {
+                        const key = `${booking.film}_${booking.date}_${booking.time}`;
+                        if (!seanceGroups[key]) {
+                            seanceGroups[key] = {
+                                film: booking.film,
+                                date: booking.date,
+                                time: booking.time,
+                                bookings: []
+                            };
+                        }
+                        seanceGroups[key].bookings.push(booking);
+                    }
+                });
+                let filteredSeances = Object.values(seanceGroups);
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 if (filter === 'today') {
                     const todayString = formatDateForComparison(today);
-                    filteredBookings = activeBookings.filter(booking => booking.date === todayString);
+                    filteredSeances = filteredSeances.filter(seance => seance.date === todayString);
                 } else if (filter === 'week') {
                     const nextWeek = new Date(today);
                     nextWeek.setDate(today.getDate() + 7);
                     const todayString = formatDateForComparison(today);
                     const nextWeekString = formatDateForComparison(nextWeek);
-                    filteredBookings = filteredBookings.filter(booking =>
-                        booking.date >= todayString && booking.date <= nextWeekString
+                    filteredSeances = filteredSeances.filter(seance =>
+                        seance.date >= todayString && seance.date <= nextWeekString
                     );
+                } else if (filter === 'future') {
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const tomorrowString = formatDateForComparison(tomorrow);
+                    filteredSeances = filteredSeances.filter(seance => seance.date >= tomorrowString);
                 }
-
-                filteredBookings.sort((a, b) => {
+                filteredSeances.sort((a, b) => {
                     if (a.date !== b.date) return a.date.localeCompare(b.date);
                     return a.time?.localeCompare(b.time) || 0;
                 });
-
-                const bookingsTableBody = document.getElementById('activeBookingsTableBody');
-                if (!bookingsTableBody) throw new Error("Элемент 'activeBookingsTableBody' не найден");
-                bookingsTableBody.innerHTML = '';
-                if (filteredBookings.length === 0) {
-                    bookingsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Нет активных бронирований</td></tr>';
+                if (filteredSeances.length === 0) {
+                    seancesContainer.innerHTML = '<p style="text-align: center; color: #ff6b6b;">Нет сеансов с бронированиями</p>';
                 } else {
-                    filteredBookings.forEach(booking => {
-                        const rowId = `booking-${booking.id}`;
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${booking.film || '---'}</td>
-                            <td>${booking.date || '---'} ${booking.time || ''}</td>
-                            <td>${booking.seat || '---'}</td>
-                            <td>${booking.people || '---'}</td>
-                            <td>${booking.price || 0} руб.</td>
-                            <td>${booking.customerName || '---'}</td>
-                            <td>${booking.customerPhone || '---'}</td>
-                            <td>
-                                <button class="delete-booking-btn" onclick="deleteBooking('${booking.id}', true)">Удалить</button>
-                            </td>
+                    filteredSeances.forEach(seance => {
+                        const seanceItem = document.createElement('div');
+                        seanceItem.className = 'seance-item';
+                        seanceItem.innerHTML = `
+                            <h3>${seance.film}</h3>
+                            <p>Дата: ${seance.date} | Время: ${seance.time}</p>
+                            <p>Бронирований: ${seance.bookings.length}</p>
                         `;
-                        row.id = rowId;
-                        row.style.cursor = 'pointer';
-                        row.title = 'Кликните для просмотра схемы зала';
-                        row.addEventListener('click', (e) => {
-                            if (e.target.classList.contains('delete-booking-btn')) return;
-                            showHallScheme(booking.film, booking.date, booking.time, booking.id);
-                        });
-                        bookingsTableBody.appendChild(row);
+                        seanceItem.onclick = () => showBookingsModal(seance.film, seance.date, seance.time, seance.bookings);
+                        seancesContainer.appendChild(seanceItem);
                     });
                 }
-
-                if (activeBookingsLoadingElement) activeBookingsLoadingElement.style.display = 'none';
-                if (activeBookingsTableElement) activeBookingsTableElement.style.display = 'table';
+                if (bookingsLoadingElement) bookingsLoadingElement.style.display = 'none';
             } catch (error) {
-                console.error('Ошибка загрузки активных бронирований:', error);
-                const activeBookingsLoadingElement = document.getElementById('activeBookingsLoading');
-                if (activeBookingsLoadingElement) activeBookingsLoadingElement.innerHTML = `Ошибка загрузки: ${error.message}`;
+                console.error('Ошибка загрузки сеансов с бронированиями:', error);
+                const bookingsLoadingElement = document.getElementById('bookingsLoading');
+                if (bookingsLoadingElement) bookingsLoadingElement.innerHTML = `Ошибка загрузки: ${error.message}`;
             }
         }
-
-        async function loadArchiveBookings() {
-            if (!db) {
-                console.error('Firestore не инициализирован');
-                document.getElementById('archiveBookingsLoading').innerHTML = 'Ошибка: Firestore не доступен';
+        /**
+         * Открывает модальное окно с бронированиями для сеанса.
+         * @param {string} film - Название фильма.
+         * @param {string} date - Дата сеанса.
+         * @param {string} time - Время сеанса.
+         * @param {Array} bookings - Список бронирований.
+         */
+        function showBookingsModal(film, date, time, bookings) {
+            const modal = document.getElementById('bookingsModal');
+            const info = document.getElementById('bookingsModalInfo');
+            const tableContainer = document.getElementById('bookingsModalTableContainer');
+            if (!modal || !info || !tableContainer) {
+                console.error('Элементы модального окна бронирований не найдены');
                 return;
             }
-            try {
-                const archiveBookingsLoadingElement = document.getElementById('archiveBookingsLoading');
-                const archiveBookingsTableWrapper = document.querySelector('#bookings .table-wrapper ~ .table-wrapper');
-                const archiveBookingsTableElement = archiveBookingsTableWrapper?.querySelector('table');
-
-                if (archiveBookingsLoadingElement) archiveBookingsLoadingElement.style.display = 'block';
-                if (archiveBookingsTableElement) archiveBookingsTableElement.style.display = 'none';
-
-                await loadAllSeances();
-                const querySnapshot = await db.collection('bookings').get();
-                const archiveBookings = querySnapshot.docs
-                    .map(doc => ({ id: doc.id, ...doc.data() }))
-                    .filter(booking => booking.film && booking.date && booking.time && !seanceExists(booking.film, booking.date, booking.time));
-
-                archiveBookings.sort((a, b) => {
-                    if (a.date !== b.date) return a.date.localeCompare(b.date);
-                    return a.time?.localeCompare(b.time) || 0;
-                });
-
-                const archiveTableBody = document.getElementById('archiveBookingsTableBody');
-                if (!archiveTableBody) throw new Error("Элемент 'archiveBookingsTableBody' не найден");
-                archiveTableBody.innerHTML = '';
-                if (archiveBookings.length === 0) {
-                    archiveTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Нет архивных бронирований</td></tr>';
-                } else {
-                    archiveBookings.forEach(booking => {
-                        const rowId = `booking-${booking.id}`;
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${booking.film || '---'}</td>
-                            <td>${booking.date || '---'} ${booking.time || ''}</td>
-                            <td>${booking.seat || '---'}</td>
-                            <td>${booking.people || '---'}</td>
-                            <td>${booking.price || 0} руб.</td>
-                            <td>${booking.customerName || '---'}</td>
-                            <td>${booking.customerPhone || '---'}</td>
-                            <td>
-                                <button class="delete-booking-btn" onclick="deleteBooking('${booking.id}', false)">Удалить</button>
-                            </td>
-                        `;
-                        row.id = rowId;
-                        row.style.cursor = 'pointer';
-                        row.title = 'Кликните для просмотра схемы зала';
-                        row.addEventListener('click', (e) => {
-                            if (e.target.classList.contains('delete-booking-btn')) return;
-                            showHallScheme(booking.film, booking.date, booking.time, booking.id);
-                        });
-                        archiveTableBody.appendChild(row);
+            info.textContent = `Фильм: ${film} | Дата: ${date} | Время: ${time}`;
+            tableContainer.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Место</th>
+                            <th>Человек</th>
+                            <th>Стоимость</th>
+                            <th>Имя</th>
+                            <th>Телефон</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsModalTableBody"></tbody>
+                </table>
+            `;
+            const tableBody = document.getElementById('bookingsModalTableBody');
+            if (bookings.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет бронирований</td></tr>';
+            } else {
+                bookings.forEach(booking => {
+                    const row = document.createElement('tr');
+                    row.id = `booking-${booking.id}`;
+                    row.innerHTML = `
+                        <td>${booking.seat || '---'}</td>
+                        <td>${booking.people || '---'}</td>
+                        <td>${booking.price || 0} руб.</td>
+                        <td>${booking.customerName || '---'}</td>
+                        <td>${booking.customerPhone || '---'}</td>
+                        <td><button class="delete-booking-btn" onclick="deleteBooking('${booking.id}', true)">Удалить</button></td>
+                    `;
+                    row.style.cursor = 'pointer';
+                    row.title = 'Кликните для просмотра схемы зала';
+                    row.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('delete-booking-btn')) return;
+                        showHallScheme(film, date, time, booking.id);
                     });
-                }
-
-                if (archiveBookingsLoadingElement) archiveBookingsLoadingElement.style.display = 'none';
-                if (archiveBookingsTableElement) archiveBookingsTableElement.style.display = 'table';
-            } catch (error) {
-                console.error('Ошибка загрузки архивных бронирований:', error);
-                const archiveBookingsLoadingElement = document.getElementById('archiveBookingsLoading');
-                if (archiveBookingsLoadingElement) archiveBookingsLoadingElement.innerHTML = `Ошибка загрузки: ${error.message}`;
+                    tableBody.appendChild(row);
+                });
             }
+            modal.style.display = 'block';
         }
-
+        /**
+         * Закрывает модальное окно бронирований.
+         */
+        function closeBookingsModal() {
+            const modal = document.getElementById('bookingsModal');
+            if (modal) modal.style.display = 'none';
+        }
+        /**
+         * Удаляет бронирование из Firestore.
+         * @param {string} bookingId - ID бронирования.
+         * @param {boolean} isActive - Является ли бронирование активным.
+         */
         async function deleteBooking(bookingId, isActive) {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -1225,18 +1244,18 @@
                 try {
                     await db.collection('bookings').doc(bookingId).delete();
                     alert('Бронирование удалено!');
-                    if (isActive) {
-                        loadActiveBookings(currentBookingFilter);
-                    } else {
-                        loadArchiveBookings();
-                    }
+                    closeBookingsModal();
+                    closeHallSchemeModal();
+                    loadSeancesWithBookings(currentBookingFilter);
                 } catch (error) {
                     console.error('Ошибка удаления бронирования:', error);
                     alert(`Ошибка удаления бронирования: ${error.message}`);
                 }
             }
         }
-
+        /**
+         * Очищает архивные бронирования.
+         */
         async function clearArchive() {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -1251,7 +1270,6 @@
                         .map(doc => ({ id: doc.id, ...doc.data() }))
                         .filter(booking => booking.film && booking.date && booking.time && !seanceExists(booking.film, booking.date, booking.time))
                         .map(booking => booking.id);
-
                     let deletedCount = 0;
                     for (const bookingId of archiveBookingIds) {
                         try {
@@ -1262,14 +1280,20 @@
                         }
                     }
                     alert(`Архив очищен. Удалено ${deletedCount} из ${archiveBookingIds.length} записей.`);
-                    loadArchiveBookings();
+                    loadSeancesWithBookings(currentBookingFilter);
                 } catch (error) {
                     console.error('Ошибка очистки архива:', error);
                     alert(`Ошибка очистки архива: ${error.message}`);
                 }
             }
         }
-
+        /**
+         * Отображает схему зала для сеанса.
+         * @param {string} film - Название фильма.
+         * @param {string} date - Дата сеанса.
+         * @param {string} time - Время сеанса.
+         * @param {string|null} bookingIdToHighlight - ID бронирования для подсветки.
+         */
         async function showHallScheme(film, date, time, bookingIdToHighlight = null) {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -1357,13 +1381,18 @@
                 container.innerHTML = `<p style="color: #ff6b6b;">Ошибка загрузки схемы зала: ${error.message}</p>`;
             }
         }
-
+        /**
+         * Закрывает модальное окно схемы зала.
+         */
         function closeHallSchemeModal() {
             const modal = document.getElementById('hallSchemeModal');
             if (modal) modal.style.display = 'none';
             currentHighlightedBookingId = null;
         }
-
+        /**
+         * Отображает информацию о бронировании.
+         * @param {HTMLElement} seatElement - Элемент места.
+         */
         async function showBookingInfo(seatElement) {
             if (!db) {
                 console.error('Firestore не инициализирован');
@@ -1372,8 +1401,8 @@
             }
             const bookingId = seatElement.dataset.bookingId;
             if (!bookingId) return;
-            const infoModal = document.getElementById('bookingInfoModal');
-            const infoContent = document.getElementById('bookingInfoContent');
+            const infoModal = document.getElementById('bookingsModal');
+            const infoContent = document.getElementById('bookingsModalTableContainer');
             if (!infoModal || !infoContent) {
                 console.error('Элементы модального окна информации не найдены');
                 return;
@@ -1382,7 +1411,6 @@
                 const bookingDoc = await db.collection('bookings').doc(bookingId).get();
                 if (!bookingDoc.exists) {
                     infoContent.innerHTML = '<p style="color: #ff6b6b;">Бронирование не найдено</p>';
-                    infoModal.style.display = 'block';
                     return;
                 }
                 const booking = bookingDoc.data();
@@ -1406,30 +1434,23 @@
                     <p><strong>Время бронирования:</strong> ${bookingTimeStr}</p>
                     <button class="delete-booking-btn" style="margin-top: 15px;" onclick="deleteBookingFromModal('${bookingId}')">Удалить бронирование</button>
                 `;
-                infoModal.style.display = 'block';
             } catch (error) {
                 console.error('Ошибка загрузки информации о бронировании:', error);
                 infoContent.innerHTML = `<p style="color: #ff6b6b;">Ошибка загрузки информации: ${error.message}</p>`;
-                infoModal.style.display = 'block';
             }
         }
-
+        /**
+         * Удаляет бронирование из модального окна.
+         * @param {string} bookingId - ID бронирования.
+         */
         async function deleteBookingFromModal(bookingId) {
-            closeBookingInfoModal();
-            closeHallSchemeModal();
             await deleteBooking(bookingId, true);
         }
-
-        function closeBookingInfoModal() {
-            const infoModal = document.getElementById('bookingInfoModal');
-            if (infoModal) infoModal.style.display = 'none';
-        }
-
         window.onclick = function(event) {
             const hallModal = document.getElementById('hallSchemeModal');
-            const infoModal = document.getElementById('bookingInfoModal');
+            const bookingsModal = document.getElementById('bookingsModal');
             if (event.target === hallModal) closeHallSchemeModal();
-            if (event.target === infoModal) closeBookingInfoModal();
+            if (event.target === bookingsModal) closeBookingsModal();
         };
     </script>
 </body>
