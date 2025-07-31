@@ -371,66 +371,7 @@
         </div>
         <div class="hall-container">
             <div class="screen">ЭКРАН</div>
-            <!-- Ряд 1: 8 одноместных пуфиков -->
-            <div class="row">
-                <div class="row-label">1</div>
-                <div class="seat single" data-seat="1-1" data-type="single">1</div>
-                <div class="seat single" data-seat="1-2" data-type="single">2</div>
-                <div class="seat single" data-seat="1-3" data-type="single">3</div>
-                <div class="seat single" data-seat="1-4" data-type="single">4</div>
-                <div class="seat single" data-seat="1-5" data-type="single">5</div>
-                <div class="seat single" data-seat="1-6" data-type="single">6</div>
-                <div class="seat single" data-seat="1-7" data-type="single">7</div>
-                <div class="seat single" data-seat="1-8" data-type="single">8</div>
-            </div>
-            <!-- Ряд 2: 5 двухместных диванов -->
-            <div class="row">
-                <div class="row-label">2</div>
-                <div class="seat double" data-seat="2-1" data-type="double">2-1</div>
-                <div class="seat double" data-seat="2-2" data-type="double">2-2</div>
-                <div class="seat double" data-seat="2-3" data-type="double">2-3</div>
-                <div class="seat double" data-seat="2-4" data-type="double">2-4</div>
-                <div class="seat double" data-seat="2-5" data-type="double">2-5</div>
-            </div>
-            <!-- Ряд 3: 6 двухместных диванов -->
-            <div class="row">
-                <div class="row-label">3</div>
-                <div class="seat double" data-seat="3-1" data-type="double">3-1</div>
-                <div class="seat double" data-seat="3-2" data-type="double">3-2</div>
-                <div class="seat double" data-seat="3-3" data-type="double">3-3</div>
-                <div class="seat double" data-seat="3-4" data-type="double">3-4</div>
-                <div class="seat double" data-seat="3-5" data-type="double">3-5</div>
-                <div class="seat double" data-seat="3-6" data-type="double">3-6</div>
-            </div>
-            <!-- Ряд 4: 6 двухместных диванов -->
-            <div class="row">
-                <div class="row-label">4</div>
-                <div class="seat double" data-seat="4-1" data-type="double">4-1</div>
-                <div class="seat double" data-seat="4-2" data-type="double">4-2</div>
-                <div class="seat double" data-seat="4-3" data-type="double">4-3</div>
-                <div class="seat double" data-seat="4-4" data-type="double">4-4</div>
-                <div class="seat double" data-seat="4-5" data-type="double">4-5</div>
-                <div class="seat double" data-seat="4-6" data-type="double">4-6</div>
-            </div>
-            <!-- Ряд 5: 4хместные по краям, 2хместные в центре -->
-            <div class="row">
-                <div class="row-label">5</div>
-                <div class="seat quad" data-seat="5-1" data-type="quad">5-1</div>
-                <div class="seat double" data-seat="5-2" data-type="double">5-2</div>
-                <div class="seat double" data-seat="5-3" data-type="double">5-3</div>
-                <div class="seat double" data-seat="5-4" data-type="double">5-4</div>
-                <div class="seat double" data-seat="5-5" data-type="double">5-5</div>
-                <div class="seat quad" data-seat="5-6" data-type="quad">5-6</div>
-            </div>
-            <!-- Ряд 6: 4хместный по краям, 2хместные в центре -->
-            <div class="row">
-                <div class="row-label">6</div>
-                <div class="seat quad" data-seat="6-1" data-type="quad">6-1</div>
-                <div class="seat double" data-seat="6-2" data-type="double">6-2</div>
-                <div class="seat double" data-seat="6-3" data-type="double">6-3</div>
-                <div class="seat double" data-seat="6-4" data-type="double">6-4</div>
-                <div class="seat quad" data-seat="6-5" data-type="quad">6-5</div>
-            </div>
+            <!-- Места будут сгенерированы динамически -->
         </div>
         <div class="form-group" style="text-align: center; margin-top: 15px;">
             <button onclick="openCancelBookingModal()">Отменить бронирование</button>
@@ -516,6 +457,15 @@
         const pricePerSeat = 400;
         const modal = document.getElementById('bookingModal');
         const cancelModal = document.getElementById('cancelBookingModal');
+        // Структура зала
+        const hallStructure = [
+            { type: 'single', count: 8 },
+            { type: 'double', count: 5 },
+            { type: 'double', count: 6 },
+            { type: 'double', count: 6 },
+            { type: 'mixed', seats: ['quad', 'double', 'double', 'double', 'double', 'quad'] },
+            { type: 'mixed', seats: ['quad', 'double', 'double', 'double', 'quad'] }
+        ];
         // Получаем параметры из URL
         const urlParams = new URLSearchParams(window.location.search);
         currentFilm = decodeURIComponent(urlParams.get('film') || 'Неизвестный фильм');
@@ -543,11 +493,35 @@
             document.getElementById('customerName').addEventListener('input', validateInput);
             document.getElementById('customerPhone').addEventListener('input', validateInput);
             document.getElementById('cancelPhone').addEventListener('input', validateInput);
+            // Рендерим зал
+            renderHall();
             // Проверяем существование сеанса
             if (await validateSeance(currentFilm, currentDate, currentTime)) {
                 loadBookedSeats();
             }
         });
+        /**
+         * Рендерит динамическую схему зала на основе hallStructure.
+         */
+        function renderHall() {
+            const container = document.querySelector('.hall-container');
+            container.innerHTML = '<div class="screen">ЭКРАН</div>';
+            hallStructure.forEach((row, rowIndex) => {
+                const rowElement = document.createElement('div');
+                rowElement.className = 'row';
+                rowElement.innerHTML = `<div class="row-label">${rowIndex + 1}</div>`;
+                const seats = row.type === 'mixed' ? row.seats : Array(row.count).fill(row.type);
+                seats.forEach((type, seatIndex) => {
+                    const seat = document.createElement('div');
+                    seat.className = `seat ${type}`;
+                    seat.dataset.seat = `${rowIndex + 1}-${seatIndex + 1}`;
+                    seat.dataset.type = type;
+                    seat.textContent = `${rowIndex + 1}-${seatIndex + 1}`;
+                    rowElement.appendChild(seat);
+                });
+                container.appendChild(rowElement);
+            });
+        }
         /**
          * Проверяет, существует ли сеанс в коллекции seances.
          * @param {string} film - Название фильма.
@@ -666,12 +640,14 @@
             document.getElementById('phoneError').style.display = 'none';
             document.getElementById('offerAgreement').checked = false;
             document.getElementById('offerError').style.display = 'none';
+            // Обновляем цену при открытии
+            peopleSelect.addEventListener('change', updatePrice);
         }
         /**
          * Обновляет цену в модальном окне на основе количества человек.
          */
         function updatePrice() {
-            const peopleCount = parseInt(document.getElementById('peopleCount').value);
+            const peopleCount = parseInt(document.getElementById('peopleCount').value) || 1;
             const totalPrice = peopleCount * pricePerSeat;
             document.getElementById('modalPrice').textContent = totalPrice;
             document.getElementById('modalPrice').style.fontSize = '1.4rem';
