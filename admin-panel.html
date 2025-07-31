@@ -125,7 +125,7 @@
             padding: 20px;
             border-radius: 15px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             border: 1px solid #4ecdc4;
             position: relative;
         }
@@ -174,6 +174,34 @@
         button:hover {
             transform: translateY(-2px);
         }
+        .seat-map {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .seat {
+            width: 40px;
+            height: 40px;
+            background: #555;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: default;
+        }
+        .seat.selected {
+            background: #4ecdc4;
+        }
+        .seat.occupied {
+            background: #ff6b6b;
+        }
         @media (max-width: 768px) {
             .nav-tabs {
                 flex-direction: column;
@@ -194,6 +222,11 @@
                 margin: 15% auto;
                 padding: 15px;
             }
+            .seat {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
         }
         @media (max-width: 480px) {
             h1 {
@@ -209,6 +242,11 @@
             .pagination button {
                 padding: 6px 12px;
                 font-size: 0.8rem;
+            }
+            .seat {
+                width: 25px;
+                height: 25px;
+                font-size: 0.7rem;
             }
         }
     </style>
@@ -307,6 +345,15 @@
                 <button onclick="addSeance()">Сохранить</button>
             </div>
         </div>
+        <!-- Модальное окно для отображения схемы зала -->
+        <div id="seatMapModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('seatMapModal')">&times;</span>
+                <h3>Схема зала</h3>
+                <p id="bookingInfo"></p>
+                <div id="seatMap" class="seat-map"></div>
+            </div>
+        </div>
     </div>
     <script>
         // Инициализация Firebase
@@ -394,12 +441,38 @@
                         <td>${booking.price} руб.</td>
                         <td>${booking.customerName}</td>
                         <td>${booking.customerPhone}</td>
-                        <td><button onclick="deleteBooking('${booking.id}')">Удалить</button></td>
+                        <td>
+                            <button onclick="showSeatMap('${booking.id}', '${booking.seat}', '${booking.film}', '${formattedDate}', '${booking.time}')">Посмотреть место</button>
+                            <button onclick="deleteBooking('${booking.id}')">Удалить</button>
+                        </td>
                     </tr>
                 `;
             });
             document.getElementById('bookingsBody').innerHTML = html;
             renderPagination('bookings', bookings.length, bookingsPage, changeBookingsPage);
+        }
+
+        // Отображение схемы зала
+        function showSeatMap(bookingId, seat, film, date, time) {
+            const modal = document.getElementById('seatMapModal');
+            const bookingInfo = document.getElementById('bookingInfo');
+            const seatMap = document.getElementById('seatMap');
+            bookingInfo.innerHTML = `Фильм: ${film}<br>Дата: ${date}<br>Время: ${time}<br>Место: ${seat}`;
+            
+            // Предполагаем, что зал имеет 10 рядов по 10 мест (как в hall.html)
+            let html = '';
+            for (let row = 1; row <= 10; row++) {
+                let rowHtml = `<div class="row">`;
+                for (let col = 1; col <= 10; col++) {
+                    const seatId = `Ряд ${row}, Место ${col}`;
+                    const isSelected = seat === seatId;
+                    rowHtml += `<div class="seat ${isSelected ? 'selected' : ''}">${row}-${col}</div>`;
+                }
+                rowHtml += `</div>`;
+                html += rowHtml;
+            }
+            seatMap.innerHTML = html;
+            modal.style.display = 'block';
         }
 
         // Удаление бронирования
