@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -12,6 +13,7 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="apple-touch-icon" href="/images/favicon.png">
     <style>
+        /* TODO: Проверить путь к /images/cinema-bg.jpg, так как возникает ошибка 404 */
         * {
             margin: 0;
             padding: 0;
@@ -168,9 +170,6 @@
             background: rgba(0, 0, 0, 0.3);
             color: white;
             font-size: 0.9rem;
-        }
-        input[type="file"] {
-            padding: 5px;
         }
         button {
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
@@ -532,10 +531,6 @@
                     <option value="18+">18+</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Постер фильма:</label>
-                <input type="file" id="moviePoster" accept="image/*">
-            </div>
             <button onclick="addMovie()">Добавить фильм</button>
             <div id="movieSuccess" class="success-message">Фильм успешно добавлен!</div>
             <div id="movieError" class="error-message">Заполните все поля!</div>
@@ -548,7 +543,6 @@
                             <th>Название</th>
                             <th>Описание</th>
                             <th>Возраст</th>
-                            <th>Постер</th>
                             <th>Действия</th>
                         </tr>
                     </thead>
@@ -679,8 +673,8 @@
                 window.location.href = 'admin.html';
                 return;
             }
-            if (!db || !storage) {
-                console.error('Firestore или Storage не инициализированы');
+            if (!db) {
+                console.error('Firestore не инициализирован');
                 alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
@@ -808,7 +802,7 @@
                 if (!moviesTableBody) throw new Error("Элемент 'moviesTableBody' не найден");
                 moviesTableBody.innerHTML = '';
                 if (querySnapshot.empty) {
-                    moviesTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет фильмов</td></tr>';
+                    moviesTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Нет фильмов</td></tr>';
                 } else {
                     querySnapshot.forEach(doc => {
                         const movie = doc.data();
@@ -817,7 +811,6 @@
                             <td>${movie.name}</td>
                             <td>${movie.description}</td>
                             <td>${movie.age}</td>
-                            <td>${movie.posterUrl ? `<img src="${movie.posterUrl}" alt="${movie.name}" style="max-width: 50px; border-radius: 5px;">` : 'Нет'}</td>
                             <td><button class="delete-booking-btn" onclick="deleteMovie('${doc.id}')">Удалить</button></td>
                         `;
                         moviesTableBody.appendChild(row);
@@ -833,18 +826,17 @@
         }
 
         /**
-         * Добавляет фильм с постером.
+         * Добавляет фильм.
          */
         async function addMovie() {
-            if (!db || !storage) {
-                console.error('Firestore или Storage не инициализированы');
+            if (!db) {
+                console.error('Firestore не инициализирован');
                 alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             const name = document.getElementById('movieName').value.trim();
             const desc = document.getElementById('movieDesc').value.trim();
             const age = document.getElementById('movieAge').value;
-            const posterFile = document.getElementById('moviePoster').files[0];
             const movieSuccessElement = document.getElementById('movieSuccess');
             const movieErrorElement = document.getElementById('movieError');
             if (movieSuccessElement) movieSuccessElement.style.display = 'none';
@@ -861,25 +853,10 @@
             }
 
             try {
-                let posterUrl = null;
-                let movieId = db.collection('movies').doc().id; // Генерируем ID заранее
-
-                // Загружаем постер, если он есть
-                if (posterFile) {
-                    if (!posterFile.type.startsWith('image/')) {
-                        throw new Error('Файл должен быть изображением');
-                    }
-                    const storageRef = storage.ref(`movie-posters/${movieId}.jpg`);
-                    await storageRef.put(posterFile);
-                    posterUrl = await storageRef.getDownloadURL();
-                }
-
-                // Добавляем фильм в Firestore
-                await db.collection('movies').doc(movieId).set({
+                await db.collection('movies').add({
                     name,
                     description: desc,
                     age,
-                    posterUrl: posterUrl || null,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
@@ -889,7 +866,6 @@
                 }
                 document.getElementById('movieName').value = '';
                 document.getElementById('movieDesc').value = '';
-                document.getElementById('moviePoster').value = '';
                 loadMovies();
             } catch (error) {
                 console.error('Ошибка добавления фильма:', error);
@@ -902,12 +878,12 @@
         }
 
         /**
-         * Удаляет фильм и его постер.
+         * Удаляет фильм.
          * @param {string} movieId - ID фильма.
          */
         async function deleteMovie(movieId) {
-            if (!db || !storage) {
-                console.error('Firestore или Storage не инициализированы');
+            if (!db) {
+                console.error('Firestore не инициализирован');
                 alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
@@ -916,10 +892,6 @@
                     const movieDoc = await db.collection('movies').doc(movieId).get();
                     if (!movieDoc.exists) {
                         throw new Error('Фильм не найден');
-                    }
-                    if (movieDoc.data().posterUrl) {
-                        const storageRef = storage.ref(`movie-posters/${movieId}.jpg`);
-                        await storageRef.delete().catch(err => console.warn('Постер не найден:', err));
                     }
                     await db.collection('movies').doc(movieId).delete();
                     loadMovies();
@@ -1481,3 +1453,4 @@
     </script>
 </body>
 </html>
+```
