@@ -506,19 +506,28 @@
         </div>
 
         <!-- Секция бронирований -->
-        <div id="bookings" class="section active">
+        <div id="bookings" class="section">
             <h2>Бронирования</h2>
-            <div class="filters-container">
+
+            <!-- Вкладки -->
+            <div class="nav-buttons">
+                <button class="nav-button active" onclick="switchBookingTab('upcoming')">Актуальные</button>
+                <button class="nav-button" onclick="switchBookingTab('archived')">Архив</button>
+            </div>
+
+            <!-- Фильтры для актуальных -->
+            <div id="upcomingFilters" class="filters-container">
                 <div class="filter-group">
-                    <button class="nav-button active" onclick="filterSeancesWithBookings('all')" id="allBtn">Все</button>
-                    <button class="nav-button" onclick="filterSeancesWithBookings('today')" id="todayBtn">Сегодня</button>
-                    <button class="nav-button" onclick="filterSeancesWithBookings('week')" id="weekBtn">Неделя</button>
-                    <button class="nav-button" onclick="filterSeancesWithBookings('future')" id="futureBtn">Будущие</button>
+                    <button class="nav-button active" onclick="filterSeancesWithBookings('upcoming')">Актуальные</button>
+                    <button class="nav-button" onclick="filterSeancesWithBookings('today')">Сегодня</button>
+                    <button class="nav-button" onclick="filterSeancesWithBookings('tomorrow')">Завтра</button>
+                    <button class="nav-button" onclick="filterSeancesWithBookings('week')">На неделе</button>
                 </div>
                 <button class="refresh-btn" onclick="loadSeancesWithBookings(currentBookingFilter)">Обновить</button>
                 <button class="clear-archive-btn" onclick="clearArchive()">Очистить архив</button>
             </div>
-            <div id="bookingsLoading" class="loading">Загрузка сеансов с бронированиями...</div>
+
+            <div id="bookingsLoading" class="loading">Загрузка бронирований...</div>
             <div id="seancesWithBookingsContainer"></div>
         </div>
 
@@ -566,33 +575,32 @@
         <!-- Секция сеансов -->
         <div id="seances" class="section">
             <h2>Управление сеансами</h2>
-            <div class="form-group">
-                <label>Выберите фильм:</label>
-                <select id="seanceMovie">
-                    <option value="">Выберите фильм</option>
-                </select>
+            <!-- Вкладки -->
+            <div class="nav-buttons">
+                <button class="nav-button active" onclick="switchSeanceTab('upcoming')">Актуальные</button>
+                <button class="nav-button" onclick="switchSeanceTab('archived')">Архив</button>
             </div>
-            <div class="form-group">
-                <label>Дата сеанса:</label>
-                <input type="date" id="seanceDate">
-            </div>
-            <div class="form-group">
-                <label>Время сеанса:</label>
-                <input type="time" id="seanceTime">
-            </div>
-            <button onclick="addSeance()">Добавить сеанс</button>
-            <div id="seanceSuccess" class="success-message">Сеанс успешно добавлен!</div>
-            <div id="seanceError" class="error-message">Заполните все поля!</div>
-            <h3 style="margin-top: 25px; text-align: center;">Список сеансов</h3>
-            <div class="filters-container">
-                <div class="filter-group">
-                    <button class="nav-button active" onclick="filterSeances('all')" id="allSeancesBtn">Все</button>
-                    <button class="nav-button" onclick="filterSeances('today')" id="todaySeancesBtn">Сегодня</button>
-                    <button class="nav-button" onclick="filterSeances('week')" id="weekSeancesBtn">Неделя</button>
-                    <button class="nav-button" onclick="filterSeances('future')" id="futureSeancesBtn">Будущие</button>
+            <!-- Форма добавления сеанса (только для актуальных) -->
+            <div id="addSeanceForm">
+                <div class="form-group">
+                    <label>Выберите фильм:</label>
+                    <select id="seanceMovie">
+                        <option value="">Выберите фильм</option>
+                    </select>
                 </div>
-                <button class="refresh-btn" onclick="loadSeances(currentSeanceFilter)">Обновить</button>
+                <div class="form-group">
+                    <label>Дата сеанса:</label>
+                    <input type="date" id="seanceDate">
+                </div>
+                <div class="form-group">
+                    <label>Время сеанса:</label>
+                    <input type="time" id="seanceTime">
+                </div>
+                <button onclick="addSeance()">Добавить сеанс</button>
+                <div id="seanceSuccess" class="success-message">Сеанс успешно добавлен!</div>
+                <div id="seanceError" class="error-message">Заполните все поля!</div>
             </div>
+            <h3 id="seancesListTitle" style="margin-top: 25px; text-align: center;">Актуальные сеансы</h3>
             <div id="seancesLoading" class="loading">Загрузка сеансов...</div>
             <div class="table-wrapper">
                 <table id="seancesTable" style="display: none;">
@@ -703,8 +711,9 @@
         }
 
         // Глобальные переменные
-        let currentBookingFilter = 'all';
-        let currentSeanceFilter = 'all';
+        let currentBookingTab = 'upcoming';
+        let currentBookingFilter = 'upcoming';
+        let currentSeanceTab = 'upcoming';
         let allSeances = [];
         let currentHighlightedBookingId = null;
 
@@ -721,11 +730,9 @@
             const today = new Date().toISOString().split('T')[0];
             const seanceDateInput = document.getElementById('seanceDate');
             if (seanceDateInput) seanceDateInput.value = today;
-
             loadMovies();
-            loadSeances();
-            loadAllSeances();
-            loadSeancesWithBookings(currentBookingFilter);
+            switchSeanceTab('upcoming');
+            switchBookingTab('upcoming');
         };
 
         function logout() {
@@ -738,22 +745,32 @@
             const section = document.getElementById(sectionId);
             if (section) section.classList.add('active');
             if (sectionId === 'movies') loadMovies();
-            else if (sectionId === 'seances') loadSeances(currentSeanceFilter);
-            else if (sectionId === 'bookings') loadSeancesWithBookings(currentBookingFilter);
+            else if (sectionId === 'seances') switchSeanceTab(currentSeanceTab);
+            else if (sectionId === 'bookings') switchBookingTab(currentBookingTab);
         }
 
-        function filterSeancesWithBookings(filter) {
+        // Переключение вкладок бронирований
+        function switchBookingTab(tab) {
             document.querySelectorAll('#bookings .nav-button').forEach(b => b.classList.remove('active'));
-            document.getElementById(filter + 'Btn')?.classList.add('active');
-            currentBookingFilter = filter;
-            loadSeancesWithBookings(filter);
+            if (tab === 'upcoming') {
+                document.querySelector('button[onclick="switchBookingTab(\'upcoming\')"]').classList.add('active');
+                document.getElementById('upcomingFilters').style.display = 'flex';
+            } else if (tab === 'archived') {
+                document.querySelector('button[onclick="switchBookingTab(\'archived\')"]').classList.add('active');
+                document.getElementById('upcomingFilters').style.display = 'none';
+            }
+            currentBookingTab = tab;
+            filterSeancesWithBookings(tab === 'archived' ? 'archived' : currentBookingFilter);
         }
 
-        function filterSeances(filter) {
-            document.querySelectorAll('#seances .nav-button').forEach(b => b.classList.remove('active'));
-            document.getElementById(filter + 'SeancesBtn')?.classList.add('active');
-            currentSeanceFilter = filter;
-            loadSeances(filter);
+        // Фильтры для бронирований
+        function filterSeancesWithBookings(filter) {
+            if (currentBookingTab === 'upcoming') {
+                document.querySelectorAll('#upcomingFilters .nav-button').forEach(b => b.classList.remove('active'));
+                document.querySelector(`#upcomingFilters .nav-button[onclick="filterSeancesWithBookings('${filter}')"]`)?.classList.add('active');
+                currentBookingFilter = filter;
+            }
+            loadSeancesWithBookings(filter);
         }
 
         async function loadAllSeances() {
@@ -770,195 +787,6 @@
             }
         }
 
-        function seanceExists(film, date, time) {
-            const exists = allSeances.some(s => s.movie === film && s.date === date && s.time === time);
-            if (!exists) return false;
-            const today = new Date(); today.setHours(0,0,0,0);
-            const [y,m,d] = date.split('-').map(Number);
-            const seanceDate = new Date(y, m-1, d);
-            return seanceDate >= today;
-        }
-
-        async function loadMovies() {
-            if (!db) return;
-            const loading = document.getElementById('moviesLoading');
-            const table = document.getElementById('moviesTable');
-            const tbody = document.getElementById('moviesTableBody');
-            if (loading) loading.style.display = 'block';
-            if (table) table.style.display = 'none';
-            try {
-                const snapshot = await db.collection('movies').orderBy('name').get();
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Нет фильмов</td></tr>';
-                } else {
-                    snapshot.forEach(doc => {
-                        const m = doc.data();
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${m.name}</td>
-                            <td>${m.description}</td>
-                            <td>${m.age}</td>
-                            <td>
-                                <button class="edit-booking-btn" onclick="editMovie('${doc.id}')">Редактировать</button>
-                                <button class="delete-booking-btn" onclick="deleteMovie('${doc.id}')">Удалить</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                }
-                if (loading) loading.style.display = 'none';
-                if (table) table.style.display = 'table';
-                updateSeanceSelect();
-            } catch (e) {
-                console.error('Ошибка загрузки фильмов:', e);
-                if (loading) loading.innerHTML = `Ошибка: ${e.message}`;
-            }
-        }
-
-        async function addMovie() {
-            const name = document.getElementById('movieName').value.trim();
-            const desc = document.getElementById('movieDesc').value.trim();
-            const age = document.getElementById('movieAge').value;
-            const success = document.getElementById('movieSuccess');
-            const error = document.getElementById('movieError');
-            success.style.display = 'none';
-            error.style.display = 'none';
-
-            if (!name || !desc || !age) {
-                error.textContent = ERROR_MESSAGES.INVALID_INPUT;
-                error.style.display = 'block';
-                setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT);
-                return;
-            }
-
-            try {
-                await db.collection('movies').add({
-                    name, description: desc, age,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                success.style.display = 'block';
-                setTimeout(() => success.style.display = 'none', MESSAGE_TIMEOUT);
-                document.getElementById('movieName').value = '';
-                document.getElementById('movieDesc').value = '';
-                loadMovies();
-            } catch (e) {
-                error.textContent = ERROR_MESSAGES.MOVIE_ADD_FAILED + e.message;
-                error.style.display = 'block';
-                setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT);
-            }
-        }
-
-        function editMovie(movieId) {
-            db.collection('movies').doc(movieId).get().then(doc => {
-                if (!doc.exists) return;
-                const data = doc.data();
-                document.getElementById('editMovieId').value = movieId;
-                document.getElementById('editMovieName').value = data.name;
-                document.getElementById('editMovieDesc').value = data.description;
-                document.getElementById('editMovieAge').value = data.age;
-                document.getElementById('editMovieModal').style.display = 'block';
-            }).catch(e => alert('Ошибка загрузки фильма: ' + e.message));
-        }
-
-        function closeEditMovieModal() {
-            document.getElementById('editMovieModal').style.display = 'none';
-        }
-
-        async function saveMovieChanges() {
-            const id = document.getElementById('editMovieId').value;
-            const name = document.getElementById('editMovieName').value.trim();
-            const desc = document.getElementById('editMovieDesc').value.trim();
-            const age = document.getElementById('editMovieAge').value;
-
-            if (!name || !desc || !age) {
-                alert(ERROR_MESSAGES.INVALID_INPUT);
-                return;
-            }
-
-            try {
-                await db.collection('movies').doc(id).update({
-                    name, description: desc, age
-                });
-                closeEditMovieModal();
-                loadMovies();
-                alert('Фильм обновлён!');
-            } catch (e) {
-                alert(ERROR_MESSAGES.MOVIE_UPDATE_FAILED + e.message);
-            }
-        }
-
-        async function deleteMovie(movieId) {
-            if (confirm('Удалить фильм?')) {
-                try {
-                    await db.collection('movies').doc(movieId).delete();
-                    loadMovies();
-                    alert('Фильм удалён!');
-                } catch (e) {
-                    alert(ERROR_MESSAGES.MOVIE_DELETE_FAILED + e.message);
-                }
-            }
-        }
-
-        async function updateSeanceSelect() {
-            const select = document.getElementById('seanceMovie');
-            if (!select) return;
-            select.innerHTML = '<option value="">Выберите фильм</option>';
-            try {
-                const snapshot = await db.collection('movies').orderBy('name').get();
-                snapshot.forEach(doc => {
-                    const m = doc.data();
-                    const opt = document.createElement('option');
-                    opt.value = m.name;
-                    opt.textContent = m.name;
-                    select.appendChild(opt);
-                });
-            } catch (e) {
-                console.error('Ошибка загрузки фильмов в селект:', e);
-            }
-        }
-
-        async function loadSeances(filter = 'all') {
-            if (!db) return;
-            const loading = document.getElementById('seancesLoading');
-            const table = document.getElementById('seancesTable');
-            if (loading) loading.style.display = 'block';
-            if (table) table.style.display = 'none';
-            try {
-                const snapshot = await db.collection('seances').get();
-                let seances = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(s => s.movie && s.date && s.time);
-                const today = new Date(); today.setHours(0,0,0,0);
-                if (filter === 'today') {
-                    const str = formatDate(today);
-                    seances = seances.filter(s => s.date === str);
-                } else if (filter === 'week') {
-                    const nextWeek = new Date(today); nextWeek.setDate(nextWeek.getDate() + 7);
-                    seances = seances.filter(s => s.date >= formatDate(today) && s.date <= formatDate(nextWeek));
-                } else if (filter === 'future') {
-                    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
-                    seances = seances.filter(s => s.date >= formatDate(tomorrow));
-                }
-                seances.sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
-
-                const tbody = document.getElementById('seancesTableBody');
-                tbody.innerHTML = seances.length ? seances.map(s => `
-                    <tr>
-                        <td>${s.movie}</td>
-                        <td>${s.date}</td>
-                        <td>${s.time}</td>
-                        <td><button class="delete-booking-btn" onclick="deleteSeance('${s.id}')">Удалить</button></td>
-                    </tr>
-                `).join('') : '<tr><td colspan="4" style="text-align: center;">Нет сеансов</td></tr>';
-
-                if (loading) loading.style.display = 'none';
-                if (table) table.style.display = 'table';
-                loadAllSeances();
-            } catch (e) {
-                console.error('Ошибка загрузки сеансов:', e);
-                if (loading) loading.innerHTML = `Ошибка: ${e.message}`;
-            }
-        }
-
         function formatDate(date) {
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -966,104 +794,101 @@
             return `${y}-${m}-${d}`;
         }
 
-        async function addSeance() {
-            const movie = document.getElementById('seanceMovie').value;
-            const date = document.getElementById('seanceDate').value;
-            const time = document.getElementById('seanceTime').value;
-            const success = document.getElementById('seanceSuccess');
-            const error = document.getElementById('seanceError');
-            success.style.display = 'none';
-            error.style.display = 'none';
-
-            if (!movie || !date || !time) {
-                error.textContent = ERROR_MESSAGES.INVALID_INPUT;
-                error.style.display = 'block';
-                setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT);
-                return;
-            }
-
-            const [y, m, d] = date.split('-').map(Number);
-            const seanceDate = new Date(y, m-1, d);
-            const today = new Date(); today.setHours(0,0,0,0);
-            if (seanceDate < today) {
-                error.textContent = 'Дата не может быть в прошлом';
-                error.style.display = 'block';
-                return;
-            }
-
-            try {
-                await db.collection('seances').add({ movie, date, time });
-                success.style.display = 'block';
-                setTimeout(() => success.style.display = 'none', MESSAGE_TIMEOUT);
-                document.getElementById('seanceTime').value = '';
-                loadSeances(currentSeanceFilter);
-            } catch (e) {
-                error.textContent = ERROR_MESSAGES.SEANCE_ADD_FAILED + e.message;
-                error.style.display = 'block';
-                setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT);
-            }
+        function getTodayStr() {
+            const d = new Date();
+            d.setHours(0,0,0,0);
+            return formatDate(d);
         }
 
-        async function deleteSeance(id) {
-            if (confirm('Удалить сеанс?')) {
-                try {
-                    await db.collection('seances').doc(id).delete();
-                    loadSeances(currentSeanceFilter);
-                    alert('Сеанс удалён!');
-                } catch (e) {
-                    alert(ERROR_MESSAGES.SEANCE_DELETE_FAILED + e.message);
-                }
-            }
+        function getTomorrowStr() {
+            const d = new Date();
+            d.setDate(d.getDate() + 1);
+            d.setHours(0,0,0,0);
+            return formatDate(d);
         }
 
-        async function loadSeancesWithBookings(filter = 'all') {
+        function getWeekEndStr() {
+            const d = new Date();
+            d.setDate(d.getDate() + 7);
+            d.setHours(0,0,0,0);
+            return formatDate(d);
+        }
+
+        async function loadSeancesWithBookings(filter = 'upcoming') {
             if (!db) return;
             const loading = document.getElementById('bookingsLoading');
             const container = document.getElementById('seancesWithBookingsContainer');
             if (loading) loading.style.display = 'block';
             if (container) container.innerHTML = '';
-            if (allSeances.length === 0) await loadAllSeances();
 
             try {
                 const snapshot = await db.collection('bookings').get();
                 const bookings = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                const today = new Date(); today.setHours(0,0,0,0);
+                const todayStr = formatDate(today);
+                const tomorrowStr = getTomorrowStr();
+                const weekEndStr = getWeekEndStr();
+
+                let filteredBookings = bookings.filter(b => b.film && b.date && b.time);
+
+                if (filter === 'archived') {
+                    filteredBookings = filteredBookings.filter(b => b.date < todayStr);
+                } else {
+                    filteredBookings = filteredBookings.filter(b => b.date >= todayStr);
+                    if (filter === 'today') {
+                        filteredBookings = filteredBookings.filter(b => b.date === todayStr);
+                    } else if (filter === 'tomorrow') {
+                        filteredBookings = filteredBookings.filter(b => b.date === tomorrowStr);
+                    } else if (filter === 'week') {
+                        filteredBookings = filteredBookings.filter(b => b.date <= weekEndStr);
+                    }
+                }
+
                 const groups = {};
-                bookings.forEach(b => {
+                filteredBookings.forEach(b => {
                     const key = `${b.film}_${b.date}_${b.time}`;
                     if (!groups[key]) groups[key] = { film: b.film, date: b.date, time: b.time, bookings: [] };
                     groups[key].bookings.push(b);
                 });
 
                 let list = Object.values(groups);
-                const today = new Date(); today.setHours(0,0,0,0);
-                if (filter === 'today') {
-                    const str = formatDate(today);
-                    list = list.filter(s => s.date === str);
-                } else if (filter === 'week') {
-                    const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 7);
-                    list = list.filter(s => s.date >= formatDate(today) && s.date <= formatDate(nextWeek));
-                } else if (filter === 'future') {
-                    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
-                    list = list.filter(s => s.date >= formatDate(tomorrow));
-                }
-                list.sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+                list.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
 
                 container.innerHTML = list.length ? list.map(s => `
-                    <div class="seance-item" onclick="showHallScheme('${s.film}', '${s.date}', '${s.time}', ${JSON.stringify(s.bookings)})">
+                    <div class="seance-item" 
+                         data-film="${escapeHtml(s.film)}"
+                         data-date="${s.date}"
+                         data-time="${s.time}"
+                         onclick="showHallSchemeFromClick(this)">
                         <h3>${s.film}</h3>
                         <p>Дата: ${s.date} | Время: ${s.time}</p>
                         <p>Бронирований: ${s.bookings.length}</p>
                     </div>
-                `).join('') : '<p style="text-align: center; color: #ff6b6b;">Нет сеансов с бронированиями</p>';
+                `).join('') : '<p style="text-align: center; color: #ff6b6b;">Нет бронирований</p>';
 
                 if (loading) loading.style.display = 'none';
+
             } catch (e) {
                 console.error('Ошибка загрузки бронирований:', e);
                 if (loading) loading.innerHTML = `Ошибка: ${e.message}`;
             }
         }
 
-        async function showHallScheme(film, date, time, bookings) {
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function showHallSchemeFromClick(el) {
+            const film = el.dataset.film;
+            const date = el.dataset.date;
+            const time = el.dataset.time;
+            await showHallScheme(film, date, time);
+        }
+
+        async function showHallScheme(film, date, time) {
             const modal = document.getElementById('hallSchemeModal');
             const container = document.getElementById('hallSchemeContainer');
             const info = document.getElementById('hallModalInfo');
@@ -1112,6 +937,7 @@
                     }
                     hallHTML += `</div>`;
                 });
+
                 container.innerHTML = hallHTML;
 
                 tableContainer.innerHTML = `
@@ -1119,6 +945,7 @@
                         <th>Место</th><th>Чел.</th><th>Цена</th><th>Имя</th><th>Телефон</th><th>Действия</th>
                     </tr></thead><tbody id="bookingsTableBody"></tbody></table>
                 `;
+
                 const tbody = document.getElementById('bookingsTableBody');
                 tbody.innerHTML = fetched.length ? fetched.map(b => `
                     <tr id="booking-${b.id}" style="cursor:pointer" onclick="highlightSeat('${b.id}', '${b.seat}')">
@@ -1154,7 +981,6 @@
             const modal = document.getElementById('bookingInfoModal');
             const content = document.getElementById('bookingInfoContent');
             if (!modal || !content) return;
-
             try {
                 const doc = await db.collection('bookings').doc(id).get();
                 if (!doc.exists) {
@@ -1188,7 +1014,7 @@
                     alert('Бронирование удалено!');
                     closeBookingInfoModal();
                     closeHallSchemeModal();
-                    loadSeancesWithBookings(currentBookingFilter);
+                    switchBookingTab(currentBookingTab);
                 } catch (e) {
                     alert(ERROR_MESSAGES.BOOKING_DELETE_FAILED + e.message);
                 }
@@ -1203,23 +1029,265 @@
                     const archive = snapshot.docs
                         .map(d => ({ id: d.id, ...d.data() }))
                         .filter(b => b.film && b.date && b.time && !seanceExists(b.film, b.date, b.time));
-
                     const batch = db.batch();
                     archive.forEach(b => batch.delete(db.collection('bookings').doc(b.id)));
                     await batch.commit();
-
                     alert(`Архив очищен. Удалено: ${archive.length}`);
-                    loadSeancesWithBookings(currentBookingFilter);
+                    switchBookingTab('archived');
                 } catch (e) {
                     alert(ERROR_MESSAGES.ARCHIVE_CLEAR_FAILED + e.message);
                 }
             }
         }
 
+        function seanceExists(film, date, time) {
+            return allSeances.some(s => s.movie === film && s.date === date && s.time === time);
+        }
+
         function closeBookingInfoModal() {
             document.getElementById('bookingInfoModal').style.display = 'none';
         }
 
+        // === Секция фильмов и сеансов (полностью) ===
+        async function loadMovies() {
+            if (!db) return;
+            const loading = document.getElementById('moviesLoading');
+            const table = document.getElementById('moviesTable');
+            const tbody = document.getElementById('moviesTableBody');
+            if (loading) loading.style.display = 'block';
+            if (table) table.style.display = 'none';
+            try {
+                const snapshot = await db.collection('movies').orderBy('name').get();
+                tbody.innerHTML = '';
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Нет фильмов</td></tr>';
+                } else {
+                    snapshot.forEach(doc => {
+                        const m = doc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${m.name}</td>
+                            <td>${m.description}</td>
+                            <td>${m.age}</td>
+                            <td>
+                                <button class="edit-booking-btn" onclick="editMovie('${doc.id}')">Редактировать</button>
+                                <button class="delete-booking-btn" onclick="deleteMovie('${doc.id}')">Удалить</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+                if (loading) loading.style.display = 'none';
+                if (table) table.style.display = 'table';
+                updateSeanceSelect();
+            } catch (e) {
+                console.error('Ошибка загрузки фильмов:', e);
+                if (loading) loading.innerHTML = `Ошибка: ${e.message}`;
+            }
+        }
+
+        async function addMovie() {
+            const name = document.getElementById('movieName').value.trim();
+            const desc = document.getElementById('movieDesc').value.trim();
+            const age = document.getElementById('movieAge').value;
+            const success = document.getElementById('movieSuccess');
+            const error = document.getElementById('movieError');
+            success.style.display = 'none';
+            error.style.display = 'none';
+            if (!name || !desc || !age) {
+                error.textContent = ERROR_MESSAGES.INVALID_INPUT;
+                error.style.display = 'block';
+                setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT);
+                return;
+            }
+            try {
+                await db.collection('movies').add({
+                    name, description: desc, age,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                success.style.display = 'block';
+                setTimeout(() => success.style.display = 'none', MESSAGE_TIMEOUT);
+                document.getElementById('movieName').value = '';
+                document.getElementById('movieDesc').value = '';
+                loadMovies();
+            } catch (e) {
+                error.textContent = ERROR_MESSAGES.MOVIE_ADD_FAILED + e.message;
+                error.style.display = 'block';
+                setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT);
+            }
+        }
+
+        function editMovie(movieId) {
+            db.collection('movies').doc(movieId).get().then(doc => {
+                if (!doc.exists) return;
+                const data = doc.data();
+                document.getElementById('editMovieId').value = movieId;
+                document.getElementById('editMovieName').value = data.name;
+                document.getElementById('editMovieDesc').value = data.description;
+                document.getElementById('editMovieAge').value = data.age;
+                document.getElementById('editMovieModal').style.display = 'block';
+            }).catch(e => alert('Ошибка загрузки фильма: ' + e.message));
+        }
+
+        function closeEditMovieModal() {
+            document.getElementById('editMovieModal').style.display = 'none';
+        }
+
+        async function saveMovieChanges() {
+            const id = document.getElementById('editMovieId').value;
+            const name = document.getElementById('editMovieName').value.trim();
+            const desc = document.getElementById('editMovieDesc').value.trim();
+            const age = document.getElementById('editMovieAge').value;
+            if (!name || !desc || !age) {
+                alert(ERROR_MESSAGES.INVALID_INPUT);
+                return;
+            }
+            try {
+                await db.collection('movies').doc(id).update({
+                    name, description: desc, age
+                });
+                closeEditMovieModal();
+                loadMovies();
+                alert('Фильм обновлён!');
+            } catch (e) {
+                alert(ERROR_MESSAGES.MOVIE_UPDATE_FAILED + e.message);
+            }
+        }
+
+        async function deleteMovie(movieId) {
+            if (confirm('Удалить фильм?')) {
+                try {
+                    await db.collection('movies').doc(movieId).delete();
+                    loadMovies();
+                    alert('Фильм удалён!');
+                } catch (e) {
+                    alert(ERROR_MESSAGES.MOVIE_DELETE_FAILED + e.message);
+                }
+            }
+        }
+
+        async function updateSeanceSelect() {
+            const select = document.getElementById('seanceMovie');
+            if (!select) return;
+            select.innerHTML = '<option value="">Выберите фильм</option>';
+            try {
+                const snapshot = await db.collection('movies').orderBy('name').get();
+                snapshot.forEach(doc => {
+                    const m = doc.data();
+                    const opt = document.createElement('option');
+                    opt.value = m.name;
+                    opt.textContent = m.name;
+                    select.appendChild(opt);
+                });
+            } catch (e) {
+                console.error('Ошибка загрузки фильмов в селект:', e);
+            }
+        }
+
+        // === Управление сеансами ===
+        function switchSeanceTab(tab) {
+            document.querySelectorAll('#seances .nav-button').forEach(b => b.classList.remove('active'));
+            if (tab === 'upcoming') {
+                document.querySelector('button[onclick="switchSeanceTab(\'upcoming\')"]').classList.add('active');
+                document.getElementById('addSeanceForm').style.display = 'block';
+                document.getElementById('seancesListTitle').textContent = 'Актуальные сеансы';
+            } else if (tab === 'archived') {
+                document.querySelector('button[onclick="switchSeanceTab(\'archived\')"]').classList.add('active');
+                document.getElementById('addSeanceForm').style.display = 'none';
+                document.getElementById('seancesListTitle').textContent = 'Архив сеансов';
+            }
+            currentSeanceTab = tab;
+            loadSeances();
+        }
+
+        async function loadSeances() {
+            if (!db) return;
+            const loading = document.getElementById('seancesLoading');
+            const table = document.getElementById('seancesTable');
+            if (loading) loading.style.display = 'block';
+            if (table) table.style.display = 'none';
+            try {
+                const snapshot = await db.collection('seances').get();
+                let seances = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(s => s.movie && s.date && s.time);
+                const today = new Date(); 
+                today.setHours(0, 0, 0, 0);
+                const todayStr = formatDate(today);
+                if (currentSeanceTab === 'upcoming') {
+                    seances = seances.filter(s => s.date >= todayStr);
+                } else if (currentSeanceTab === 'archived') {
+                    seances = seances.filter(s => s.date < todayStr);
+                }
+                seances.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+                const tbody = document.getElementById('seancesTableBody');
+                tbody.innerHTML = seances.length 
+                    ? seances.map(s => `
+                        <tr>
+                            <td>${s.movie}</td>
+                            <td>${s.date}</td>
+                            <td>${s.time}</td>
+                            <td>
+                                <button class="delete-booking-btn" onclick="deleteSeance('${s.id}')">Удалить</button>
+                            </td>
+                        </tr>
+                    `).join('')
+                    : '<tr><td colspan="4" style="text-align: center;">Нет сеансов</td></tr>';
+                if (loading) loading.style.display = 'none';
+                if (table) table.style.display = 'table';
+                await loadAllSeances();
+            } catch (e) {
+                console.error('Ошибка загрузки сеансов:', e);
+                if (loading) loading.innerHTML = `Ошибка: ${e.message}`;
+            }
+        }
+
+        async function addSeance() {
+            const movie = document.getElementById('seanceMovie').value;
+            const date = document.getElementById('seanceDate').value;
+            const time = document.getElementById('seanceTime').value;
+            const success = document.getElementById('seanceSuccess');
+            const error = document.getElementById('seanceError');
+            success.style.display = 'none';
+            error.style.display = 'none';
+            if (!movie || !date || !time) {
+                error.textContent = ERROR_MESSAGES.INVALID_INPUT;
+                error.style.display = 'block';
+                setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT);
+                return;
+            }
+            const [y, m, d] = date.split('-').map(Number);
+            const seanceDate = new Date(y, m-1, d);
+            const today = new Date(); today.setHours(0,0,0,0);
+            if (seanceDate < today) {
+                error.textContent = 'Дата не может быть в прошлом';
+                error.style.display = 'block';
+                return;
+            }
+            try {
+                await db.collection('seances').add({ movie, date, time });
+                success.style.display = 'block';
+                setTimeout(() => success.style.display = 'none', MESSAGE_TIMEOUT);
+                document.getElementById('seanceTime').value = '';
+                switchSeanceTab(currentSeanceTab);
+            } catch (e) {
+                error.textContent = ERROR_MESSAGES.SEANCE_ADD_FAILED + e.message;
+                error.style.display = 'block';
+                setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT);
+            }
+        }
+
+        async function deleteSeance(id) {
+            if (confirm('Удалить сеанс?')) {
+                try {
+                    await db.collection('seances').doc(id).delete();
+                    switchSeanceTab(currentSeanceTab);
+                    alert('Сеанс удалён!');
+                } catch (e) {
+                    alert(ERROR_MESSAGES.SEANCE_DELETE_FAILED + e.message);
+                }
+            }
+        }
+
+        // Обработчик клика вне модалки
         window.onclick = function(e) {
             const m1 = document.getElementById('hallSchemeModal');
             const m2 = document.getElementById('bookingInfoModal');
