@@ -9,6 +9,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <!-- Google Fonts: Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/favicon.png">
     <style>
         * {
             margin: 0;
@@ -17,14 +20,30 @@
         }
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: url('/images/cinema-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-blend-mode: darken;
             color: white;
             min-height: 100vh;
             padding: 15px;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Тёмный оверлей для читаемости */
+            z-index: -1;
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон для контента */
+            border-radius: 15px;
+            padding: 15px;
         }
         .back-link {
             display: inline-block;
@@ -375,6 +394,7 @@
         </div>
         <div class="form-group" style="text-align: center; margin-top: 15px;">
             <button onclick="openCancelBookingModal()">Отменить бронирование</button>
+            <button onclick="refreshHall()">Обновить</button>
         </div>
     </div>
     <!-- Модальное окно бронирования -->
@@ -551,54 +571,74 @@
             }
         }
         /**
-         * Загружает забронированные места для текущего сеанса из Firestore.
+         * Загружает забронированные места для текущего сеанса из Firestore и подписывается на изменения.
          * @returns {Promise<void>} - Промис, завершающийся после загрузки и рендеринга мест.
          */
         async function loadBookedSeats() {
             try {
                 const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
+                const cacheTimestampKey = `${cacheKey}_timestamp`;
+                const cacheExpiry = 5 * 60 * 1000; // 5 минут
                 const cachedBookings = localStorage.getItem(cacheKey);
-                if (cachedBookings) {
+                const cachedTimestamp = localStorage.getItem(cacheTimestampKey);
+                const now = Date.now();
+                // Проверяем, актуален ли кэш
+                if (cachedBookings && cachedTimestamp && (now - parseInt(cachedTimestamp) < cacheExpiry)) {
                     console.log('Используем кэш:', JSON.parse(cachedBookings));
-                    JSON.parse(cachedBookings).forEach(booking => {
-                        const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
-                        if (seatElement) {
-                            seatElement.classList.add('booked');
-                            seatElement.onclick = null;
-                            seatElement.style.cursor = 'not-allowed';
-                        }
-                    });
+                    updateSeats(JSON.parse(cachedBookings));
                 } else {
-                    console.log('Загружаем брони для:', { film: currentFilm, date: currentDate, time: currentTime });
-                    const querySnapshot = await db.collection('bookings')
-                        .where('film', '==', currentFilm)
-                        .where('date', '==', currentDate)
-                        .where('time', '==', currentTime)
-                        .get();
-                    const bookings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    console.log('Найдено бронирований:', bookings);
-                    localStorage.setItem(cacheKey, JSON.stringify(bookings));
-                    querySnapshot.forEach((doc) => {
-                        const booking = doc.data();
-                        const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
-                        if (seatElement) {
-                            seatElement.classList.add('booked');
-                            seatElement.onclick = null;
-                            seatElement.style.cursor = 'not-allowed';
-                        }
-                    });
+                    localStorage.removeItem(cacheKey);
+                    localStorage.removeItem(cacheTimestampKey);
                 }
-                // Очищаем старые обработчики и добавляем новые
-                document.querySelectorAll('.seat:not(.booked)').forEach(seat => {
-                    seat.removeEventListener('click', openBooking);
-                    seat.addEventListener('click', function() {
-                        openBooking(this);
+                // Подписываемся на изменения в реальном времени
+                db.collection('bookings')
+                    .where('film', '==', currentFilm)
+                    .where('date', '==', currentDate)
+                    .where('time', '==', currentTime)
+                    .onSnapshot((querySnapshot) => {
+                        const bookings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        console.log('Обновлено бронирований:', bookings);
+                        localStorage.setItem(cacheKey, JSON.stringify(bookings));
+                        localStorage.setItem(cacheTimestampKey, Date.now());
+                        updateSeats(bookings);
+                    }, (error) => {
+                        console.error('Ошибка подписки на бронирования:', error);
+                        alert(`Ошибка загрузки бронирований: ${error.message}`);
                     });
-                });
             } catch (error) {
                 console.error('Ошибка загрузки бронирований:', error);
                 alert(`Ошибка загрузки бронирований: ${error.message}`);
             }
+        }
+        /**
+         * Обновляет статус мест на основе списка бронирований.
+         * @param {Array} bookings - Список бронирований.
+         */
+        function updateSeats(bookings) {
+            document.querySelectorAll('.seat').forEach(seat => {
+                seat.classList.remove('booked');
+                seat.style.cursor = 'pointer';
+                seat.onclick = () => openBooking(seat);
+            });
+            bookings.forEach(booking => {
+                const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
+                if (seatElement) {
+                    seatElement.classList.add('booked');
+                    seatElement.onclick = null;
+                    seatElement.style.cursor = 'not-allowed';
+                }
+            });
+        }
+        /**
+         * Принудительно обновляет зал, очищая кэш и загружая данные из Firestore.
+         */
+        async function refreshHall() {
+            const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
+            const cacheTimestampKey = `${cacheKey}_timestamp`;
+            localStorage.removeItem(cacheKey);
+            localStorage.removeItem(cacheTimestampKey);
+            await loadBookedSeats();
+            showNotification('Зал обновлён!');
         }
         /**
          * Открывает модальное окно для бронирования места.
@@ -761,7 +801,9 @@
                 });
                 // Очищаем кэш
                 const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
+                const cacheTimestampKey = `${cacheKey}_timestamp`;
                 localStorage.removeItem(cacheKey);
+                localStorage.removeItem(cacheTimestampKey);
                 const seatElement = document.querySelector(`[data-seat="${currentSeat}"]`);
                 if (seatElement) {
                     seatElement.classList.remove('selected');
@@ -779,8 +821,6 @@
                 document.getElementById('customerName').value = '';
                 document.getElementById('customerPhone').value = '+7';
                 document.getElementById('offerAgreement').checked = false;
-                // Обновляем схему зала
-                await loadBookedSeats();
             } catch (error) {
                 console.error('Ошибка бронирования:', error);
                 alert(`Ошибка бронирования: ${error.message}`);
@@ -831,10 +871,11 @@
                 }
                 // Очищаем кэш
                 const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
+                const cacheTimestampKey = `${cacheKey}_timestamp`;
                 localStorage.removeItem(cacheKey);
+                localStorage.removeItem(cacheTimestampKey);
                 showNotification('Бронирование успешно отменено!');
                 closeCancelModal();
-                await loadBookedSeats();
             } catch (error) {
                 console.error('Ошибка отмены бронирования:', error);
                 alert(`Ошибка: ${error.message}`);
