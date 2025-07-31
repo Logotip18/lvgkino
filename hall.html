@@ -22,11 +22,11 @@
             font-family: 'Roboto', sans-serif;
             background: url('/images/cinema-bg.jpg') no-repeat center center fixed;
             background-size: cover;
-            background-blend-mode: darken;
             color: white;
             min-height: 100vh;
             padding: 15px;
             position: relative;
+            transition: background-image 0.5s ease;
         }
         body::before {
             content: '';
@@ -477,7 +477,6 @@
         const pricePerSeat = 400;
         const modal = document.getElementById('bookingModal');
         const cancelModal = document.getElementById('cancelBookingModal');
-        // Структура зала
         const hallStructure = [
             { type: 'single', count: 8 },
             { type: 'double', count: 5 },
@@ -501,8 +500,27 @@
         document.getElementById('modalFilm').textContent = currentFilm;
         document.getElementById('modalDate').textContent = formattedDate;
         document.getElementById('modalTime').textContent = currentTime;
+        // Устанавливаем фон постера
+        async function setMovieBackground(movieName) {
+            try {
+                const movieQuery = await db.collection('movies').where('name', '==', movieName).get();
+                if (!movieQuery.empty) {
+                    const movie = movieQuery.docs[0].data();
+                    document.body.style.backgroundImage = movie.posterUrl 
+                        ? `url('${movie.posterUrl}')` 
+                        : `url('/images/cinema-bg.jpg')`;
+                } else {
+                    document.body.style.backgroundImage = `url('/images/cinema-bg.jpg')`;
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки постера:', error);
+                document.body.style.backgroundImage = `url('/images/cinema-bg.jpg')`;
+            }
+        }
         // Загружаем страницу
         document.addEventListener('DOMContentLoaded', async () => {
+            // Устанавливаем фон постера
+            await setMovieBackground(currentFilm);
             const phoneInput = document.getElementById('customerPhone');
             phoneInput.addEventListener('input', formatPhoneNumber);
             phoneInput.addEventListener('keydown', allowOnlyNumbers);
