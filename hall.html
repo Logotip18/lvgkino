@@ -7,6 +7,8 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Google Fonts: Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,7 +16,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: white;
             min-height: 100vh;
@@ -104,6 +106,12 @@
         }
         .seat.selected {
             background: #4CAF50;
+            animation: pulse 0.5s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         /* Размеры мест */
         .single { width: 35px; height: 35px; }
@@ -298,6 +306,11 @@
             color: white;
             font-size: 0.9rem;
         }
+        .form-group input:invalid {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            transition: border-color 0.3s, background 0.3s;
+        }
         /* Стили для уведомлений */
         .notification {
             position: fixed;
@@ -419,6 +432,9 @@
                 <div class="seat quad" data-seat="6-5" data-type="quad">6-5</div>
             </div>
         </div>
+        <div class="form-group" style="text-align: center; margin-top: 15px;">
+            <button onclick="openCancelBookingModal()">Отменить бронирование</button>
+        </div>
     </div>
     <!-- Модальное окно бронирования -->
     <div id="bookingModal" class="modal">
@@ -437,7 +453,6 @@
                         <option value="1">1</option>
                     </select>
                 </div>
-                <!-- Новые поля для имени и телефона -->
                 <div class="form-group">
                     <label for="customerName">Имя:</label>
                     <input type="text" id="customerName" placeholder="Введите ваше имя" required>
@@ -447,7 +462,6 @@
                     <input type="tel" id="customerPhone" placeholder="+7 (XXX) XXX-XXXX" required maxlength="12">
                     <div id="phoneError" class="error">Неверный формат телефона. Пример: +79998887766</div>
                 </div>
-                <!-- Чекбокс согласия на оферту -->
                 <div class="form-group" style="text-align: left; margin-top: 15px;">
                     <label style="display: flex; align-items: flex-start; cursor: pointer;">
                         <input type="checkbox" id="offerAgreement" style="margin-right: 10px; margin-top: 3px;" required>
@@ -455,11 +469,24 @@
                     </label>
                     <div id="offerError" class="error">Необходимо согласиться с договором оферты</div>
                 </div>
-                <!-- УВЕЛИЧЕННАЯ стоимость -->
                 <p>Стоимость: <span id="modalPrice" style="font-size: 1.4rem; font-weight: bold; color: #4ecdc4;">400</span> руб.</p>
             </div>
             <button onclick="confirmBooking()">Забронировать</button>
             <button onclick="closeModal()" style="background: #666;">Отмена</button>
+        </div>
+    </div>
+    <!-- Модальное окно отмены бронирования -->
+    <div id="cancelBookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCancelModal()">&times;</span>
+            <h3>Отмена бронирования</h3>
+            <div class="form-group">
+                <label for="cancelPhone">Телефон:</label>
+                <input type="tel" id="cancelPhone" placeholder="+79998887766" required maxlength="12">
+                <div id="cancelPhoneError" class="error">Неверный формат телефона. Пример: +79998887766</div>
+            </div>
+            <button onclick="cancelBooking()">Подтвердить отмену</button>
+            <button onclick="closeCancelModal()" style="background: #666;">Отмена</button>
         </div>
     </div>
     <script>
@@ -472,7 +499,6 @@
             messagingSenderId: "526810546839",
             appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
         };
-        // Инициализация Firebase
         try {
             firebase.initializeApp(firebaseConfig);
             console.log('Firebase успешно инициализирован');
@@ -489,12 +515,13 @@
         let currentDate = '';
         const pricePerSeat = 400;
         const modal = document.getElementById('bookingModal');
+        const cancelModal = document.getElementById('cancelBookingModal');
         // Получаем параметры из URL
         const urlParams = new URLSearchParams(window.location.search);
         currentFilm = decodeURIComponent(urlParams.get('film') || 'Неизвестный фильм');
         currentTime = decodeURIComponent(urlParams.get('time') || 'Неизвестное время');
         currentDate = decodeURIComponent(urlParams.get('date') || 'Неизвестная дата');
-        // --- ФОРМАТИРОВАНИЕ ДАТЫ ---
+        // Форматирование даты
         const [year, month, day] = currentDate.split('-');
         const formattedDate = `${day}.${month}.${year}`;
         // Отображаем информацию о фильме
@@ -504,36 +531,92 @@
         document.getElementById('modalFilm').textContent = currentFilm;
         document.getElementById('modalDate').textContent = formattedDate;
         document.getElementById('modalTime').textContent = currentTime;
-        // Загружаем забронированные места при открытии страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            loadBookedSeats();
-            // Добавляем обработчик ввода для поля телефона
+        // Загружаем страницу
+        document.addEventListener('DOMContentLoaded', async () => {
             const phoneInput = document.getElementById('customerPhone');
             phoneInput.addEventListener('input', formatPhoneNumber);
             phoneInput.addEventListener('keydown', allowOnlyNumbers);
+            const cancelPhoneInput = document.getElementById('cancelPhone');
+            cancelPhoneInput.addEventListener('input', formatPhoneNumber);
+            cancelPhoneInput.addEventListener('keydown', allowOnlyNumbers);
+            // Валидация полей в реальном времени
+            document.getElementById('customerName').addEventListener('input', validateInput);
+            document.getElementById('customerPhone').addEventListener('input', validateInput);
+            document.getElementById('cancelPhone').addEventListener('input', validateInput);
+            // Проверяем существование сеанса
+            if (await validateSeance(currentFilm, currentDate, currentTime)) {
+                loadBookedSeats();
+            }
         });
-        // Загрузка забронированных мест из Firebase
+        /**
+         * Проверяет, существует ли сеанс в коллекции seances.
+         * @param {string} film - Название фильма.
+         * @param {string} date - Дата сеанса (формат YYYY-MM-DD).
+         * @param {string} time - Время сеанса (формат HH:MM).
+         * @returns {Promise<boolean>} - True, если сеанс существует, иначе перенаправляет на seances.html.
+         */
+        async function validateSeance(film, date, time) {
+            try {
+                const snapshot = await db.collection('seances')
+                    .where('movie', '==', film)
+                    .where('date', '==', date)
+                    .where('time', '==', time)
+                    .get();
+                if (snapshot.empty) {
+                    showNotification('Сеанс не найден. Пожалуйста, выберите другой.');
+                    setTimeout(() => {
+                        window.location.href = 'seances.html';
+                    }, 2000);
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Ошибка проверки сеанса:', error);
+                alert(`Ошибка проверки сеанса: ${error.message}`);
+                return false;
+            }
+        }
+        /**
+         * Загружает забронированные места для текущего сеанса из Firestore.
+         * @returns {Promise<void>} - Промис, завершающийся после загрузки и рендеринга мест.
+         */
         async function loadBookedSeats() {
             try {
-                console.log('Загружаем брони для:', { film: currentFilm, date: currentDate, time: currentTime });
-                const querySnapshot = await db.collection('bookings')
-                    .where('film', '==', currentFilm)
-                    .where('date', '==', currentDate)
-                    .where('time', '==', currentTime)
-                    .get();
-                const bookings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                console.log('Найдено бронирований:', bookings);
-                querySnapshot.forEach((doc) => {
-                    const booking = doc.data();
-                    const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
-                    if (seatElement) {
-                        seatElement.classList.add('booked');
-                        seatElement.onclick = null;
-                        seatElement.style.cursor = 'not-allowed';
-                    }
-                });
-                // Добавляем обработчики клика только к НЕзабронированным местам
+                const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
+                const cachedBookings = localStorage.getItem(cacheKey);
+                if (cachedBookings) {
+                    console.log('Используем кэш:', JSON.parse(cachedBookings));
+                    JSON.parse(cachedBookings).forEach(booking => {
+                        const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
+                        if (seatElement) {
+                            seatElement.classList.add('booked');
+                            seatElement.onclick = null;
+                            seatElement.style.cursor = 'not-allowed';
+                        }
+                    });
+                } else {
+                    console.log('Загружаем брони для:', { film: currentFilm, date: currentDate, time: currentTime });
+                    const querySnapshot = await db.collection('bookings')
+                        .where('film', '==', currentFilm)
+                        .where('date', '==', currentDate)
+                        .where('time', '==', currentTime)
+                        .get();
+                    const bookings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    console.log('Найдено бронирований:', bookings);
+                    localStorage.setItem(cacheKey, JSON.stringify(bookings));
+                    querySnapshot.forEach((doc) => {
+                        const booking = doc.data();
+                        const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
+                        if (seatElement) {
+                            seatElement.classList.add('booked');
+                            seatElement.onclick = null;
+                            seatElement.style.cursor = 'not-allowed';
+                        }
+                    });
+                }
+                // Очищаем старые обработчики и добавляем новые
                 document.querySelectorAll('.seat:not(.booked)').forEach(seat => {
+                    seat.removeEventListener('click', openBooking);
                     seat.addEventListener('click', function() {
                         openBooking(this);
                     });
@@ -543,18 +626,21 @@
                 alert(`Ошибка загрузки бронирований: ${error.message}`);
             }
         }
+        /**
+         * Открывает модальное окно для бронирования места.
+         * @param {HTMLElement} seatElement - Элемент места (div.seat).
+         */
         function openBooking(seatElement) {
-            // Дополнительная проверка
-            if (seatElement.classList.contains('booked')) {
-                return;
-            }
+            if (seatElement.classList.contains('booked')) return;
+            // Удаляем класс selected у всех мест
+            document.querySelectorAll('.seat.selected').forEach(seat => seat.classList.remove('selected'));
+            seatElement.classList.add('selected');
             currentSeat = seatElement.dataset.seat;
             currentType = seatElement.dataset.type;
             document.getElementById('modalSeat').textContent = currentSeat;
             document.getElementById('modalType').textContent =
                 currentType === 'single' ? 'Одноместный' :
                 currentType === 'double' ? 'Двухместный' : 'Четырехместный';
-            // Настраиваем селектор количества человек
             const peopleSelect = document.getElementById('peopleCount');
             peopleSelect.innerHTML = '';
             let min = 1, max = 1;
@@ -573,17 +659,17 @@
             }
             updatePrice();
             modal.style.display = 'block';
-            // Центрируем модальное окно
             const modalContent = document.querySelector('.modal-content');
             modalContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Очищаем поля формы
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '+7';
             document.getElementById('phoneError').style.display = 'none';
-            // Сбрасываем чекбокс и ошибку
             document.getElementById('offerAgreement').checked = false;
             document.getElementById('offerError').style.display = 'none';
         }
+        /**
+         * Обновляет цену в модальном окне на основе количества человек.
+         */
         function updatePrice() {
             const peopleCount = parseInt(document.getElementById('peopleCount').value);
             const totalPrice = peopleCount * pricePerSeat;
@@ -592,36 +678,26 @@
             document.getElementById('modalPrice').style.fontWeight = 'bold';
             document.getElementById('modalPrice').style.color = '#4ecdc4';
         }
-        // Обновляем цену при изменении количества человек
-        document.getElementById('peopleCount').addEventListener('change', updatePrice);
-        // Форматирование номера телефона
+        /**
+         * Форматирует номер телефона в формате +7XXXXXXXXXX.
+         * @param {Event} e - Событие ввода.
+         */
         function formatPhoneNumber(e) {
             let input = e.target.value.replace(/\D/g, '');
-            if (input.startsWith('7')) {
-                input = input.substring(1);
-            }
-            if (input.startsWith('8')) {
-                input = input.substring(1);
-            }
-            if (input.length > 10) {
-                input = input.substring(0, 10);
-            }
+            if (input.startsWith('7')) input = input.substring(1);
+            if (input.startsWith('8')) input = input.substring(1);
+            if (input.length > 10) input = input.substring(0, 10);
             let formatted = '+7';
-            if (input.length > 0) {
-                formatted += input.substring(0, 3);
-            }
-            if (input.length > 3) {
-                formatted += input.substring(3, 6);
-            }
-            if (input.length > 6) {
-                formatted += input.substring(6, 8);
-            }
-            if (input.length > 8) {
-                formatted += input.substring(8, 10);
-            }
+            if (input.length > 0) formatted += input.substring(0, 3);
+            if (input.length > 3) formatted += input.substring(3, 6);
+            if (input.length > 6) formatted += input.substring(6, 8);
+            if (input.length > 8) formatted += input.substring(8, 10);
             e.target.value = formatted;
         }
-        // Разрешаем только цифры и управляющие клавиши
+        /**
+         * Разрешает ввод только цифр и управляющих клавиш.
+         * @param {Event} e - Событие нажатия клавиши.
+         */
         function allowOnlyNumbers(e) {
             if ([46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||
                 (e.keyCode === 65 && e.ctrlKey === true) ||
@@ -635,12 +711,30 @@
                 e.preventDefault();
             }
         }
-        // Валидация номера телефона
+        /**
+         * Проверяет валидность номера телефона.
+         * @param {string} phone - Номер телефона.
+         * @returns {boolean} - True, если номер валиден.
+         */
         function validatePhone(phone) {
             const phoneRegex = /^\+7\d{10}$/;
             return phoneRegex.test(phone);
         }
-        // Подтверждение бронирования
+        /**
+         * Проверяет валидность полей формы в реальном времени.
+         * @param {Event} e - Событие ввода.
+         */
+        function validateInput(e) {
+            const input = e.target;
+            if (input.id === 'customerName') {
+                input.setCustomValidity(input.value.trim() ? '' : 'Введите имя');
+            } else if (input.id === 'customerPhone' || input.id === 'cancelPhone') {
+                input.setCustomValidity(validatePhone(input.value) ? '' : 'Неверный формат телефона');
+            }
+        }
+        /**
+         * Подтверждает бронирование и сохраняет его в Firestore.
+         */
         async function confirmBooking() {
             const people = document.getElementById('peopleCount').value;
             const price = document.getElementById('modalPrice').textContent;
@@ -651,11 +745,14 @@
             document.getElementById('phoneError').style.display = 'none';
             offerError.style.display = 'none';
             if (!customerName) {
-                alert('Пожалуйста, введите имя.');
+                document.getElementById('customerName').setCustomValidity('Введите имя');
+                document.getElementById('customerName').reportValidity();
                 return;
             }
             if (!validatePhone(customerPhone)) {
                 document.getElementById('phoneError').style.display = 'block';
+                document.getElementById('customerPhone').setCustomValidity('Неверный формат телефона');
+                document.getElementById('customerPhone').reportValidity();
                 return;
             }
             if (!offerCheckbox.checked) {
@@ -663,6 +760,18 @@
                 return;
             }
             try {
+                // Проверка, что место не забронировано
+                const snapshot = await db.collection('bookings')
+                    .where('film', '==', currentFilm)
+                    .where('date', '==', currentDate)
+                    .where('time', '==', currentTime)
+                    .where('seat', '==', currentSeat)
+                    .get();
+                if (!snapshot.empty) {
+                    showNotification('Место уже забронировано!');
+                    closeModal();
+                    return;
+                }
                 await db.collection('bookings').add({
                     film: currentFilm,
                     time: currentTime,
@@ -674,8 +783,12 @@
                     customerPhone: customerPhone,
                     bookingTimestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
+                // Очищаем кэш
+                const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
+                localStorage.removeItem(cacheKey);
                 const seatElement = document.querySelector(`[data-seat="${currentSeat}"]`);
                 if (seatElement) {
+                    seatElement.classList.remove('selected');
                     seatElement.classList.add('booked');
                     seatElement.onclick = null;
                     seatElement.style.cursor = 'not-allowed';
@@ -690,19 +803,78 @@
                 document.getElementById('customerName').value = '';
                 document.getElementById('customerPhone').value = '+7';
                 document.getElementById('offerAgreement').checked = false;
+                // Обновляем схему зала
+                await loadBookedSeats();
             } catch (error) {
                 console.error('Ошибка бронирования:', error);
                 alert(`Ошибка бронирования: ${error.message}`);
             }
         }
-        function closeModal() {
-            modal.style.display = 'none';
+        /**
+         * Открывает модальное окно для отмены бронирования.
+         */
+        function openCancelBookingModal() {
+            cancelModal.style.display = 'block';
+            document.getElementById('cancelPhone').value = '+7';
+            document.getElementById('cancelPhoneError').style.display = 'none';
+            const modalContent = cancelModal.querySelector('.modal-content');
+            modalContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
+        /**
+         * Закрывает модальное окно отмены бронирования.
+         */
+        function closeCancelModal() {
+            cancelModal.style.display = 'none';
+        }
+        /**
+         * Отменяет бронирование по номеру телефона.
+         */
+        async function cancelBooking() {
+            const phone = document.getElementById('cancelPhone').value.trim();
+            document.getElementById('cancelPhoneError').style.display = 'none';
+            if (!validatePhone(phone)) {
+                document.getElementById('cancelPhoneError').style.display = 'block';
+                document.getElementById('cancelPhone').setCustomValidity('Неверный формат телефона');
+                document.getElementById('cancelPhone').reportValidity();
+                return;
+            }
+            try {
+                const snapshot = await db.collection('bookings')
+                    .where('film', '==', currentFilm)
+                    .where('date', '==', currentDate)
+                    .where('time', '==', currentTime)
+                    .where('customerPhone', '==', phone)
+                    .get();
+                if (snapshot.empty) {
+                    showNotification('Бронирование не найдено для этого телефона.');
+                    closeCancelModal();
+                    return;
+                }
+                for (const doc of snapshot.docs) {
+                    await db.collection('bookings').doc(doc.id).delete();
+                }
+                // Очищаем кэш
+                const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
+                localStorage.removeItem(cacheKey);
+                showNotification('Бронирование успешно отменено!');
+                closeCancelModal();
+                await loadBookedSeats();
+            } catch (error) {
+                console.error('Ошибка отмены бронирования:', error);
+                alert(`Ошибка: ${error.message}`);
             }
         }
+        /**
+         * Закрывает модальное окно бронирования.
+         */
+        function closeModal() {
+            document.querySelectorAll('.seat.selected').forEach(seat => seat.classList.remove('selected'));
+            modal.style.display = 'none';
+        }
+        /**
+         * Показывает уведомление с сообщением.
+         * @param {string} message - Текст уведомления.
+         */
         function showNotification(message) {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -723,6 +895,10 @@
                     }, 500);
                 }
             }, 5000);
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) closeModal();
+            if (event.target == cancelModal) closeCancelModal();
         }
     </script>
 </body>
