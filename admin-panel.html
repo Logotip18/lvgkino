@@ -624,8 +624,9 @@
         </div>
     </div>
     <script>
-        // Инициализация Firebase
-        const firebaseConfig = {
+        // Конфигурация и константы
+        const MESSAGE_TIMEOUT = 5000; // Время отображения сообщений (5 секунд)
+        const FIREBASE_CONFIG = {
             apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
             authDomain: "lvgkino.firebaseapp.com",
             projectId: "lvgkino",
@@ -633,35 +634,45 @@
             messagingSenderId: "526810546839",
             appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
         };
-        if (typeof firebase === 'undefined') {
-            console.error('Firebase SDK не загружен');
-            alert('Ошибка: Не удалось загрузить Firebase SDK. Проверьте подключение к интернету.');
-        } else {
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                    console.log('Firebase успешно инициализирован');
-                }
-            } catch (error) {
-                console.error('Ошибка инициализации Firebase:', error);
-                alert('Ошибка инициализации Firebase: ' + error.message);
-            }
-        }
+        const ERROR_MESSAGES = {
+            FIREBASE_NOT_LOADED: 'Firebase SDK не загружен. Проверьте подключение к интернету.',
+            FIREBASE_INIT_FAILED: 'Ошибка инициализации Firebase: ',
+            FIRESTORE_UNAVAILABLE: 'Firestore не доступен.',
+            STORAGE_UNAVAILABLE: 'Storage не доступен.',
+            INVALID_INPUT: 'Пожалуйста, заполните все обязательные поля корректно.',
+            MOVIE_ADD_FAILED: 'Ошибка добавления фильма: ',
+            MOVIE_DELETE_FAILED: 'Ошибка удаления фильма: ',
+            SEANCE_ADD_FAILED: 'Ошибка добавления сеанса: ',
+            SEANCE_DELETE_FAILED: 'Ошибка удаления сеанса: ',
+            BOOKING_DELETE_FAILED: 'Ошибка удаления бронирования: ',
+            ARCHIVE_CLEAR_FAILED: 'Ошибка очистки архива: '
+        };
+
+        // Инициализация Firebase
         let db = null;
         let storage = null;
         try {
+            if (typeof firebase === 'undefined' || !firebase.app) {
+                throw new Error('Firebase SDK не загружен');
+            }
+            if (!firebase.apps.length) {
+                firebase.initializeApp(FIREBASE_CONFIG);
+                console.log('Firebase успешно инициализирован');
+            }
             db = firebase.firestore();
             storage = firebase.storage();
             console.log('Firestore и Storage успешно инициализированы');
         } catch (error) {
-            console.error('Ошибка получения Firestore или Storage:', error);
-            alert('Ошибка Firestore/Storage: ' + error.message);
+            console.error('Ошибка инициализации Firebase:', error);
+            alert(ERROR_MESSAGES.FIREBASE_INIT_FAILED + error.message);
         }
+
         // Глобальные переменные
         let currentBookingFilter = 'all';
         let currentSeanceFilter = 'all';
         let allSeances = [];
         let currentHighlightedBookingId = null;
+
         // Проверка авторизации и загрузка данных
         window.onload = function() {
             if (localStorage.getItem('adminLoggedIn') !== 'true') {
@@ -670,7 +681,7 @@
             }
             if (!db || !storage) {
                 console.error('Firestore или Storage не инициализированы');
-                alert('Ошибка: Firestore или Storage не доступны.');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             const today = new Date();
@@ -682,6 +693,7 @@
             loadAllSeances();
             loadSeancesWithBookings(currentBookingFilter);
         };
+
         /**
          * Выполняет выход из админ-панели.
          */
@@ -689,6 +701,7 @@
             localStorage.removeItem('adminLoggedIn');
             window.location.href = 'admin.html';
         }
+
         /**
          * Переключает видимость секций админ-панели.
          * @param {string} sectionId - ID секции для отображения.
@@ -701,6 +714,7 @@
             else if (sectionId === 'seances') loadSeances(currentSeanceFilter);
             else if (sectionId === 'bookings') loadSeancesWithBookings(currentBookingFilter);
         }
+
         /**
          * Фильтрует сеансы с бронированиями.
          * @param {string} filter - Тип фильтра ('all', 'today', 'week', 'future').
@@ -712,6 +726,7 @@
             currentBookingFilter = filter;
             loadSeancesWithBookings(filter);
         }
+
         /**
          * Фильтрует сеансы.
          * @param {string} filter - Тип фильтра ('all', 'today', 'week', 'future').
@@ -723,6 +738,7 @@
             currentSeanceFilter = filter;
             loadSeances(filter);
         }
+
         /**
          * Загружает все сеансы из Firestore.
          * @returns {Promise<Array>} Список сеансов.
@@ -730,7 +746,7 @@
         async function loadAllSeances() {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                document.getElementById('bookingsLoading').innerHTML = 'Ошибка: Firestore не доступен';
+                document.getElementById('bookingsLoading').innerHTML = ERROR_MESSAGES.FIRESTORE_UNAVAILABLE;
                 return [];
             }
             try {
@@ -745,6 +761,7 @@
                 return [];
             }
         }
+
         /**
          * Проверяет, существует ли сеанс и является ли он активным.
          * @param {string} film - Название фильма.
@@ -770,13 +787,14 @@
                 return true;
             }
         }
+
         /**
          * Загружает фильмы и обновляет таблицу.
          */
         async function loadMovies() {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                document.getElementById('moviesLoading').innerHTML = 'Ошибка: Firestore не доступен';
+                document.getElementById('moviesLoading').innerHTML = ERROR_MESSAGES.FIRESTORE_UNAVAILABLE;
                 return;
             }
             try {
@@ -813,13 +831,14 @@
                 document.getElementById('moviesLoading').innerHTML = `Ошибка загрузки: ${error.message}`;
             }
         }
+
         /**
          * Добавляет фильм с постером.
          */
         async function addMovie() {
             if (!db || !storage) {
                 console.error('Firestore или Storage не инициализированы');
-                alert('Ошибка: Firestore или Storage не доступны');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             const name = document.getElementById('movieName').value.trim();
@@ -830,40 +849,58 @@
             const movieErrorElement = document.getElementById('movieError');
             if (movieSuccessElement) movieSuccessElement.style.display = 'none';
             if (movieErrorElement) movieErrorElement.style.display = 'none';
-            if (name && desc) {
-                try {
-                    const movieRef = await db.collection('movies').add({
-                        name,
-                        description: desc,
-                        age,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    let posterUrl = null;
-                    if (posterFile) {
-                        const storageRef = storage.ref(`movie-posters/${movieRef.id}.jpg`);
-                        await storageRef.put(posterFile);
-                        posterUrl = await storageRef.getDownloadURL();
-                        await db.collection('movies').doc(movieRef.id).update({ posterUrl });
-                    }
-                    if (movieSuccessElement) {
-                        movieSuccessElement.style.display = 'block';
-                        setTimeout(() => movieSuccessElement.style.display = 'none', 3000);
-                    }
-                    document.getElementById('movieName').value = '';
-                    document.getElementById('movieDesc').value = '';
-                    document.getElementById('moviePoster').value = '';
-                    loadMovies();
-                } catch (error) {
-                    console.error('Ошибка добавления фильма:', error);
-                    alert(`Ошибка добавления фильма: ${error.message}`);
-                }
-            } else {
+
+            // Валидация входных данных
+            if (!name || !desc || !age) {
                 if (movieErrorElement) {
+                    movieErrorElement.textContent = ERROR_MESSAGES.INVALID_INPUT;
                     movieErrorElement.style.display = 'block';
-                    setTimeout(() => movieErrorElement.style.display = 'none', 3000);
+                    setTimeout(() => movieErrorElement.style.display = 'none', MESSAGE_TIMEOUT);
+                }
+                return;
+            }
+
+            try {
+                let posterUrl = null;
+                let movieId = db.collection('movies').doc().id; // Генерируем ID заранее
+
+                // Загружаем постер, если он есть
+                if (posterFile) {
+                    if (!posterFile.type.startsWith('image/')) {
+                        throw new Error('Файл должен быть изображением');
+                    }
+                    const storageRef = storage.ref(`movie-posters/${movieId}.jpg`);
+                    await storageRef.put(posterFile);
+                    posterUrl = await storageRef.getDownloadURL();
+                }
+
+                // Добавляем фильм в Firestore
+                await db.collection('movies').doc(movieId).set({
+                    name,
+                    description: desc,
+                    age,
+                    posterUrl: posterUrl || null,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                if (movieSuccessElement) {
+                    movieSuccessElement.style.display = 'block';
+                    setTimeout(() => movieSuccessElement.style.display = 'none', MESSAGE_TIMEOUT);
+                }
+                document.getElementById('movieName').value = '';
+                document.getElementById('movieDesc').value = '';
+                document.getElementById('moviePoster').value = '';
+                loadMovies();
+            } catch (error) {
+                console.error('Ошибка добавления фильма:', error);
+                if (movieErrorElement) {
+                    movieErrorElement.textContent = ERROR_MESSAGES.MOVIE_ADD_FAILED + error.message;
+                    movieErrorElement.style.display = 'block';
+                    setTimeout(() => movieErrorElement.style.display = 'none', MESSAGE_TIMEOUT);
                 }
             }
         }
+
         /**
          * Удаляет фильм и его постер.
          * @param {string} movieId - ID фильма.
@@ -871,13 +908,16 @@
         async function deleteMovie(movieId) {
             if (!db || !storage) {
                 console.error('Firestore или Storage не инициализированы');
-                alert('Ошибка: Firestore или Storage не доступны');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             if (confirm('Удалить фильм?')) {
                 try {
                     const movieDoc = await db.collection('movies').doc(movieId).get();
-                    if (movieDoc.exists && movieDoc.data().posterUrl) {
+                    if (!movieDoc.exists) {
+                        throw new Error('Фильм не найден');
+                    }
+                    if (movieDoc.data().posterUrl) {
                         const storageRef = storage.ref(`movie-posters/${movieId}.jpg`);
                         await storageRef.delete().catch(err => console.warn('Постер не найден:', err));
                     }
@@ -886,10 +926,11 @@
                     alert('Фильм удалён!');
                 } catch (error) {
                     console.error('Ошибка удаления фильма:', error);
-                    alert(`Ошибка удаления фильма: ${error.message}`);
+                    alert(ERROR_MESSAGES.MOVIE_DELETE_FAILED + error.message);
                 }
             }
         }
+
         /**
          * Обновляет выпадающий список фильмов.
          */
@@ -911,6 +952,7 @@
                 console.error('Ошибка обновления селекта:', error);
             }
         }
+
         /**
          * Загружает сеансы.
          * @param {string} filter - Тип фильтра ('all', 'today', 'week', 'future').
@@ -918,7 +960,7 @@
         async function loadSeances(filter = 'all') {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                document.getElementById('seancesLoading').innerHTML = 'Ошибка: Firestore не доступен';
+                document.getElementById('seancesLoading').innerHTML = ERROR_MESSAGES.FIRESTORE_UNAVAILABLE;
                 return;
             }
             try {
@@ -980,6 +1022,7 @@
                 document.getElementById('seancesLoading').innerHTML = `Ошибка загрузки: ${error.message}`;
             }
         }
+
         /**
          * Форматирует дату для сравнения.
          * @param {Date} date - Дата.
@@ -991,13 +1034,14 @@
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
+
         /**
          * Добавляет сеанс.
          */
         async function addSeance() {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                alert('Ошибка: Firestore не доступен');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             const movie = document.getElementById('seanceMovie').value;
@@ -1007,31 +1051,46 @@
             const seanceErrorElement = document.getElementById('seanceError');
             if (seanceSuccessElement) seanceSuccessElement.style.display = 'none';
             if (seanceErrorElement) seanceErrorElement.style.display = 'none';
-            if (movie && date && time) {
-                try {
-                    await db.collection('seances').add({
-                        movie,
-                        date,
-                        time,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    if (seanceSuccessElement) {
-                        seanceSuccessElement.style.display = 'block';
-                        setTimeout(() => seanceSuccessElement.style.display = 'none', 3000);
-                    }
-                    document.getElementById('seanceTime').value = '';
-                    loadSeances(currentSeanceFilter);
-                } catch (error) {
-                    console.error('Ошибка добавления сеанса:', error);
-                    alert(`Ошибка добавления сеанса: ${error.message}`);
-                }
-            } else {
+
+            // Валидация входных данных
+            if (!movie || !date || !time) {
                 if (seanceErrorElement) {
+                    seanceErrorElement.textContent = ERROR_MESSAGES.INVALID_INPUT;
                     seanceErrorElement.style.display = 'block';
-                    setTimeout(() => seanceErrorElement.style.display = 'none', 3000);
+                    setTimeout(() => seanceErrorElement.style.display = 'none', MESSAGE_TIMEOUT);
+                }
+                return;
+            }
+            try {
+                const [year, month, day] = date.split('-').map(Number);
+                const seanceDate = new Date(year, month - 1, day);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (seanceDate < today) {
+                    throw new Error('Дата сеанса не может быть в прошлом');
+                }
+                await db.collection('seances').add({
+                    movie,
+                    date,
+                    time,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                if (seanceSuccessElement) {
+                    seanceSuccessElement.style.display = 'block';
+                    setTimeout(() => seanceSuccessElement.style.display = 'none', MESSAGE_TIMEOUT);
+                }
+                document.getElementById('seanceTime').value = '';
+                loadSeances(currentSeanceFilter);
+            } catch (error) {
+                console.error('Ошибка добавления сеанса:', error);
+                if (seanceErrorElement) {
+                    seanceErrorElement.textContent = ERROR_MESSAGES.SEANCE_ADD_FAILED + error.message;
+                    seanceErrorElement.style.display = 'block';
+                    setTimeout(() => seanceErrorElement.style.display = 'none', MESSAGE_TIMEOUT);
                 }
             }
         }
+
         /**
          * Удаляет сеанс.
          * @param {string} seanceId - ID сеанса.
@@ -1039,20 +1098,22 @@
         async function deleteSeance(seanceId) {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                alert('Ошибка: Firestore не доступен');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             if (confirm('Удалить сеанс?')) {
                 try {
+                    await db.collection('seances').doc(seanceId).get();
                     await db.collection('seances').doc(seanceId).delete();
                     loadSeances(currentSeanceFilter);
                     alert('Сеанс удалён!');
                 } catch (error) {
                     console.error('Ошибка удаления сеанса:', error);
-                    alert(`Ошибка удаления сеанса: ${error.message}`);
+                    alert(ERROR_MESSAGES.SEANCE_DELETE_FAILED + error.message);
                 }
             }
         }
+
         /**
          * Загружает сеансы с бронированиями.
          * @param {string} filter - Тип фильтра ('all', 'today', 'week', 'future').
@@ -1060,7 +1121,7 @@
         async function loadSeancesWithBookings(filter = 'all') {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                document.getElementById('bookingsLoading').innerHTML = 'Ошибка: Firestore не доступен';
+                document.getElementById('bookingsLoading').innerHTML = ERROR_MESSAGES.FIRESTORE_UNAVAILABLE;
                 return;
             }
             try {
@@ -1068,7 +1129,7 @@
                 const seancesContainer = document.getElementById('seancesWithBookingsContainer');
                 if (bookingsLoadingElement) bookingsLoadingElement.style.display = 'block';
                 if (seancesContainer) seancesContainer.innerHTML = '';
-                await loadAllSeances();
+                if (allSeances.length === 0) await loadAllSeances();
                 const querySnapshot = await db.collection('bookings').get();
                 const bookings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 const seanceGroups = {};
@@ -1131,6 +1192,7 @@
                 document.getElementById('bookingsLoading').innerHTML = `Ошибка загрузки: ${error.message}`;
             }
         }
+
         /**
          * Отображает схему зала и бронирования.
          * @param {string} film - Название фильма.
@@ -1141,7 +1203,7 @@
         async function showHallScheme(film, date, time, bookings) {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                alert('Ошибка: Firestore не доступен');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             currentHighlightedBookingId = null;
@@ -1254,8 +1316,9 @@
                 bookingsTableContainer.innerHTML = `<p style="color: #ff6b6b;">Ошибка загрузки бронирований: ${error.message}</p>`;
             }
         }
+
         /**
-         * Подсвеокупает место на схеме зала.
+         * Подсвечивает место на схеме зала.
          * @param {string} bookingId - ID бронирования.
          * @param {string} seatId - ID места.
          */
@@ -1271,6 +1334,7 @@
                 seatElement.classList.add('highlighted');
             }
         }
+
         /**
          * Закрывает модальное окно схемы зала.
          */
@@ -1279,6 +1343,7 @@
             if (modal) modal.style.display = 'none';
             currentHighlightedBookingId = null;
         }
+
         /**
          * Отображает информацию о бронировании.
          * @param {HTMLElement} seatElement - Элемент места.
@@ -1286,7 +1351,7 @@
         async function showBookingInfo(seatElement) {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                alert('Ошибка: Firestore не доступен');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             const bookingId = seatElement.dataset.bookingId;
@@ -1332,6 +1397,7 @@
                 infoModal.style.display = 'block';
             }
         }
+
         /**
          * Удаляет бронирование.
          * @param {string} bookingId - ID бронирования.
@@ -1340,7 +1406,7 @@
         async function deleteBooking(bookingId, isActive) {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                alert('Ошибка: Firestore не доступен');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             if (confirm('Вы уверены, что хотите удалить это бронирование?')) {
@@ -1352,10 +1418,11 @@
                     loadSeancesWithBookings(currentBookingFilter);
                 } catch (error) {
                     console.error('Ошибка удаления бронирования:', error);
-                    alert(`Ошибка удаления бронирования: ${error.message}`);
+                    alert(ERROR_MESSAGES.BOOKING_DELETE_FAILED + error.message);
                 }
             }
         }
+
         /**
          * Удаляет бронирование из модального окна.
          * @param {string} bookingId - ID бронирования.
@@ -1363,40 +1430,40 @@
         async function deleteBookingFromModal(bookingId) {
             await deleteBooking(bookingId, true);
         }
+
         /**
          * Очищает архивные бронирования.
          */
         async function clearArchive() {
             if (!db) {
                 console.error('Firestore не инициализирован');
-                alert('Ошибка: Firestore не доступен');
+                alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
                 return;
             }
             if (confirm('Вы уверены, что хотите удалить все архивные бронирования? Это действие нельзя отменить.')) {
                 try {
                     await loadAllSeances();
                     const querySnapshot = await db.collection('bookings').get();
-                    const archiveBookingIds = querySnapshot.docs
+                    const archiveBookings = querySnapshot.docs
                         .map(doc => ({ id: doc.id, ...doc.data() }))
-                        .filter(booking => booking.film && booking.date && booking.time && !seanceExists(booking.film, booking.date, booking.time))
-                        .map(booking => booking.id);
+                        .filter(booking => booking.film && booking.date && booking.time && !seanceExists(booking.film, booking.date, booking.time));
                     let deletedCount = 0;
-                    for (const bookingId of archiveBookingIds) {
-                        try {
-                            await db.collection('bookings').doc(bookingId).delete();
-                            deletedCount++;
-                        } catch (deleteError) {
-                            console.error(`Ошибка удаления бронирования ${bookingId}:`, deleteError);
-                        }
-                    }
-                    alert(`Архив очищен. Удалено ${deletedCount} из ${archiveBookingIds.length} записей.`);
+                    const batch = db.batch();
+                    archiveBookings.forEach(booking => {
+                        const docRef = db.collection('bookings').doc(booking.id);
+                        batch.delete(docRef);
+                        deletedCount++;
+                    });
+                    await batch.commit();
+                    alert(`Архив очищен. Удалено ${deletedCount} записей.`);
                     loadSeancesWithBookings(currentBookingFilter);
                 } catch (error) {
                     console.error('Ошибка очистки архива:', error);
-                    alert(`Ошибка очистки архива: ${error.message}`);
+                    alert(ERROR_MESSAGES.ARCHIVE_CLEAR_FAILED + error.message);
                 }
             }
         }
+
         /**
          * Закрывает модальное окно информации о бронировании.
          */
@@ -1404,6 +1471,7 @@
             const infoModal = document.getElementById('bookingInfoModal');
             if (infoModal) infoModal.style.display = 'none';
         }
+
         window.onclick = function(event) {
             const hallModal = document.getElementById('hallSchemeModal');
             const infoModal = document.getElementById('bookingInfoModal');
