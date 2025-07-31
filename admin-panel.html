@@ -4,9 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Панель управления - LVG Kino</title>
-    <!-- Подключение Firebase SDK напрямую -->
+    <!-- Подключение Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Инициализация Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
+            authDomain: "lvgkino.firebaseapp.com",
+            projectId: "lvgkino",
+            storageBucket: "lvgkino.firebasestorage.app",
+            messagingSenderId: "526810546839",
+            appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
+        };
+
+        // Проверяем, что Firebase SDK загружен
+        if (typeof firebase === 'undefined') {
+            console.error('Firebase SDK не загружен');
+            alert('Ошибка: Не удалось загрузить Firebase SDK. Проверьте подключение к интернету.');
+        } else {
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                    console.log('Firebase успешно инициализирован');
+                }
+            } catch (error) {
+                console.error('Ошибка инициализации Firebase:', error);
+                alert('Ошибка инициализации Firebase: ' + error.message);
+            }
+        }
+
+        // Инициализация Firestore
+        let db = null;
+        try {
+            db = firebase.firestore();
+            console.log('Firestore успешно инициализирован');
+        } catch (error) {
+            console.error('Ошибка получения Firestore:', error);
+            alert('Ошибка Firestore: ' + error.message);
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -654,60 +691,39 @@
         </div>
     </div>
     <script>
-        // Проверка авторизации
-        document.addEventListener('DOMContentLoaded', function() {
+        // Глобальные переменные
+        let currentBookingFilter = 'all';
+        let currentSeanceFilter = 'all';
+        let allSeances = [];
+        let currentHighlightedBookingId = null;
+
+        // Проверка авторизации и загрузка данных
+        window.onload = function() {
             if (localStorage.getItem('adminLoggedIn') !== 'true') {
                 window.location.href = 'admin.html';
                 return;
             }
-            // Инициализация Firebase
-            if (typeof firebase === 'undefined') {
-                console.error('Firebase SDK не загружен');
-                alert('Ошибка: Не удалось загрузить Firebase. Проверьте подключение к интернету или файлы Firebase SDK.');
+
+            // Убедимся, что db инициализирован
+            if (!db) {
+                console.error('Firestore не инициализирован в window.onload');
+                alert('Ошибка: Firestore не доступен. Проверьте подключение к Firebase.');
                 return;
             }
-            try {
-                const firebaseConfig = {
-                    apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
-                    authDomain: "lvgkino.firebaseapp.com",
-                    projectId: "lvgkino",
-                    storageBucket: "lvgkino.firebasestorage.app",
-                    messagingSenderId: "526810546839",
-                    appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
-                };
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
-            } catch (error) {
-                console.error('Ошибка инициализации Firebase:', error);
-                alert('Ошибка инициализации Firebase: ' + error.message);
-                return;
-            }
+
             // Устанавливаем сегодняшнюю дату по умолчанию
             const today = new Date();
             const dateString = today.toISOString().split('T')[0];
             const seanceDateInput = document.getElementById('seanceDate');
             if (seanceDateInput) seanceDateInput.value = dateString;
+
             // Загружаем данные
             loadMovies();
             loadSeances();
             loadAllSeances();
             loadActiveBookings(currentBookingFilter);
             loadArchiveBookings();
-        });
-
-        // Глобальные переменные
-        let db;
-        try {
-            db = firebase.firestore();
-        } catch (error) {
-            console.error('Ошибка получения Firestore:', error);
-            alert('Ошибка Firestore: ' + error.message);
-        }
-        let currentBookingFilter = 'all';
-        let currentSeanceFilter = 'all';
-        let allSeances = [];
-        let currentHighlightedBookingId = null;
+        };
 
         function logout() {
             localStorage.removeItem('adminLoggedIn');
@@ -754,6 +770,7 @@
         async function loadAllSeances() {
             if (!db) {
                 console.error('Firestore не инициализирован');
+                document.getElementById('activeBookingsLoading').innerHTML = 'Ошибка: Firestore не доступен';
                 return [];
             }
             try {
@@ -827,7 +844,7 @@
             } catch (error) {
                 console.error('Ошибка загрузки фильмов:', error);
                 const moviesLoadingElement = document.getElementById('moviesLoading');
-                if (moviesLoadingElement) moviesLoadingElement.innerHTML = 'Ошибка загрузки';
+                if (moviesLoadingElement) moviesLoadingElement.innerHTML = `Ошибка загрузки: ${error.message}`;
             }
         }
 
@@ -978,7 +995,7 @@
                 if (seancesLoadingElement) seancesLoadingElement.style.display = 'none';
                 if (seancesTableElement) seancesTableElement.style.display = 'table';
                 loadAllSeances();
-            }  catch (error) {
+            } catch (error) {
                 console.error('Ошибка загрузки сеансов:', error);
                 const seancesLoadingElement = document.getElementById('seancesLoading');
                 if (seancesLoadingElement) seancesLoadingElement.innerHTML = `Ошибка загрузки: ${error.message}`;
