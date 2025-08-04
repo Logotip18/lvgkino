@@ -397,6 +397,7 @@
             <button onclick="refreshHall()">Обновить</button>
         </div>
     </div>
+
     <!-- Модальное окно бронирования -->
     <div id="bookingModal" class="modal">
         <div class="modal-content">
@@ -426,7 +427,7 @@
                 <div class="form-group" style="text-align: left; margin-top: 15px;">
                     <label style="display: flex; align-items: flex-start; cursor: pointer;">
                         <input type="checkbox" id="offerAgreement" style="margin-right: 10px; margin-top: 3px;" required>
-                        <span>Я согласен с <a href="#" onclick="alert('Договор оферты будет добавлен позже'); return false;" style="color: #4ecdc4;">договором оферты</a></span>
+                        <span>Я согласен с <a href="oferta.html" target="_blank" style="color: #4ecdc4; text-decoration: underline;">договором оферты</a></span>
                     </label>
                     <div id="offerError" class="error">Необходимо согласиться с договором оферты</div>
                 </div>
@@ -436,6 +437,7 @@
             <button onclick="closeModal()" style="background: #666;">Отмена</button>
         </div>
     </div>
+
     <!-- Модальное окно отмены бронирования -->
     <div id="cancelBookingModal" class="modal">
         <div class="modal-content">
@@ -450,6 +452,7 @@
             <button onclick="closeCancelModal()" style="background: #666;">Отмена</button>
         </div>
     </div>
+
     <script>
         // Инициализация Firebase
         const firebaseConfig = {
