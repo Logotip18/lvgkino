@@ -70,7 +70,20 @@
             overflow: hidden;
             margin: 20px 0;
         }
-        /* Мобильная адаптация */
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        .footer-links a {
+            color: #4ecdc4;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -108,15 +121,20 @@
             <h1>Контакты</h1>
         </header>
         <div class="contact-info">
-            <p><strong>Адрес:</strong> Новороссийск, Набережная адмирала Серебрякова 29а</p>
+            <p><strong>Адрес:</strong> Новороссийск, Набережная адмирала Серебрякова, 29а</p>
             <p><strong>Телефон:</strong> <a href="tel:+79585555966">+7 (958) 555-59-66</a></p>
             <p><strong>Электронная почта:</strong> <a href="mailto:kod4game@mail.ru">kod4game@mail.ru</a></p>
             <p><strong>Telegram:</strong> <a href="https://t.me/lydivgolivyde" target="_blank">@lydivgolivyde</a></p>
             <p><strong>Instagram:</strong> <a href="https://instagram.com/lydivgolivyde" target="_blank">@lydivgolivyde</a></p>
+            <p><strong><a href="oferta.html" target="_blank">Публичная оферта</a></strong></p>
         </div>
-        <!-- Интерактивная карта -->
         <div class="map-placeholder">
             <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3ACHXmZZjS&amp;source=constructor" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+
+        <!-- Доп. ссылка внизу -->
+        <div class="footer-links">
+            <a href="oferta.html" target="_blank">Публичная оферта</a>
         </div>
     </div>
 </body>
