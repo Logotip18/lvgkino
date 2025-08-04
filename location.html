@@ -37,7 +37,7 @@
             border: 1px solid #4ecdc4;
             border-radius: 5px;
             transition: all 0.3s;
-            align-self: flex-start; /* Выравнивание ссылки "назад" по левому краю контейнера */
+            align-self: flex-start;
         }
         
         .back-link:hover {
@@ -63,7 +63,7 @@
             border-radius: 15px;
             margin-bottom: 30px;
             backdrop-filter: blur(10px);
-            text-align: center; /* Центрирование текста внутри блока */
+            text-align: center;
             width: 100%;
         }
         
@@ -87,28 +87,41 @@
             margin: 20px 0;
             font-size: 1.2rem;
             width: 100%;
+            color: #fff;
         }
         
         .map-placeholder {
-            background: #333;
+            width: 100%;
             height: 400px;
             border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
             margin: 20px 0;
-            font-size: 1.2rem;
-            width: 100%;
         }
 
-        /* Мобильная адаптация */
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .footer-links a {
+            color: #4ecdc4;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 15px;
             }
             
             .back-link {
-                align-self: center; /* Центрируем ссылку "назад" на мобильных */
+                align-self: center;
                 margin-bottom: 15px;
             }
             
@@ -124,9 +137,13 @@
                 font-size: 1.4rem;
             }
             
-            .photo-placeholder, .map-placeholder {
+            .photo-placeholder {
                 height: 200px;
                 font-size: 1rem;
+            }
+            
+            .map-placeholder {
+                height: 300px;
             }
         }
         
@@ -151,9 +168,13 @@
                 font-size: 0.9rem;
             }
             
-            .photo-placeholder, .map-placeholder {
+            .photo-placeholder {
                 height: 150px;
                 font-size: 0.9rem;
+            }
+            
+            .map-placeholder {
+                height: 250px;
             }
         }
     </style>
@@ -169,7 +190,7 @@
         
         <div class="location-info">
             <h2>Адрес</h2>
-            <p>📍 г. Новороссийск, ул. Адмирала Серебрякова, пляж</p>
+            <p>📍 г. Новороссийск, ул. Адмирала Серебрякова, 29а, пляж</p>
             <p>⏰ Режим работы: ежедневно с 10:00 до 23:00</p>
         </div>
         
@@ -178,7 +199,11 @@
         </div>
         
         <div class="map-placeholder">
-            🗺️ Интерактивная карта с расположением
+            <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3ACHXmZZjS&amp;source=constructor" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+
+        <div class="footer-links">
+            <a href="oferta.html" target="_blank">Публичная оферта</a>
         </div>
     </div>
 </body>
