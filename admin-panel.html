@@ -118,10 +118,21 @@
 
         /* Info and create modals */
         .booking-info-modal, .booking-create-modal {
-            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7);
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); padding: 20px; overflow: auto;
         }
         .booking-info-modal-content, .booking-create-modal-content {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); margin: 15% auto; padding: 20px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #4ecdc4;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 480px;
+            text-align: center;
+            border: 1px solid #4ecdc4;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            position: relative;
         }
         .booking-info-modal-close, .booking-create-modal-close {
             color: #aaa; float: right; font-size: 24px; font-weight: bold; cursor: pointer;
@@ -140,6 +151,7 @@
         .confirm-booking-btn { background: #8BC34A; }
         .confirm-booking-btn:hover { background: #7CB342; }
         .btn-secondary { background: #666; }
+        .muted { opacity: 0.8; font-size: 0.85rem; }
 
         /* Interactive seance cards */
         .seance-item {
@@ -158,10 +170,7 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 14px rgba(0,0,0,.25);
         }
-        .seance-item:active {
-            transform: translateY(0);
-            box-shadow: 0 3px 8px rgba(0,0,0,.2);
-        }
+        .seance-item:active { transform: translateY(0); box-shadow: 0 3px 8px rgba(0,0,0,.2); }
         .seance-item.selected {
             border-color: #4ecdc4;
             box-shadow: 0 0 0 2px rgba(78,205,196,.35), 0 10px 20px rgba(0,0,0,.25);
@@ -184,10 +193,7 @@
         .seance-open-btn:hover { transform: translateY(-1px); }
         .kbd { border: 1px solid rgba(255,255,255,.2); border-bottom-width: 3px; border-radius: 6px; padding: 0 6px; font-size: .74rem; opacity: .85; }
         .fade-in { animation: fadeInUp .25s both; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
             body { padding: 10px; } .container { padding: 5px; } h1 { font-size: 1.5rem; }
@@ -195,6 +201,9 @@
             .menu-item { padding: 12px; min-height: 70px; } .menu-item h3 { font-size: 1.1rem; }
             .section { padding: 15px; } .form-group { margin-bottom: 12px; }
             input, select, textarea, button { font-size: 0.85rem; padding: 8px; }
+            .booking-info-modal-content, .booking-create-modal-content {
+                margin: 20px auto; max-height: calc(100vh - 40px);
+            }
         }
         @media (max-width: 480px) {
             body { padding: 8px; } h1 { font-size: 1.3rem; }
@@ -370,7 +379,11 @@
                     <div class="form-group"><label>Место:</label><p id="createBookingSeatDisplay"></p></div>
                     <div class="form-group"><label>Имя клиента:</label><input type="text" id="createBookingCustomerName" placeholder="Введите имя"></div>
                     <div class="form-group"><label>Телефон:</label><input type="tel" id="createBookingCustomerPhone" placeholder="+7XXXXXXXXXX"></div>
-                    <div class="form-group"><label>Количество человек:</label><input type="number" id="createBookingPeople" min="1" placeholder="Введите количество"></div>
+                    <div class="form-group">
+                        <label>Количество человек:</label>
+                        <input type="number" id="createBookingPeople" min="1" placeholder="Введите количество">
+                        <div class="muted" id="createPeopleHint"></div>
+                    </div>
                     <div class="form-group"><label>Цена (руб.):</label><input type="number" id="createBookingPrice" min="0" placeholder="Введите цену"></div>
                     <button onclick="createBooking()">Создать</button>
                     <button onclick="closeBookingCreateModal()" class="btn-secondary">Отмена</button>
@@ -393,11 +406,15 @@
                     <div class="form-group">
                         <label>Место (ряд-№):</label>
                         <input type="text" id="editBookingSeat" placeholder="Напр., 3-2">
-                        <p style="opacity:0.7; margin-top:6px;">Подсказка: кликните по месту на схеме → «Информация» → «Редактировать».</p>
+                        <p class="muted" style="margin-top:6px;">Подсказка: кликните по месту на схеме → «Информация» → «Редактировать».</p>
                     </div>
                     <div class="form-group"><label>Имя клиента:</label><input type="text" id="editBookingCustomerName" placeholder="Введите имя"></div>
                     <div class="form-group"><label>Телефон:</label><input type="tel" id="editBookingCustomerPhone" placeholder="+7XXXXXXXXXX"></div>
-                    <div class="form-group"><label>Количество человек:</label><input type="number" id="editBookingPeople" min="1" placeholder="Введите количество"></div>
+                    <div class="form-group">
+                        <label>Количество человек:</label>
+                        <input type="number" id="editBookingPeople" min="1" placeholder="Введите количество">
+                        <div class="muted" id="editPeopleHint"></div>
+                    </div>
                     <div class="form-group"><label>Цена (руб.):</label><input type="number" id="editBookingPrice" min="0" placeholder="Введите цену"></div>
                     <button onclick="updateBooking()">Сохранить</button>
                     <button onclick="closeBookingEditModal()" class="btn-secondary">Отмена</button>
@@ -484,6 +501,61 @@
                 const [y,m,d] = dateStr.split('-').map(Number);
                 const [hh,mm] = timeStr.split(':').map(Number);
                 return new Date(y, m - 1, d, hh, mm, 0, 0);
+            }
+
+            // Seat layout helpers
+            function getHallLayout() {
+                return [
+                    { row: 1, seats: 8, type: 'single' },
+                    { row: 2, seats: 5, type: 'double' },
+                    { row: 3, seats: 6, type: 'double' },
+                    { row: 4, seats: 6, type: 'double' },
+                    { row: 5, seats: 6, type: 'mixed', details: ['quad','double','double','double','double','quad'] },
+                    { row: 6, seats: 5, type: 'mixed', details: ['quad','double','double','double','quad'] }
+                ];
+            }
+            function getSeatTypeFromId(seatId) {
+                if (!seatId || typeof seatId !== 'string' || !seatId.includes('-')) return null;
+                const [rowStr, colStr] = seatId.split('-');
+                const r = parseInt(rowStr, 10) - 1;
+                const c = parseInt(colStr, 10) - 1;
+                const layout = getHallLayout();
+                const row = layout[r];
+                if (!row) return null;
+                if (row.type === 'single') return 'single';
+                if (row.type === 'double') return 'double';
+                if (row.type === 'mixed') return row.details[c] || null;
+                return null;
+            }
+            function getPeopleRangeForSeatType(type) {
+                if (type === 'single') return { min: 1, max: 1 };
+                if (type === 'double') return { min: 2, max: 3 };
+                if (type === 'quad') return { min: 4, max: 6 };
+                return { min: 1, max: 6 };
+            }
+            function applyPeopleRangeForCreate(seatId) {
+                const type = getSeatTypeFromId(seatId);
+                const { min, max } = getPeopleRangeForSeatType(type);
+                const input = document.getElementById('createBookingPeople');
+                const hint = document.getElementById('createPeopleHint');
+                input.min = String(min);
+                input.max = String(max);
+                hint.textContent = `Допустимо: ${min}–${max}`;
+                const val = parseInt(input.value || '0', 10);
+                if (!val || val < min) input.value = String(min);
+                if (val > max) input.value = String(max);
+            }
+            function applyPeopleRangeForEdit(seatId) {
+                const type = getSeatTypeFromId(seatId);
+                const { min, max } = getPeopleRangeForSeatType(type);
+                const input = document.getElementById('editBookingPeople');
+                const hint = document.getElementById('editPeopleHint');
+                input.min = String(min);
+                input.max = String(max);
+                hint.textContent = `Допустимо: ${min}–${max}`;
+                const val = parseInt(input.value || '0', 10);
+                if (!val || val < min) input.value = String(min);
+                if (val > max) input.value = String(max);
             }
 
             window.onload = function() {
@@ -669,27 +741,18 @@
                 }
             };
 
-            // FIX: каскадное удаление бронирований при удалении сеанса
+            // Cascade delete: seance + related bookings
             window.deleteSeance = async function(id) {
                 if (!confirm('Удалить сеанс и все его бронирования?')) return;
                 try {
-                    // 1) Получаем данные сеанса
                     const seanceDoc = await db.collection('seances').doc(id).get();
                     let movie = null, date = null, time = null;
                     if (seanceDoc.exists) {
                         const s = seanceDoc.data();
                         movie = s.movie; date = s.date; time = s.time;
                     }
-
-                    // 2) Удаляем связанные бронирования батчами по 500
                     if (movie && date && time) {
                         let totalDeleted = 0;
-                        // Ограничение batch 500
-                        // Повторяем, пока не удалим все
-                        // Здесь равенства по трём полям — индексы не требуются
-                        // Firestore не поддерживает server-side cascade, делаем на клиенте
-                        // Важно: сначала бронирования, затем сам сеанс
-                        // Цикл:
                         // eslint-disable-next-line no-constant-condition
                         while (true) {
                             const snap = await db.collection('bookings')
@@ -704,13 +767,9 @@
                             totalDeleted += snap.docs.length;
                             if (snap.size < 500) break;
                         }
-                        // Можно вывести инфо в консоль
                         console.log('Удалено бронирований для сеанса:', totalDeleted);
                     }
-
-                    // 3) Удаляем сам сеанс
                     await db.collection('seances').doc(id).delete();
-
                     alert('Сеанс и связанные бронирования удалены!');
                 } catch (e) {
                     alert(ERROR_MESSAGES.SEANCE_DELETE_FAILED + e.message);
@@ -851,17 +910,6 @@
                 modal.style.display = 'block';
                 subscribeToHallBookings(film, date, time);
             };
-
-            function getHallLayout() {
-                return [
-                    { row: 1, seats: 8, type: 'single' },
-                    { row: 2, seats: 5, type: 'double' },
-                    { row: 3, seats: 6, type: 'double' },
-                    { row: 4, seats: 6, type: 'double' },
-                    { row: 5, seats: 6, type: 'mixed', details: ['quad','double','double','double','double','quad'] },
-                    { row: 6, seats: 5, type: 'mixed', details: ['quad','double','double','double','quad'] }
-                ];
-            }
 
             function subscribeToHallBookings(film, date, time) {
                 const container = document.getElementById('hallSchemeContainer');
@@ -1026,6 +1074,7 @@
                 document.getElementById('createBookingPrice').value = '';
                 document.getElementById('createBookingSuccess').style.display = 'none';
                 document.getElementById('createBookingError').style.display = 'none';
+                applyPeopleRangeForCreate(seat);
                 modal.style.display = 'block';
             };
 
@@ -1044,6 +1093,12 @@
 
                 if (!film || !date || !time || !seat || !customerName || !customerPhone || !people || !price) {
                     error.textContent = ERROR_MESSAGES.INVALID_INPUT; error.style.display = 'block';
+                    setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT); return;
+                }
+                const type = getSeatTypeFromId(seat);
+                const { min, max } = getPeopleRangeForSeatType(type);
+                if (people < min || people > max) {
+                    error.textContent = `Для этого места допустимо от ${min} до ${max} человек.`; error.style.display = 'block';
                     setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT); return;
                 }
                 try {
@@ -1091,7 +1146,10 @@
                     document.getElementById('editBookingCustomerPhone').value = b.customerPhone || '';
                     document.getElementById('editBookingPeople').value = b.people || 1;
                     document.getElementById('editBookingPrice').value = b.price || 0;
+                    applyPeopleRangeForEdit(b.seat);
                     modal.style.display = 'block';
+                    // Центрирование при открытии + вьюпорт
+                    document.querySelector('#bookingEditModal .booking-create-modal-content').scrollTop = 0;
                 } catch (e) { alert('Ошибка загрузки бронирования: ' + e.message); }
             };
 
@@ -1116,6 +1174,13 @@
                     error.textContent = ERROR_MESSAGES.INVALID_INPUT; error.style.display = 'block';
                     setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT); return;
                 }
+                const type = getSeatTypeFromId(seat);
+                const { min, max } = getPeopleRangeForSeatType(type);
+                if (people < min || people > max) {
+                    error.textContent = `Для этого места допустимо от ${min} до ${max} человек.`; error.style.display = 'block';
+                    setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT); return;
+                }
+
                 try {
                     if (seat !== originalSeat) {
                         const snapshot = await db.collection('bookings')
