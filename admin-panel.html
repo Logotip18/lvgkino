@@ -141,6 +141,73 @@
         .confirm-booking-btn:hover { background: #7CB342; }
         .btn-secondary { background: #666; }
 
+        /* NEW: Interactive seance list cards */
+        .seance-item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+            border: 1px solid transparent;
+            outline: none;
+        }
+        .seance-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,.25);
+        }
+        .seance-item:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 8px rgba(0,0,0,.2);
+        }
+        .seance-item.selected {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 2px rgba(78,205,196,.35), 0 10px 20px rgba(0,0,0,.25);
+            background: linear-gradient(135deg, rgba(78,205,196,.15), rgba(255,255,255,.05));
+        }
+        .seance-item-header {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        }
+        .seance-title {
+            color: #4ecdc4; font-weight: 700; font-size: 1.05rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .seance-sub {
+            margin-top: 6px; opacity: .9; font-size: .92rem;
+        }
+        .chips {
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        }
+        .chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 8px; border-radius: 999px; font-size: .78rem; border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255,255,255,.06);
+        }
+        .chip-confirmed { border-color: rgba(139,195,74,.4); background: rgba(139,195,74,.15); color: #b6e47f; }
+        .chip-pending { border-color: rgba(255,152,0,.4); background: rgba(255,152,0,.12); color: #ffc36b; }
+        .chip-total { border-color: rgba(255,255,255,.25); color: #eaeaea; }
+        .seance-cta {
+            margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .seance-open-btn {
+            background: linear-gradient(45deg, #4ecdc4, #64d8d1);
+            padding: 6px 12px; border-radius: 999px; font-size: .85rem; border: 1px solid rgba(255,255,255,.15);
+        }
+        .seance-open-btn:hover { transform: translateY(-1px); }
+        .kbd {
+            border: 1px solid rgba(255,255,255,.2); border-bottom-width: 3px; border-radius: 6px;
+            padding: 0 6px; font-size: .74rem; opacity: .85;
+        }
+        .fade-in {
+            animation: fadeInUp .25s both;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 768px) {
             body { padding: 10px; } .container { padding: 5px; } h1 { font-size: 1.5rem; }
             .admin-menu { grid-template-columns: 1fr; gap: 10px; }
@@ -192,7 +259,7 @@
                 <button class="clear-archive-btn" onclick="clearArchive()">Очистить архив</button>
             </div>
             <div id="bookingsLoading" class="loading">Загрузка сеансов с бронированиями...</div>
-            <div id="seancesWithBookingsContainer"></div>
+            <div id="seancesWithBookingsContainer" aria-live="polite"></div>
         </div>
 
         <!-- Фильмы -->
@@ -270,7 +337,7 @@
             </div>
         </div>
 
-        <!-- Модалка редактирования фильма -->
+        <!-- Модалки -->
         <div id="editMovieModal" class="hall-modal">
             <div class="hall-modal-content" style="max-width: 500px;">
                 <span class="hall-modal-close" onclick="closeEditMovieModal()">&times;</span>
@@ -289,7 +356,6 @@
             </div>
         </div>
 
-        <!-- Модалка схемы зала -->
         <div id="hallSchemeModal" class="hall-modal">
             <div class="hall-modal-content">
                 <span class="hall-modal-close" onclick="closeHallSchemeModal()">&times;</span>
@@ -303,7 +369,6 @@
             </div>
         </div>
 
-        <!-- Модалка информации о бронировании -->
         <div id="bookingInfoModal" class="booking-info-modal">
             <div class="booking-info-modal-content">
                 <span class="booking-info-modal-close" onclick="closeBookingInfoModal()">&times;</span>
@@ -312,7 +377,6 @@
             </div>
         </div>
 
-        <!-- Модалка создания бронирования -->
         <div id="bookingCreateModal" class="booking-create-modal">
             <div class="booking-create-modal-content">
                 <span class="booking-create-modal-close" onclick="closeBookingCreateModal()">&times;</span>
@@ -335,7 +399,6 @@
             </div>
         </div>
 
-        <!-- Модалка редактирования бронирования -->
         <div id="bookingEditModal" class="booking-create-modal">
             <div class="booking-create-modal-content">
                 <span class="booking-create-modal-close" onclick="closeBookingEditModal()">&times;</span>
@@ -365,7 +428,7 @@
     </div>
 
     <script>
-        // Guard init
+        // Firebase init (guard)
         const FIREBASE_CONFIG = {
             apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
             authDomain: "lvgkino.firebaseapp.com",
@@ -398,7 +461,6 @@
             try {
                 if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
                 db = firebase.firestore();
-                // Опционально: оффлайн кэш
                 try { firebase.firestore().enablePersistence({ synchronizeTabs: true }); } catch (e) {}
             } catch (error) {
                 alert(ERROR_MESSAGES.FIREBASE_INIT_FAILED + error.message);
@@ -411,14 +473,17 @@
             let currentHighlightedBookingId = null;
             let currentSeanceDetails = { film: '', date: '', time: '' };
 
+            // NEW: selection for seance cards
+            let selectedSeanceKey = null;
+
             // Live subscriptions
             let moviesUnsub = null;
             let seancesUnsub = null;
             let bookingsListUnsub = null;
             let hallBookingsUnsub = null;
-
-            // Auto-cancel watcher
             let todayAutoCancelUnsub = null;
+
+            // Auto-cancel cache/timer
             let cachedTodayBookings = [];
             let autoCancelIntervalId = null;
 
@@ -432,28 +497,18 @@
                 const d = String(date.getDate()).padStart(2, '0');
                 return `${y}-${m}-${d}`;
             }
-            function getTodayStr() {
-                const t = new Date(); t.setHours(0,0,0,0); return formatDate(t);
-            }
+            function getTodayStr() { const t = new Date(); t.setHours(0,0,0,0); return formatDate(t); }
             function getTomorrowStr() { const t = new Date(); t.setHours(0,0,0,0); t.setDate(t.getDate() + 1); return formatDate(t); }
             function getNextWeekStr() { const t = new Date(); t.setHours(0,0,0,0); t.setDate(t.getDate() + 7); return formatDate(t); }
-            function getNowTimeHHMM() {
-                const n = new Date();
-                return `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
-            }
+            function getNowTimeHHMM() { const n = new Date(); return `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`; }
             function parseLocalDateTime(dateStr, timeStr) {
-                // dateStr: YYYY-MM-DD, timeStr: HH:MM
                 const [y,m,d] = dateStr.split('-').map(Number);
                 const [hh,mm] = timeStr.split(':').map(Number);
                 return new Date(y, m - 1, d, hh, mm, 0, 0);
             }
 
-            // Auth guard
             window.onload = function() {
-                if (localStorage.getItem('adminLoggedIn') !== 'true') {
-                    window.location.href = 'admin.html';
-                    return;
-                }
+                if (localStorage.getItem('adminLoggedIn') !== 'true') { window.location.href = 'admin.html'; return; }
                 if (!db) { alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE); return; }
                 const today = new Date().toISOString().split('T')[0];
                 const seanceDateInput = document.getElementById('seanceDate');
@@ -462,14 +517,11 @@
                 subscribeToMovies();
                 switchSeanceTab('upcoming');
                 subscribeToBookingsList(currentBookingFilter);
-                startAutoCancelWatcher(); // глобальный авто-кансел для сегодняшних броней
+                startAutoCancelWatcher();
             };
 
-            // Global handlers
-            window.logout = function() {
-                localStorage.removeItem('adminLoggedIn');
-                window.location.href = 'admin.html';
-            };
+            // Navigation
+            window.logout = function() { localStorage.removeItem('adminLoggedIn'); window.location.href = 'admin.html'; };
 
             window.showSection = function(sectionId) {
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -480,33 +532,7 @@
                 else if (sectionId === 'bookings') subscribeToBookingsList(currentBookingFilter);
             };
 
-            window.filterSeancesWithBookings = function(filter) {
-                document.querySelectorAll('#bookings .nav-button').forEach(b => b.classList.remove('active'));
-                document.getElementById(filter + 'Btn')?.classList.add('active');
-                currentBookingFilter = filter;
-                subscribeToBookingsList(filter);
-            };
-
-            window.refreshBookingsList = function() {
-                subscribeToBookingsList(currentBookingFilter, true);
-            };
-
-            window.switchSeanceTab = function(tab) {
-                document.querySelectorAll('#seances .nav-button').forEach(b => b.classList.remove('active'));
-                if (tab === 'upcoming') {
-                    document.querySelector('button[onclick="switchSeanceTab(\'upcoming\')"]').classList.add('active');
-                    document.getElementById('addSeanceForm').style.display = 'block';
-                    document.getElementById('seancesListTitle').textContent = 'Актуальные сеансы';
-                } else {
-                    document.querySelector('button[onclick="switchSeanceTab(\'archived\')"]').classList.add('active');
-                    document.getElementById('addSeanceForm').style.display = 'none';
-                    document.getElementById('seancesListTitle').textContent = 'Архив сеансов';
-                }
-                currentSeanceTab = tab;
-                subscribeToSeances(tab);
-            };
-
-            // Movies
+            // Movies CRUD
             window.addMovie = async function() {
                 const name = document.getElementById('movieName').value.trim();
                 const desc = document.getElementById('movieDesc').value.trim();
@@ -545,26 +571,16 @@
                     document.getElementById('editMovieModal').style.display = 'block';
                 }).catch(e => alert('Ошибка загрузки фильма: ' + e.message));
             };
-
-            window.closeEditMovieModal = function() {
-                document.getElementById('editMovieModal').style.display = 'none';
-            };
-
+            window.closeEditMovieModal = function() { document.getElementById('editMovieModal').style.display = 'none'; };
             window.saveMovieChanges = async function() {
                 const id = document.getElementById('editMovieId').value;
                 const name = document.getElementById('editMovieName').value.trim();
                 const desc = document.getElementById('editMovieDesc').value.trim();
                 const age = document.getElementById('editMovieAge').value;
                 if (!name || !desc || !age) { alert(ERROR_MESSAGES.INVALID_INPUT); return; }
-                try {
-                    await db.collection('movies').doc(id).update({ name, description: desc, age });
-                    closeEditMovieModal();
-                    alert('Фильм обновлён!');
-                } catch (e) {
-                    alert(ERROR_MESSAGES.MOVIE_UPDATE_FAILED + e.message);
-                }
+                try { await db.collection('movies').doc(id).update({ name, description: desc, age }); closeEditMovieModal(); alert('Фильм обновлён!'); }
+                catch (e) { alert(ERROR_MESSAGES.MOVIE_UPDATE_FAILED + e.message); }
             };
-
             window.deleteMovie = async function(movieId) {
                 if (confirm('Удалить фильм?')) {
                     try { await db.collection('movies').doc(movieId).delete(); alert('Фильм удалён!'); }
@@ -623,6 +639,21 @@
             }
 
             // Seances
+            window.switchSeanceTab = function(tab) {
+                document.querySelectorAll('#seances .nav-button').forEach(b => b.classList.remove('active'));
+                if (tab === 'upcoming') {
+                    document.querySelector('button[onclick="switchSeanceTab(\'upcoming\')"]').classList.add('active');
+                    document.getElementById('addSeanceForm').style.display = 'block';
+                    document.getElementById('seancesListTitle').textContent = 'Актуальные сеансы';
+                } else {
+                    document.querySelector('button[onclick="switchSeanceTab(\'archived\')"]').classList.add('active');
+                    document.getElementById('addSeanceForm').style.display = 'none';
+                    document.getElementById('seancesListTitle').textContent = 'Архив сеансов';
+                }
+                currentSeanceTab = tab;
+                subscribeToSeances(tab);
+            };
+
             window.addSeance = async function() {
                 const movie = document.getElementById('seanceMovie').value;
                 const date = document.getElementById('seanceDate').value;
@@ -706,7 +737,15 @@
                 }, (e) => { if (loading) loading.innerHTML = `Ошибка: ${e.message}`; });
             }
 
-            // Bookings list (grouped by seance)
+            // Bookings list (grouped) with interactive cards
+            window.filterSeancesWithBookings = function(filter) {
+                document.querySelectorAll('#bookings .nav-button').forEach(b => b.classList.remove('active'));
+                document.getElementById(filter + 'Btn')?.classList.add('active');
+                currentBookingFilter = filter;
+                subscribeToBookingsList(filter);
+            };
+            window.refreshBookingsList = function() { subscribeToBookingsList(currentBookingFilter, true); };
+
             function subscribeToBookingsList(filter = 'upcoming') {
                 const loading = document.getElementById('bookingsLoading');
                 const container = document.getElementById('seancesWithBookingsContainer');
@@ -725,7 +764,7 @@
                     const groups = {};
                     bookings.forEach(b => {
                         const key = `${b.film}_${b.date}_${b.time}`;
-                        if (!groups[key]) groups[key] = { film: b.film, date: b.date, time: b.time, bookings: [] };
+                        if (!groups[key]) groups[key] = { key, film: b.film, date: b.date, time: b.time, bookings: [] };
                         groups[key].bookings.push(b);
                     });
                     let list = Object.values(groups);
@@ -736,23 +775,52 @@
 
                     list.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
 
-                    // Отображаем счётчик подтверждений
                     container.innerHTML = list.length ? list.map(s => {
                         const total = s.bookings.length;
                         const confirmed = s.bookings.filter(b => b.confirmed === true).length;
+                        const pending = total - confirmed;
+                        const isSelected = selectedSeanceKey === s.key ? 'selected' : '';
+                        // Card with header, chips and CTA
                         return `
-                        <div class="seance-item" onclick="showHallScheme('${s.film}', '${s.date}', '${s.time}')">
-                            <h3>${s.film}</h3>
-                            <p>Дата: ${s.date} | Время: ${s.time}</p>
-                            <p>Бронирований: ${confirmed}/${total} подтверждено</p>
+                        <div class="seance-item fade-in ${isSelected}" role="button" tabindex="0"
+                             data-key="${s.key}"
+                             onmousedown="selectSeanceCard('${s.key}')"
+                             onclick="selectSeanceCard('${s.key}'); showHallScheme('${s.film}', '${s.date}', '${s.time}')"
+                             onkeydown="if(event.key==='Enter'||event.key===' '){selectSeanceCard('${s.key}'); showHallScheme('${s.film}','${s.date}','${s.time}')}">
+                            <div class="seance-item-header">
+                                <div class="seance-title">🎬 ${s.film}</div>
+                                <div class="chips">
+                                    <span class="chip chip-confirmed" title="Подтверждено">✔ ${confirmed}</span>
+                                    <span class="chip chip-pending" title="Ожидают подтверждения">⏳ ${pending}</span>
+                                    <span class="chip chip-total" title="Всего">${total}</span>
+                                </div>
+                            </div>
+                            <div class="seance-sub">📅 ${s.date} &nbsp; • &nbsp; ⏰ ${s.time}</div>
+                            <div class="seance-cta">
+                                <button class="seance-open-btn">Открыть зал <span class="kbd">Enter</span></button>
+                            </div>
                         </div>`;
                     }).join('') : '<p style="text-align: center; color: #ff6b6b;">Нет актуальных сеансов с бронированиями</p>';
+
+                    // Ensure selected state reapplied if DOM recreated
+                    if (selectedSeanceKey) {
+                        const el = container.querySelector(`.seance-item[data-key="${selectedSeanceKey}"]`);
+                        if (el) el.classList.add('selected');
+                    }
 
                     if (loading) loading.style.display = 'none';
                 }, (e) => { if (loading) loading.innerHTML = `Ошибка: ${e.message}`; });
             }
 
-            // Hall modal
+            // Selection helper for seance list
+            window.selectSeanceCard = function(key) {
+                selectedSeanceKey = key;
+                document.querySelectorAll('#seancesWithBookingsContainer .seance-item').forEach(el => el.classList.remove('selected'));
+                const el = document.querySelector(`#seancesWithBookingsContainer .seance-item[data-key="${key}"]`);
+                if (el) el.classList.add('selected');
+            };
+
+            // Hall
             window.showHallScheme = function(film, date, time) {
                 currentSeanceDetails = { film, date, time };
                 const modal = document.getElementById('hallSchemeModal');
@@ -790,16 +858,15 @@
 
                 hallBookingsUnsub = query.onSnapshot(snapshot => {
                     const fetched = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderHallWithBookings(container, tableContainer, fetched, { film, date, time });
-                    // Авто-отмена в рамках текущего сеанса (на случай, если глобальный вотчер выключен)
-                    autoCancelExpiredBookings(fetched);
+                    renderHallWithBookings(container, tableContainer, fetched);
+                    autoCancelExpiredBookings(fetched); // safeguard within seance
                 }, (e) => {
                     container.innerHTML = `<p style="color: #ff6b6b;">Ошибка: ${e.message}</p>`;
                     tableContainer.innerHTML = `<p style="color: #ff6b6b;">Ошибка: ${e.message}</p>`;
                 });
             }
 
-            function renderHallWithBookings(container, tableContainer, bookings, seance) {
+            function renderHallWithBookings(container, tableContainer, bookings) {
                 const layout = getHallLayout();
                 let hallHTML = `<div class="hall-modal-screen">ЭКРАН</div>`;
                 layout.forEach(r => {
@@ -815,15 +882,10 @@
                         }
                     };
                     if (r.type === 'single') {
-                        for (let i = 1; i <= r.seats; i++) {
-                            const id = `${r.row}-${i}`;
-                            hallHTML += makeSeat(id, 'single');
-                        }
+                        for (let i = 1; i <= r.seats; i++) hallHTML += makeSeat(`${r.row}-${i}`, 'single');
                     } else if (r.type === 'double' || r.type === 'mixed') {
-                        (r.type === 'mixed' ? r.details : Array(r.seats).fill('double')).forEach((t, i) => {
-                            const id = `${r.row}-${i+1}`;
-                            hallHTML += makeSeat(id, t);
-                        });
+                        (r.type === 'mixed' ? r.details : Array(r.seats).fill('double'))
+                            .forEach((t, i) => hallHTML += makeSeat(`${r.row}-${i+1}`, t));
                     }
                     hallHTML += `</div>`;
                 });
@@ -860,7 +922,6 @@
                     `;
                 }).join('') : '<tr><td colspan="7" style="text-align: center;">Нет бронирований</td></tr>';
 
-                // Reapply highlight if needed
                 if (currentHighlightedBookingId) {
                     const selected = bookings.find(b => b.id === currentHighlightedBookingId);
                     if (selected) {
@@ -931,9 +992,7 @@
                 }
             };
 
-            window.closeBookingInfoModal = function() {
-                document.getElementById('bookingInfoModal').style.display = 'none';
-            };
+            window.closeBookingInfoModal = function() { document.getElementById('bookingInfoModal').style.display = 'none'; };
 
             // Create / Edit booking
             window.showBookingCreateForm = function(seat) {
@@ -971,14 +1030,12 @@
                     setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT); return;
                 }
                 try {
-                    // Проверка занятости места
                     const snapshot = await db.collection('bookings')
                         .where('film', '==', film).where('date', '==', date).where('time', '==', time).where('seat', '==', seat).limit(1).get();
                     if (!snapshot.empty) {
                         error.textContent = 'Место уже забронировано!'; error.style.display = 'block';
                         setTimeout(() => error.style.display = 'none', MESSAGE_TIMEOUT); return;
                     }
-                    // Бронь, созданная админом — сразу подтверждённая
                     await db.collection('bookings').add({
                         film, date, time, seat,
                         customerName, customerPhone, people, price,
@@ -996,9 +1053,7 @@
                 }
             };
 
-            window.closeBookingCreateModal = function() {
-                document.getElementById('bookingCreateModal').style.display = 'none';
-            };
+            window.closeBookingCreateModal = function() { document.getElementById('bookingCreateModal').style.display = 'none'; };
 
             window.showBookingEditForm = async function(bookingId) {
                 const modal = document.getElementById('bookingEditModal');
@@ -1023,9 +1078,7 @@
                 } catch (e) { alert('Ошибка загрузки бронирования: ' + e.message); }
             };
 
-            window.closeBookingEditModal = function() {
-                document.getElementById('bookingEditModal').style.display = 'none';
-            };
+            window.closeBookingEditModal = function() { document.getElementById('bookingEditModal').style.display = 'none'; };
 
             window.updateBooking = async function() {
                 const id = document.getElementById('editBookingId').value;
@@ -1081,7 +1134,7 @@
                 if (typeof hallBookingsUnsub === 'function') { hallBookingsUnsub(); hallBookingsUnsub = null; }
             };
 
-            // Clear archive
+            // Archive
             window.clearArchive = async function() {
                 if (confirm('Очистить архивные бронирования?')) {
                     try {
@@ -1123,29 +1176,21 @@
                 const threshold = new Date(seanceDT.getTime() - 5 * 60 * 1000);
                 return new Date() >= threshold;
             }
-
             async function autoCancelExpiredBookings(bookings) {
                 const toDelete = bookings.filter(b => shouldAutoCancel(b));
                 for (const b of toDelete) {
-                    try {
-                        await db.collection('bookings').doc(b.id).delete();
-                    } catch (e) {
-                        // игнорим единичные ошибки
-                    }
+                    try { await db.collection('bookings').doc(b.id).delete(); } catch (e) {}
                 }
             }
-
             function startAutoCancelWatcher() {
                 const todayStr = getTodayStr();
                 if (typeof todayAutoCancelUnsub === 'function') { todayAutoCancelUnsub(); todayAutoCancelUnsub = null; }
                 if (autoCancelIntervalId) { clearInterval(autoCancelIntervalId); autoCancelIntervalId = null; }
 
-                // Следим за всеми сегодняшними бронями (live)
                 todayAutoCancelUnsub = db.collection('bookings').where('date', '==', todayStr).onSnapshot(snap => {
                     cachedTodayBookings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 }, () => { cachedTodayBookings = []; });
 
-                // Каждые 30 секунд проверяем срок
                 autoCancelIntervalId = setInterval(() => {
                     if (cachedTodayBookings.length) autoCancelExpiredBookings(cachedTodayBookings);
                 }, 30000);
