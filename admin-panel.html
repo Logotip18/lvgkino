@@ -116,7 +116,7 @@
         }
         @keyframes pulseHighlight { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-        /* Info and create modals (reused styles) */
+        /* Info and create modals */
         .booking-info-modal, .booking-create-modal {
             display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7);
         }
@@ -141,7 +141,7 @@
         .confirm-booking-btn:hover { background: #7CB342; }
         .btn-secondary { background: #666; }
 
-        /* NEW: Interactive seance list cards */
+        /* Interactive seance cards */
         .seance-item {
             position: relative;
             background: rgba(255, 255, 255, 0.06);
@@ -167,19 +167,10 @@
             box-shadow: 0 0 0 2px rgba(78,205,196,.35), 0 10px 20px rgba(0,0,0,.25);
             background: linear-gradient(135deg, rgba(78,205,196,.15), rgba(255,255,255,.05));
         }
-        .seance-item-header {
-            display: flex; align-items: center; justify-content: space-between; gap: 10px;
-        }
-        .seance-title {
-            color: #4ecdc4; font-weight: 700; font-size: 1.05rem;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .seance-sub {
-            margin-top: 6px; opacity: .9; font-size: .92rem;
-        }
-        .chips {
-            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-        }
+        .seance-item-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .seance-title { color: #4ecdc4; font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+        .seance-sub { margin-top: 6px; opacity: .9; font-size: .92rem; }
+        .chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         .chip {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 4px 8px; border-radius: 999px; font-size: .78rem; border: 1px solid rgba(255,255,255,.15);
@@ -188,21 +179,11 @@
         .chip-confirmed { border-color: rgba(139,195,74,.4); background: rgba(139,195,74,.15); color: #b6e47f; }
         .chip-pending { border-color: rgba(255,152,0,.4); background: rgba(255,152,0,.12); color: #ffc36b; }
         .chip-total { border-color: rgba(255,255,255,.25); color: #eaeaea; }
-        .seance-cta {
-            margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;
-        }
-        .seance-open-btn {
-            background: linear-gradient(45deg, #4ecdc4, #64d8d1);
-            padding: 6px 12px; border-radius: 999px; font-size: .85rem; border: 1px solid rgba(255,255,255,.15);
-        }
+        .seance-cta { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .seance-open-btn { background: linear-gradient(45deg, #4ecdc4, #64d8d1); padding: 6px 12px; border-radius: 999px; font-size: .85rem; border: 1px solid rgba(255,255,255,.15); }
         .seance-open-btn:hover { transform: translateY(-1px); }
-        .kbd {
-            border: 1px solid rgba(255,255,255,.2); border-bottom-width: 3px; border-radius: 6px;
-            padding: 0 6px; font-size: .74rem; opacity: .85;
-        }
-        .fade-in {
-            animation: fadeInUp .25s both;
-        }
+        .kbd { border: 1px solid rgba(255,255,255,.2); border-bottom-width: 3px; border-radius: 6px; padding: 0 6px; font-size: .74rem; opacity: .85; }
+        .fade-in { animation: fadeInUp .25s both; }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
@@ -472,8 +453,6 @@
             let allSeances = [];
             let currentHighlightedBookingId = null;
             let currentSeanceDetails = { film: '', date: '', time: '' };
-
-            // NEW: selection for seance cards
             let selectedSeanceKey = null;
 
             // Live subscriptions
@@ -690,10 +669,51 @@
                 }
             };
 
+            // FIX: каскадное удаление бронирований при удалении сеанса
             window.deleteSeance = async function(id) {
-                if (confirm('Удалить сеанс?')) {
-                    try { await db.collection('seances').doc(id).delete(); alert('Сеанс удалён!'); }
-                    catch (e) { alert(ERROR_MESSAGES.SEANCE_DELETE_FAILED + e.message); }
+                if (!confirm('Удалить сеанс и все его бронирования?')) return;
+                try {
+                    // 1) Получаем данные сеанса
+                    const seanceDoc = await db.collection('seances').doc(id).get();
+                    let movie = null, date = null, time = null;
+                    if (seanceDoc.exists) {
+                        const s = seanceDoc.data();
+                        movie = s.movie; date = s.date; time = s.time;
+                    }
+
+                    // 2) Удаляем связанные бронирования батчами по 500
+                    if (movie && date && time) {
+                        let totalDeleted = 0;
+                        // Ограничение batch 500
+                        // Повторяем, пока не удалим все
+                        // Здесь равенства по трём полям — индексы не требуются
+                        // Firestore не поддерживает server-side cascade, делаем на клиенте
+                        // Важно: сначала бронирования, затем сам сеанс
+                        // Цикл:
+                        // eslint-disable-next-line no-constant-condition
+                        while (true) {
+                            const snap = await db.collection('bookings')
+                                .where('film', '==', movie)
+                                .where('date', '==', date)
+                                .where('time', '==', time)
+                                .limit(500).get();
+                            if (snap.empty) break;
+                            const batch = db.batch();
+                            snap.docs.forEach(d => batch.delete(db.collection('bookings').doc(d.id)));
+                            await batch.commit();
+                            totalDeleted += snap.docs.length;
+                            if (snap.size < 500) break;
+                        }
+                        // Можно вывести инфо в консоль
+                        console.log('Удалено бронирований для сеанса:', totalDeleted);
+                    }
+
+                    // 3) Удаляем сам сеанс
+                    await db.collection('seances').doc(id).delete();
+
+                    alert('Сеанс и связанные бронирования удалены!');
+                } catch (e) {
+                    alert(ERROR_MESSAGES.SEANCE_DELETE_FAILED + e.message);
                 }
             };
 
@@ -780,7 +800,6 @@
                         const confirmed = s.bookings.filter(b => b.confirmed === true).length;
                         const pending = total - confirmed;
                         const isSelected = selectedSeanceKey === s.key ? 'selected' : '';
-                        // Card with header, chips and CTA
                         return `
                         <div class="seance-item fade-in ${isSelected}" role="button" tabindex="0"
                              data-key="${s.key}"
@@ -802,7 +821,6 @@
                         </div>`;
                     }).join('') : '<p style="text-align: center; color: #ff6b6b;">Нет актуальных сеансов с бронированиями</p>';
 
-                    // Ensure selected state reapplied if DOM recreated
                     if (selectedSeanceKey) {
                         const el = container.querySelector(`.seance-item[data-key="${selectedSeanceKey}"]`);
                         if (el) el.classList.add('selected');
@@ -812,7 +830,6 @@
                 }, (e) => { if (loading) loading.innerHTML = `Ошибка: ${e.message}`; });
             }
 
-            // Selection helper for seance list
             window.selectSeanceCard = function(key) {
                 selectedSeanceKey = key;
                 document.querySelectorAll('#seancesWithBookingsContainer .seance-item').forEach(el => el.classList.remove('selected'));
