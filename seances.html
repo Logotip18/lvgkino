@@ -8,173 +8,58 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Arial', sans-serif;
-            /* Морская лагуна */
             background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
             color: white;
             min-height: 100vh;
             padding: 15px;
         }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1000px; margin: 0 auto; }
         .back-link {
-            display: inline-block;
-            margin-bottom: 15px;
-            /* Акцентный цвет */
-            color: #009688;
-            text-decoration: none;
-            padding: 8px 15px;
-            border: 1px solid #009688;
-            border-radius: 5px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
+            display: inline-block; margin-bottom: 15px; color: #009688; text-decoration: none;
+            padding: 8px 15px; border: 1px solid #009688; border-radius: 5px; transition: all 0.3s; font-size: 0.9rem;
             background: rgba(255, 255, 255, 0.05);
         }
-        .back-link:hover {
-            background: rgba(0, 150, 136, 0.1);
-        }
-        header {
-            text-align: center;
-            padding: 15px 0;
-            margin-bottom: 20px;
-        }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            /* Акцентный цвет */
-            color: #009688;
-        }
-        .loading {
-            text-align: center;
-            padding: 30px;
-            font-size: 1.1rem;
-        }
+        .back-link:hover { background: rgba(0, 150, 136, 0.1); }
+        header { text-align: center; padding: 15px 0; margin-bottom: 20px; }
+        h1 { font-size: 1.8rem; margin-bottom: 10px; color: #009688; }
+        .loading { text-align: center; padding: 30px; font-size: 1.1rem; }
         .movie-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; margin-bottom: 20px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .movie-header {
-            /* Цвет ошибок/важных элементов */
-            color: #FF5722;
-            margin-bottom: 15px;
-            font-size: 1.4rem;
-            text-align: center;
-        }
-        .seance-date {
-            /* Акцентный цвет */
-            background: rgba(0, 150, 136, 0.1);
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        .seance-date h3 {
-            /* Акцентный цвет */
-            color: #009688;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-        .seances-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
+        .movie-header { color: #FF5722; margin-bottom: 15px; font-size: 1.4rem; text-align: center; }
+        .seance-date { background: rgba(0, 150, 136, 0.1); padding: 12px; border-radius: 10px; margin-bottom: 15px; }
+        .seance-date h3 { color: #009688; margin-bottom: 10px; font-size: 1.1rem; text-align: center; }
+        .seances-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
         .seance {
-            /* Градиент кнопки сеанса */
-            background: linear-gradient(45deg, #2196F3, #21CBF3);
-            padding: 12px 15px;
-            border-radius: 25px;
-            text-decoration: none;
-            color: white;
-            transition: all 0.3s;
-            font-weight: bold;
-            min-width: 80px;
-            text-align: center;
+            background: linear-gradient(45deg, #2196F3, #21CBF3); padding: 12px 15px; border-radius: 25px; text-decoration: none;
+            color: white; transition: all 0.3s; font-weight: bold; min-width: 80px; text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        .seance:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .no-seances {
-            text-align: center;
-            padding: 30px;
-            color: #aaa;
-            font-size: 1.1rem;
-        }
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        .seance:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .no-seances { text-align: center; padding: 30px; color: #aaa; font-size: 1.1rem; }
+        .filter-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
         .filter-button {
-            /* Акцентный цвет */
-            background: rgba(0, 150, 136, 0.2);
-            color: white;
-            border: 1px solid #009688;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s;
+            background: rgba(0, 150, 136, 0.2); color: white; border: 1px solid #009688; padding: 8px 15px;
+            border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;
         }
-        .filter-button:hover {
-            background: rgba(0, 150, 136, 0.3);
-        }
-        .filter-button.active {
-            /* Градиент активной кнопки */
-            background: linear-gradient(45deg, #FF5722, #FF9800);
-        }
-        /* Мобильная адаптация */
+        .filter-button:hover { background: rgba(0, 150, 136, 0.3); }
+        .filter-button.active { background: linear-gradient(45deg, #FF5722, #FF9800); }
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            .movie-section {
-                padding: 15px;
-            }
-            .movie-header {
-                font-size: 1.2rem;
-            }
-            .seance {
-                padding: 10px 12px;
-                min-width: 70px;
-                font-size: 0.9rem;
-            }
+            body { padding: 10px; }
+            h1 { font-size: 1.5rem; }
+            .movie-section { padding: 15px; }
+            .movie-header { font-size: 1.2rem; }
+            .seance { padding: 10px 12px; min-width: 70px; font-size: 0.9rem; }
         }
         @media (max-width: 480px) {
-            .container {
-                padding: 5px;
-            }
-            h1 {
-                font-size: 1.3rem;
-            }
-            .filter-buttons {
-                flex-direction: column;
-            }
-            .seance {
-                min-width: 60px;
-                padding: 8px 10px;
-                font-size: 0.8rem;
-            }
+            .container { padding: 5px; }
+            h1 { font-size: 1.3rem; }
+            .filter-buttons { flex-direction: column; }
+            .seance { min-width: 60px; padding: 8px 10px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -185,20 +70,21 @@
             <h1>Расписание сеансов</h1>
             <p>Выберите фильм, дату и удобное время</p>
         </header>
+
         <div class="filter-buttons">
             <button class="filter-button active" onclick="filterSeances('all')" id="allBtn">Все сеансы</button>
             <button class="filter-button" onclick="filterSeances('today')" id="todayBtn">Сегодня</button>
             <button class="filter-button" onclick="filterSeances('tomorrow')" id="tomorrowBtn">Завтра</button>
             <button class="filter-button" onclick="filterSeances('week')" id="weekBtn">На неделю</button>
         </div>
+
         <div id="loading" class="loading">Загрузка сеансов...</div>
         <div id="seancesContent" style="display: none;"></div>
-        <div id="noSeances" class="no-seances" style="display: none;">
-            Нет доступных сеансов
-        </div>
+        <div id="noSeances" class="no-seances" style="display: none;">Нет доступных сеансов</div>
     </div>
+
     <script>
-        // Инициализация Firebase
+        // Firebase init (guard)
         const firebaseConfig = {
             apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
             authDomain: "lvgkino.firebaseapp.com",
@@ -207,180 +93,172 @@
             messagingSenderId: "526810546839",
             appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
         };
-        // Инициализация Firebase
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps?.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.firestore();
-        // Глобальные переменные
+        // Опционально: оффлайн кэш с синхронизацией вкладок
+        try { firebase.firestore().enablePersistence({ synchronizeTabs: true }); } catch (e) {}
+
+        // Global state
         let allSeances = [];
         let currentFilter = 'all';
-        // Загружаем сеансы при открытии страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSeances();
-        });
-        // Фильтрация сеансов
-        function filterSeances(filter) {
-            // Обновляем активные кнопки
-            document.querySelectorAll('.filter-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById(filter + 'Btn').classList.add('active');
-            currentFilter = filter;
-            displaySeances();
-        }
-        // Загрузка сеансов из Firebase
-        async function loadSeances() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('seancesContent').style.display = 'none';
-                document.getElementById('noSeances').style.display = 'none';
-                // Получаем все сеансы
-                const seancesSnapshot = await db.collection('seances').get();
-                allSeances = [];
-                seancesSnapshot.forEach((doc) => {
-                    const seance = doc.data();
-                    // Проверяем, что у сеанса есть все необходимые данные
-                    if (seance.movie && seance.date && seance.time) {
-                        allSeances.push({
-                            id: doc.id,
-                            ...seance
-                        });
-                    }
-                });
-                // Сортируем по дате и времени (с проверкой на undefined)
-                allSeances.sort((a, b) => {
-                    if (a.date && b.date) {
-                        if (a.date !== b.date) {
-                            return a.date.localeCompare(b.date);
-                        }
-                    }
-                    if (a.time && b.time) {
-                        return a.time.localeCompare(b.time);
-                    }
-                    return 0;
-                });
-                displaySeances();
-            } catch (error) {
-                console.error('Ошибка загрузки сеансов:', error);
-                document.getElementById('loading').innerHTML = 'Ошибка загрузки сеансов: ' + error.message;
-            }
-        }
-        // Отображение сеансов
-        async function displaySeances() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('seancesContent').style.display = 'none';
-                document.getElementById('noSeances').style.display = 'none';
-                // Фильтруем сеансы
-                let filteredSeances = filterSeancesByDate(allSeances, currentFilter);
-                if (filteredSeances.length === 0) {
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('noSeances').style.display = 'block';
-                    return;
-                }
-                // Группируем сеансы по фильмам и датам
-                const groupedSeances = groupSeancesByMovieAndDate(filteredSeances);
-                // Создаем HTML для отображения
-                let html = '';
-                for (const [movieName, dates] of Object.entries(groupedSeances)) {
-                    html += `
-                        <div class="movie-section">
-                            <h2 class="movie-header">🎬 ${movieName}</h2>
-                    `;
-                    for (const [date, seances] of Object.entries(dates)) {
-                        const dateObj = new Date(date + 'T00:00:00'); // Фикс времени
-                        const formattedDate = formatDate(dateObj);
-                        const weekday = getWeekday(dateObj);
-                        html += `
-                            <div class="seance-date">
-                                <h3>${formattedDate} (${weekday})</h3>
-                                <div class="seances-list">
-                        `;
-                        for (const seance of seances) {
-                            html += `
-                                <a href="hall.html?film=${encodeURIComponent(seance.movie)}&time=${encodeURIComponent(seance.time)}&date=${encodeURIComponent(date)}" 
-                                   class="seance">
-                                    ${seance.time}
-                                </a>
-                            `;
-                        }
-                        html += `
-                                </div>
-                            </div>
-                        `;
-                    }
-                    html += `
-                        </div>
-                    `;
-                }
-                document.getElementById('seancesContent').innerHTML = html;
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('seancesContent').style.display = 'block';
-            } catch (error) {
-                console.error('Ошибка отображения сеансов:', error);
-                document.getElementById('loading').innerHTML = 'Ошибка отображения сеансов: ' + error.message;
-            }
-        }
-        // Фильтрация сеансов по дате
-        function filterSeancesByDate(seances, filter) {
-            // Используем правильное время
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            if (filter === 'today') {
-                const todayString = formatDateForComparison(today);
-                return seances.filter(seance => seance.date === todayString);
-            } else if (filter === 'tomorrow') {
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const tomorrowString = formatDateForComparison(tomorrow);
-                return seances.filter(seance => seance.date === tomorrowString);
-            } else if (filter === 'week') {
-                const nextWeek = new Date(today);
-                nextWeek.setDate(nextWeek.getDate() + 7);
-                return seances.filter(seance => {
-                    const seanceDate = new Date(seance.date + 'T00:00:00');
-                    return seanceDate >= today && seanceDate <= nextWeek;
-                });
-            }
-            // По умолчанию показываем все сеансы на ближайшие 2 недели
-            const twoWeeks = new Date(today);
-            twoWeeks.setDate(twoWeeks.getDate() + 14);
-            return seances.filter(seance => {
-                const seanceDate = new Date(seance.date + 'T00:00:00');
-                return seanceDate >= today && seanceDate <= twoWeeks;
-            });
-        }
-        // Форматирование даты для сравнения (YYYY-MM-DD)
+        let seancesUnsub = null;
+
+        // Utils
         function formatDateForComparison(date) {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
-        // Группировка сеансов по фильмам и датам
+        function formatDate(date) {
+            return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long' });
+        }
+        function getWeekday(date) {
+            const weekdays = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            return weekdays[date.getDay()];
+        }
+        function getNowTimeString() {
+            const n = new Date();
+            const hh = String(n.getHours()).padStart(2, '0');
+            const mm = String(n.getMinutes()).padStart(2, '0');
+            return `${hh}:${mm}`;
+        }
+
+        // Live subscription
+        document.addEventListener('DOMContentLoaded', () => { subscribeSeances(); });
+        window.addEventListener('beforeunload', () => { if (seancesUnsub) seancesUnsub(); });
+
+        function subscribeSeances() {
+            const loading = document.getElementById('loading');
+            const seancesContent = document.getElementById('seancesContent');
+            const noSeances = document.getElementById('noSeances');
+
+            loading.style.display = 'block';
+            seancesContent.style.display = 'none';
+            noSeances.style.display = 'none';
+
+            if (seancesUnsub) seancesUnsub();
+
+            const todayStr = formatDateForComparison(new Date());
+            // Только будущие даты, сортировка по дате (без индекса по времени)
+            const query = db.collection('seances')
+                .where('date', '>=', todayStr)
+                .orderBy('date')
+                .limit(200);
+
+            seancesUnsub = query.onSnapshot((snapshot) => {
+                allSeances = snapshot.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    .filter(s => s.movie && s.date && s.time);
+
+                // Клиентская сортировка по дате и времени
+                allSeances.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+
+                displaySeances();
+            }, (error) => {
+                console.error('Ошибка live-сеансов:', error);
+                loading.textContent = 'Ошибка загрузки: ' + error.message;
+            });
+        }
+
+        // Filters
+        function filterSeances(filter) {
+            document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(filter + 'Btn')?.classList.add('active');
+            currentFilter = filter;
+            displaySeances();
+        }
+
+        function filterSeancesByDate(seances, filter) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const todayString = formatDateForComparison(today);
+            const nowTime = getNowTimeString();
+
+            if (filter === 'today') {
+                return seances.filter(s => s.date === todayString && s.time >= nowTime);
+            } else if (filter === 'tomorrow') {
+                const t = new Date(today); t.setDate(t.getDate() + 1);
+                const tStr = formatDateForComparison(t);
+                return seances.filter(s => s.date === tStr);
+            } else if (filter === 'week') {
+                const nextWeek = new Date(today); nextWeek.setDate(nextWeek.getDate() + 7);
+                return seances.filter(s => {
+                    const d = new Date(s.date + 'T00:00:00');
+                    if (s.date === todayString) return s.time >= nowTime;
+                    return d >= today && d <= nextWeek;
+                });
+            }
+
+            // По умолчанию: 2 недели, сегодня — только будущие по времени
+            const twoWeeks = new Date(today); twoWeeks.setDate(twoWeeks.getDate() + 14);
+            return seances.filter(s => {
+                const d = new Date(s.date + 'T00:00:00');
+                if (s.date === todayString) return s.time >= nowTime;
+                return d >= today && d <= twoWeeks;
+            });
+        }
+
+        // Group and render
         function groupSeancesByMovieAndDate(seances) {
             const grouped = {};
             seances.forEach(seance => {
-                if (!grouped[seance.movie]) {
-                    grouped[seance.movie] = {};
-                }
-                if (!grouped[seance.movie][seance.date]) {
-                    grouped[seance.movie][seance.date] = [];
-                }
+                if (!grouped[seance.movie]) grouped[seance.movie] = {};
+                if (!grouped[seance.movie][seance.date]) grouped[seance.movie][seance.date] = [];
                 grouped[seance.movie][seance.date].push(seance);
             });
             return grouped;
         }
-        // Форматирование даты для отображения
-        function formatDate(date) {
-            return date.toLocaleDateString('ru-RU', {
-                day: '2-digit',
-                month: 'long'
-            });
-        }
-        // Получение дня недели
-        function getWeekday(date) {
-            const weekdays = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-            return weekdays[date.getDay()];
+
+        function displaySeances() {
+            const loading = document.getElementById('loading');
+            const seancesContent = document.getElementById('seancesContent');
+            const noSeances = document.getElementById('noSeances');
+
+            loading.style.display = 'block';
+            seancesContent.style.display = 'none';
+            noSeances.style.display = 'none';
+
+            const filteredSeances = filterSeancesByDate(allSeances, currentFilter);
+
+            if (filteredSeances.length === 0) {
+                loading.style.display = 'none';
+                noSeances.style.display = 'block';
+                return;
+            }
+
+            const groupedSeances = groupSeancesByMovieAndDate(filteredSeances);
+            let html = '';
+            for (const [movieName, dates] of Object.entries(groupedSeances)) {
+                html += `<div class="movie-section"><h2 class="movie-header">🎬 ${movieName}</h2>`;
+                // Даты по возрастанию
+                const sortedDates = Object.keys(dates).sort((a, b) => a.localeCompare(b));
+                for (const date of sortedDates) {
+                    const seances = dates[date];
+                    const dateObj = new Date(date + 'T00:00:00');
+                    const formattedDate = formatDate(dateObj);
+                    const weekday = getWeekday(dateObj);
+                    html += `
+                        <div class="seance-date">
+                            <h3>${formattedDate} (${weekday})</h3>
+                            <div class="seances-list">
+                    `;
+                    // Сеансы по времени
+                    seances.sort((a, b) => a.time.localeCompare(b.time));
+                    for (const seance of seances) {
+                        html += `
+                            <a href="hall.html?film=${encodeURIComponent(seance.movie)}&time=${encodeURIComponent(seance.time)}&date=${encodeURIComponent(date)}"
+                               class="seance">${seance.time}</a>
+                        `;
+                    }
+                    html += `</div></div>`;
+                }
+                html += `</div>`;
+            }
+
+            document.getElementById('seancesContent').innerHTML = html;
+            loading.style.display = 'none';
+            seancesContent.style.display = 'block';
         }
     </script>
 </body>
