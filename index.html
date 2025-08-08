@@ -1,196 +1,73 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LVG Kino - Кинотеатр</title>
-    <!-- Подключение Google Fonts Montserrat -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            /* Морская лагуна из других страниц */
-            background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
-            color: white;
-            min-height: 100vh;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Arial', sans-serif; /* Базовый шрифт */
-        }
-
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Центрирование по вертикали */
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-        }
-
-        header {
-            width: 100%;
-            max-width: 800px;
-            padding: 30px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-family: 'Montserrat', sans-serif; /* Современный шрифт для заголовка */
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            /* Градиентный текст для заголовка */
-            background: linear-gradient(45deg, #009688, #4CAF50);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .subtitle {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            margin-bottom: 30px;
-            font-weight: 300;
-        }
-
-        .main-button {
-            /* Градиент кнопки из seances.html */
-            background: linear-gradient(45deg, #2196F3, #21CBF3);
-            color: white;
-            border: none;
-            padding: 22px 55px;
-            border-radius: 40px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
-            transition: all 0.3s ease;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .main-button:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0 12px 25px rgba(33, 150, 243, 0.7);
-        }
-
-        /* Ссылки внизу страницы */
-        .bottom-links {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 30px;
-            align-items: center;
-        }
-
-        .bottom-link {
-            /* Акцентный цвет из других страниц */
-            color: #009688;
-            text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid #009688;
-            border-radius: 25px;
-            transition: all 0.3s;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .bottom-link:hover {
-            background: rgba(0, 150, 136, 0.1);
-            transform: translateY(-2px);
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            opacity: 0.8;
-            width: 100%;
-            font-size: 1rem;
-            margin-top: auto; /* Прижимает футер вниз, если контента мало */
-        }
-
-        /* Мобильная адаптация */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 2.8rem;
-            }
-
-            .subtitle {
-                font-size: 1.1rem;
-            }
-
-            .main-button {
-                padding: 18px 40px;
-                font-size: 1.3rem;
-                border-radius: 30px;
-            }
-
-            .bottom-link {
-                font-size: 0.9rem;
-                padding: 8px 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .main-button {
-                padding: 15px 30px;
-                font-size: 1.1rem;
-            }
-
-            header {
-                padding: 20px 10px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LVG Kino - Кинотеатр</title>
+  <meta name="description" content="LVG Kino — расписание сеансов и бронирование мест. Новороссийск.">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
+      color: white; min-height: 100vh; padding: 15px;
+      display: flex; flex-direction: column; font-family: 'Arial', sans-serif;
+    }
+    .container {
+      max-width: 1200px; width: 100%; margin: 0 auto; flex: 1;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;
+    }
+    header { width: 100%; max-width: 800px; padding: 30px; margin-bottom: 20px; }
+    h1 {
+      font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin-bottom: 20px;
+      background: linear-gradient(45deg, #009688, #4CAF50);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .subtitle { font-size: 1.3rem; opacity: 0.9; margin-bottom: 30px; font-weight: 300; }
+    .main-button {
+      background: linear-gradient(45deg, #2196F3, #21CBF3); color: white; border: none; padding: 22px 55px;
+      border-radius: 40px; font-size: 1.5rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block;
+      margin-top: 20px; box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5); transition: all 0.3s ease; font-family: 'Montserrat', sans-serif;
+    }
+    .main-button:hover { transform: translateY(-8px) scale(1.05); box-shadow: 0 12px 25px rgba(33, 150, 243, 0.7); }
+    .bottom-links { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; align-items: center; }
+    .bottom-link {
+      color: #009688; text-decoration: none; padding: 10px 20px; border: 1px solid #009688; border-radius: 25px; transition: all 0.3s;
+      font-size: 1rem; background: rgba(255, 255, 255, 0.05); width: 100%; max-width: 300px;
+    }
+    .bottom-link:hover { background: rgba(0, 150, 136, 0.1); transform: translateY(-2px); }
+    footer { text-align: center; padding: 20px; opacity: 0.8; width: 100%; font-size: 1rem; margin-top: auto; }
+    @media (max-width: 768px) {
+      body { padding: 10px; } .container { padding: 15px; }
+      h1 { font-size: 2.8rem; } .subtitle { font-size: 1.1rem; }
+      .main-button { padding: 18px 40px; font-size: 1.3rem; border-radius: 30px; }
+      .bottom-link { font-size: 0.9rem; padding: 8px 16px; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 2.2rem; } .subtitle { font-size: 1rem; }
+      .main-button { padding: 15px 30px; font-size: 1.1rem; }
+      header { padding: 20px 10px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>LVG Kino</h1>
-            <p class="subtitle">Кинотеатр на берегу моря в городе Новороссийск</p>
-            <a href="seances.html" class="main-button">Выбрать сеанс</a>
-        </header>
+  <div class="container">
+    <header>
+      <h1>LVG Kino</h1>
+      <p class="subtitle">Кинотеатр на берегу моря в городе Новороссийск</p>
+      <a href="seances.html" class="main-button">Выбрать сеанс</a>
+    </header>
 
-        <!-- Ссылки внизу страницы -->
-        <div class="bottom-links">
-            <a href="contact.html" class="bottom-link">📞 Контакты</a>
-            <a href="admin.html" class="bottom-link">🔐 Админка</a>
-            <!-- Дублируем Telegram -->
-            <a href="https://t.me/lydivgolivyde" target="_blank" class="bottom-link">💬 Наш Telegram</a>
-        </div>
-
-        <footer>
-            <p>© 2025 LVG Kino Новороссийск</p>
-        </footer>
+    <div class="bottom-links">
+      <a href="contact.html" class="bottom-link">📞 Контакты</a>
+      <a href="admin.html" class="bottom-link">🔐 Админка</a>
+      <a href="https://t.me/lydivgolivyde" target="_blank" rel="noopener noreferrer" class="bottom-link">💬 Наш Telegram</a>
     </div>
+
+    <footer>
+      <p>© 2025 LVG Kino Новороссийск</p>
+    </footer>
+  </div>
 </body>
 </html>
