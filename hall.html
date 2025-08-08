@@ -13,11 +13,7 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="apple-touch-icon" href="/images/favicon.png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Roboto', sans-serif;
             background: url('/images/cinema-bg.jpg') no-repeat center center fixed;
@@ -30,337 +26,113 @@
         }
         body::before {
             content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Тёмный оверлей для читаемости */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон для контента */
-            border-radius: 15px;
-            padding: 15px;
+            max-width: 1000px; margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px; padding: 15px;
         }
         .back-link {
-            display: inline-block;
-            margin-bottom: 15px;
-            color: #4ecdc4;
-            text-decoration: none;
-            padding: 8px 15px;
-            border: 1px solid #4ecdc4;
-            border-radius: 5px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
+            display: inline-block; margin-bottom: 15px; color: #4ecdc4; text-decoration: none;
+            padding: 8px 15px; border: 1px solid #4ecdc4; border-radius: 5px; transition: all 0.3s; font-size: 0.9rem;
         }
-        .back-link:hover {
-            background: rgba(78, 205, 196, 0.1);
-        }
-        header {
-            text-align: center;
-            padding: 15px 0;
-            margin-bottom: 15px;
-        }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: #4ecdc4;
-        }
+        .back-link:hover { background: rgba(78, 205, 196, 0.1); }
+        header { text-align: center; padding: 15px 0; margin-bottom: 15px; }
+        h1 { font-size: 1.8rem; margin-bottom: 10px; color: #4ecdc4; }
         .film-info {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px;
+            text-align: center; margin-bottom: 15px; font-size: 0.9rem;
         }
         .screen {
             background: linear-gradient(180deg, #4a90e2, #2c5aa0);
-            height: 50px;
-            width: 95%;
-            margin: 0 auto 20px;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 50px;
-            font-weight: bold;
-            box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+            height: 50px; width: 95%; margin: 0 auto 20px; border-radius: 5px;
+            text-align: center; line-height: 50px; font-weight: bold; box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
             font-size: 1rem;
         }
-        .hall-container {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        .row {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-            gap: 8px;
-        }
+        .hall-container { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; backdrop-filter: blur(10px); }
+        .row { display: flex; justify-content: center; margin-bottom: 10px; gap: 8px; }
         .seat {
-            background: #555;
-            border: 1px solid #777;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 11px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
+            background: #555; border: 1px solid #777; border-radius: 5px; cursor: pointer; text-align: center;
+            font-size: 11px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; user-select: none;
         }
-        .seat:hover {
-            background: #666;
-            transform: scale(1.05);
-        }
-        .seat.booked {
-            background: #ff4444;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .seat.selected {
-            background: #4CAF50;
-            animation: pulse 0.5s ease-in-out;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        /* Размеры мест */
+        .seat:hover { background: #666; transform: scale(1.05); }
+        .seat.booked { background: #ff4444; cursor: not-allowed; transform: none; }
+        .seat.selected { background: #4CAF50; animation: pulse 0.5s ease-in-out; }
+        @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
         .single { width: 35px; height: 35px; }
         .double { width: 75px; height: 35px; }
         .quad { width: 155px; height: 35px; }
-        .row-label {
-            width: 25px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #4ecdc4;
-            font-size: 0.8rem;
-        }
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.8rem;
-        }
-        .legend-color {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
-        }
-        /* Модальное окно */
+        .row-label { width: 25px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #4ecdc4; font-size: 0.8rem; }
+        .legend { display: flex; justify-content: center; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; }
+        .legend-color { width: 15px; height: 15px; border-radius: 3px; }
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            overflow: auto;
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8); overflow: auto;
         }
         .modal-content {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            margin: 5% auto;
-            padding: 15px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            border: 1px solid #4ecdc4;
-            position: relative;
+            margin: 5% auto; padding: 15px; border-radius: 15px; width: 90%; max-width: 500px;
+            text-align: center; border: 1px solid #4ecdc4; position: relative;
         }
         .close {
-            color: #aaa;
-            float: right;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 15px;
+            color: #aaa; float: right; font-size: 24px; font-weight: bold; cursor: pointer; position: absolute; top: 10px; right: 15px;
         }
-        .close:hover,
-        .close:focus {
-            color: #4ecdc4;
-        }
-        .booking-info {
-            margin: 15px 0;
-        }
-        .booking-info p {
-            margin: 8px 0;
-            font-size: 0.9rem;
-        }
+        .close:hover, .close:focus { color: #4ecdc4; }
+        .booking-info { margin: 15px 0; }
+        .booking-info p { margin: 8px 0; font-size: 0.9rem; }
         button {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 8px 5px;
-            transition: transform 0.3s;
-            font-size: 0.9rem;
-            min-height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; padding: 10px 20px; border-radius: 25px;
+            cursor: pointer; font-weight: bold; margin: 8px 5px; transition: transform 0.3s; font-size: 0.9rem; min-height: 40px;
         }
-        button:hover {
-            transform: translateY(-2px);
-        }
+        button:hover { transform: translateY(-2px); }
+        button[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; }
         select {
-            padding: 8px;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: #333;
-            color: white;
-            border: 1px solid #4ecdc4;
-            width: 100%;
+            padding: 8px; margin: 10px 0; border-radius: 5px; background: #333; color: white; border: 1px solid #4ecdc4; width: 100%;
         }
-        .loading {
-            text-align: center;
-            padding: 20px;
-        }
-        /* Мобильная адаптация */
+        .loading { text-align: center; padding: 20px; }
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 5px;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            .film-info {
-                font-size: 0.8rem;
-                padding: 10px;
-            }
-            .screen {
-                height: 40px;
-                line-height: 40px;
-                font-size: 0.9rem;
-            }
-            .seat {
-                font-size: 10px;
-            }
+            body { padding: 10px; }
+            .container { padding: 5px; }
+            h1 { font-size: 1.5rem; }
+            .film-info { font-size: 0.8rem; padding: 10px; }
+            .screen { height: 40px; line-height: 40px; font-size: 0.9rem; }
+            .seat { font-size: 10px; }
             .single { width: 30px; height: 30px; }
             .double { width: 65px; height: 30px; }
             .quad { width: 135px; height: 30px; }
-            .row-label {
-                width: 20px;
-                height: 30px;
-                font-size: 0.7rem;
-            }
-            .legend {
-                gap: 10px;
-            }
-            .legend-item {
-                font-size: 0.7rem;
-            }
-            .modal-content {
-                width: 95%;
-                margin: 15% auto;
-                padding: 12px;
-            }
-            .close {
-                font-size: 20px;
-                top: 5px;
-                right: 10px;
-            }
+            .row-label { width: 20px; height: 30px; font-size: 0.7rem; }
+            .legend { gap: 10px; }
+            .legend-item { font-size: 0.7rem; }
+            .modal-content { width: 95%; margin: 15% auto; padding: 12px; }
+            .close { font-size: 20px; top: 5px; right: 10px; }
         }
         @media (max-width: 480px) {
-            .seat {
-                transform: scale(0.9);
-            }
+            .seat { transform: scale(0.9); }
             .single { width: 25px; height: 25px; font-size: 8px; }
             .double { width: 55px; height: 25px; font-size: 8px; }
             .quad { width: 115px; height: 25px; font-size: 8px; }
-            .row-label {
-                width: 18px;
-                height: 25px;
-                font-size: 0.6rem;
-            }
-            .legend {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .back-link {
-                font-size: 0.8rem;
-                padding: 6px 12px;
-            }
+            .row-label { width: 18px; height: 25px; font-size: 0.6rem; }
+            .legend { flex-direction: column; gap: 8px; }
+            .back-link { font-size: 0.8rem; padding: 6px 12px; }
         }
-        /* Стили для новых полей формы */
-        .form-group {
-            margin-bottom: 10px;
-            text-align: left;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
+        .form-group { margin-bottom: 10px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input {
-            width: 100%;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #4ecdc4;
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            font-size: 0.9rem;
+            width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #4ecdc4; background: rgba(0,0,0,0.3); color: white; font-size: 0.9rem;
         }
-        .form-group input:invalid {
-            border-color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-            transition: border-color 0.3s, background 0.3s;
-        }
-        /* Стили для уведомлений */
+        .form-group input:invalid { border-color: #ff6b6b; background: rgba(255,107,107,0.1); transition: border-color 0.3s, background 0.3s; }
         .notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.3);
-            text-align: center;
-            z-index: 2000;
-            max-width: 90%;
-            width: 300px;
-            color: #333;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            text-align: center; z-index: 2000; max-width: 90%; width: 300px; color: #333;
         }
-        .notification h3 {
-            color: #4ecdc4;
-            margin-bottom: 15px;
-        }
-        .notification p {
-            margin: 10px 0;
-            font-size: 0.9rem;
-        }
-        /* Стили для ошибок валидации */
-        .error {
-            color: #ff6b6b;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            display: none;
-        }
+        .notification h3 { color: #4ecdc4; margin-bottom: 15px; }
+        .notification p { margin: 10px 0; font-size: 0.9rem; }
+        .error { color: #ff6b6b; font-size: 0.8rem; margin-top: 5px; display: none; }
     </style>
 </head>
 <body>
@@ -374,31 +146,24 @@
                 <p>Дата: <span id="filmDate">Загрузка...</span></p>
             </div>
         </header>
+
         <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color" style="background: #555;"></div>
-                <span>Свободно</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #4CAF50;"></div>
-                <span>Выбрано</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #ff4444;"></div>
-                <span>Забронировано</span>
-            </div>
+            <div class="legend-item"><div class="legend-color" style="background:#555;"></div><span>Свободно</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#4CAF50;"></div><span>Выбрано</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#ff4444;"></div><span>Забронировано</span></div>
         </div>
+
         <div class="hall-container">
             <div class="screen">ЭКРАН</div>
-            <!-- Места будут сгенерированы динамически -->
         </div>
-        <div class="form-group" style="text-align: center; margin-top: 15px;">
+
+        <div class="form-group" style="text-align:center; margin-top: 15px;">
             <button onclick="openCancelBookingModal()">Отменить бронирование</button>
             <button onclick="refreshHall()">Обновить</button>
         </div>
     </div>
 
-    <!-- Модальное окно бронирования -->
+    <!-- Модалка бронирования -->
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -411,9 +176,7 @@
                 <p>Тип: <span id="modalType"></span></p>
                 <div id="peopleSelector">
                     <label>Количество человек:</label><br>
-                    <select id="peopleCount">
-                        <option value="1">1</option>
-                    </select>
+                    <select id="peopleCount"><option value="1">1</option></select>
                 </div>
                 <div class="form-group">
                     <label for="customerName">Имя:</label>
@@ -421,24 +184,24 @@
                 </div>
                 <div class="form-group">
                     <label for="customerPhone">Телефон:</label>
-                    <input type="tel" id="customerPhone" placeholder="+7 (XXX) XXX-XXXX" required maxlength="12">
+                    <input type="tel" id="customerPhone" placeholder="+79998887766" required maxlength="12">
                     <div id="phoneError" class="error">Неверный формат телефона. Пример: +79998887766</div>
                 </div>
-                <div class="form-group" style="text-align: left; margin-top: 15px;">
-                    <label style="display: flex; align-items: flex-start; cursor: pointer;">
-                        <input type="checkbox" id="offerAgreement" style="margin-right: 10px; margin-top: 3px;" required>
-                        <span>Я согласен с <a href="oferta.html" target="_blank" style="color: #4ecdc4; text-decoration: underline;">договором оферты</a></span>
+                <div class="form-group" style="text-align:left; margin-top: 15px;">
+                    <label style="display:flex; align-items:flex-start; cursor:pointer;">
+                        <input type="checkbox" id="offerAgreement" style="margin-right:10px; margin-top:3px;" required>
+                        <span>Я согласен с <a href="oferta.html" target="_blank" style="color:#4ecdc4; text-decoration:underline;">договором оферты</a></span>
                     </label>
                     <div id="offerError" class="error">Необходимо согласиться с договором оферты</div>
                 </div>
-                <p>Стоимость: <span id="modalPrice" style="font-size: 1.4rem; font-weight: bold; color: #4ecdc4;">400</span> руб.</p>
+                <p>Стоимость: <span id="modalPrice" style="font-size:1.4rem; font-weight:bold; color:#4ecdc4;">400</span> руб.</p>
             </div>
-            <button onclick="confirmBooking()">Забронировать</button>
-            <button onclick="closeModal()" style="background: #666;">Отмена</button>
+            <button id="confirmBookingBtn" onclick="confirmBooking()">Забронировать</button>
+            <button onclick="closeModal()" style="background:#666;">Отмена</button>
         </div>
     </div>
 
-    <!-- Модальное окно отмены бронирования -->
+    <!-- Модалка отмены -->
     <div id="cancelBookingModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeCancelModal()">&times;</span>
@@ -448,13 +211,13 @@
                 <input type="tel" id="cancelPhone" placeholder="+79998887766" required maxlength="12">
                 <div id="cancelPhoneError" class="error">Неверный формат телефона. Пример: +79998887766</div>
             </div>
-            <button onclick="cancelBooking()">Подтвердить отмену</button>
-            <button onclick="closeCancelModal()" style="background: #666;">Отмена</button>
+            <button id="confirmCancelBtn" onclick="cancelBooking()">Подтвердить отмену</button>
+            <button onclick="closeCancelModal()" style="background:#666;">Отмена</button>
         </div>
     </div>
 
     <script>
-        // Инициализация Firebase
+        // Firebase init (guard)
         const firebaseConfig = {
             apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
             authDomain: "lvgkino.firebaseapp.com",
@@ -463,15 +226,10 @@
             messagingSenderId: "526810546839",
             appId: "1:526810546839:web:aaf02cb3a91b31cd311fd2"
         };
-        try {
-            firebase.initializeApp(firebaseConfig);
-            console.log('Firebase успешно инициализирован');
-        } catch (error) {
-            console.error('Ошибка инициализации Firebase:', error);
-            alert('Ошибка инициализации Firebase: ' + error.message);
-        }
+        if (!firebase.apps?.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.firestore();
-        // Глобальные переменные
+
+        // State
         let currentSeat = '';
         let currentType = '';
         let currentFilm = '';
@@ -480,70 +238,102 @@
         const pricePerSeat = 400;
         const modal = document.getElementById('bookingModal');
         const cancelModal = document.getElementById('cancelBookingModal');
+        let bookingsUnsub = null;
+        let isBookingProcessing = false;
+        let isCancelProcessing = false;
+
         const hallStructure = [
             { type: 'single', count: 8 },
             { type: 'double', count: 5 },
             { type: 'double', count: 6 },
             { type: 'double', count: 6 },
-            { type: 'mixed', seats: ['quad', 'double', 'double', 'double', 'double', 'quad'] },
-            { type: 'mixed', seats: ['quad', 'double', 'double', 'double', 'quad'] }
+            { type: 'mixed', seats: ['quad','double','double','double','double','quad'] },
+            { type: 'mixed', seats: ['quad','double','double','double','quad'] }
         ];
-        // Получаем параметры из URL
+
+        // URL params
         const urlParams = new URLSearchParams(window.location.search);
         currentFilm = decodeURIComponent(urlParams.get('film') || 'Неизвестный фильм');
         currentTime = decodeURIComponent(urlParams.get('time') || 'Неизвестное время');
         currentDate = decodeURIComponent(urlParams.get('date') || 'Неизвестная дата');
-        // Форматирование даты
-        const [year, month, day] = currentDate.split('-');
-        const formattedDate = `${day}.${month}.${year}`;
-        // Отображаем информацию о фильме
+
+        // Format date for display
+        const [year, month, day] = (currentDate || '').split('-');
+        const formattedDate = (year && month && day) ? `${day}.${month}.${year}` : currentDate;
+
+        // Fill header
         document.getElementById('filmName').textContent = currentFilm;
         document.getElementById('filmTime').textContent = currentTime;
         document.getElementById('filmDate').textContent = formattedDate;
         document.getElementById('modalFilm').textContent = currentFilm;
         document.getElementById('modalDate').textContent = formattedDate;
         document.getElementById('modalTime').textContent = currentTime;
-        // Устанавливаем фон постера
+
+        // Poster background
         async function setMovieBackground(movieName) {
             try {
-                const movieQuery = await db.collection('movies').where('name', '==', movieName).get();
+                const movieQuery = await db.collection('movies').where('name', '==', movieName).limit(1).get();
                 if (!movieQuery.empty) {
                     const movie = movieQuery.docs[0].data();
-                    document.body.style.backgroundImage = movie.posterUrl 
-                        ? `url('${movie.posterUrl}')` 
-                        : `url('/images/cinema-bg.jpg')`;
+                    document.body.style.backgroundImage = movie.posterUrl ? `url('${movie.posterUrl}')` : `url('/images/cinema-bg.jpg')`;
                 } else {
                     document.body.style.backgroundImage = `url('/images/cinema-bg.jpg')`;
                 }
-            } catch (error) {
-                console.error('Ошибка загрузки постера:', error);
+            } catch {
                 document.body.style.backgroundImage = `url('/images/cinema-bg.jpg')`;
             }
         }
-        // Загружаем страницу
+
+        // Helpers
+        function formatDateForComparison(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+        function getNowTimeString() {
+            const n = new Date();
+            return `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+        }
+        function isSeanceInPast() {
+            if (!currentDate || !currentTime) return false;
+            const todayStr = formatDateForComparison(new Date());
+            if (currentDate < todayStr) return true;
+            if (currentDate > todayStr) return false;
+            return currentTime <= getNowTimeString();
+        }
+
+        // Init
         document.addEventListener('DOMContentLoaded', async () => {
-            // Устанавливаем фон постера
             await setMovieBackground(currentFilm);
+
             const phoneInput = document.getElementById('customerPhone');
             phoneInput.addEventListener('input', formatPhoneNumber);
             phoneInput.addEventListener('keydown', allowOnlyNumbers);
+
             const cancelPhoneInput = document.getElementById('cancelPhone');
             cancelPhoneInput.addEventListener('input', formatPhoneNumber);
             cancelPhoneInput.addEventListener('keydown', allowOnlyNumbers);
-            // Валидация полей в реальном времени
+
             document.getElementById('customerName').addEventListener('input', validateInput);
             document.getElementById('customerPhone').addEventListener('input', validateInput);
             document.getElementById('cancelPhone').addEventListener('input', validateInput);
-            // Рендерим зал
+
             renderHall();
-            // Проверяем существование сеанса
+
             if (await validateSeance(currentFilm, currentDate, currentTime)) {
-                loadBookedSeats();
+                if (isSeanceInPast()) {
+                    showNotification('Этот сеанс уже начался или завершился.');
+                }
+                await loadBookedSeats();
             }
         });
-        /**
-         * Рендерит динамическую схему зала на основе hallStructure.
-         */
+
+        window.addEventListener('beforeunload', () => {
+            if (typeof bookingsUnsub === 'function') bookingsUnsub();
+        });
+
+        // Render hall
         function renderHall() {
             const container = document.querySelector('.hall-container');
             container.innerHTML = '<div class="screen">ЭКРАН</div>';
@@ -563,86 +353,73 @@
                 container.appendChild(rowElement);
             });
         }
-        /**
-         * Проверяет, существует ли сеанс в коллекции seances.
-         * @param {string} film - Название фильма.
-         * @param {string} date - Дата сеанса (формат YYYY-MM-DD).
-         * @param {string} time - Время сеанса (формат HH:MM).
-         * @returns {Promise<boolean>} - True, если сеанс существует, иначе перенаправляет на seances.html.
-         */
+
+        // Validate seance exists
         async function validateSeance(film, date, time) {
             try {
                 const snapshot = await db.collection('seances')
                     .where('movie', '==', film)
                     .where('date', '==', date)
                     .where('time', '==', time)
+                    .limit(1)
                     .get();
                 if (snapshot.empty) {
                     showNotification('Сеанс не найден. Пожалуйста, выберите другой.');
-                    setTimeout(() => {
-                        window.location.href = 'seances.html';
-                    }, 2000);
+                    setTimeout(() => { window.location.href = 'seances.html'; }, 2000);
                     return false;
                 }
                 return true;
             } catch (error) {
-                console.error('Ошибка проверки сеанса:', error);
                 alert(`Ошибка проверки сеанса: ${error.message}`);
                 return false;
             }
         }
-        /**
-         * Загружает забронированные места для текущего сеанса из Firestore и подписывается на изменения.
-         * @returns {Promise<void>} - Промис, завершающийся после загрузки и рендеринга мест.
-         */
+
+        // Load and live subscribe bookings
         async function loadBookedSeats() {
             try {
                 const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
                 const cacheTimestampKey = `${cacheKey}_timestamp`;
-                const cacheExpiry = 5 * 60 * 1000; // 5 минут
+                const cacheExpiry = 5 * 60 * 1000; // 5 мин
                 const cachedBookings = localStorage.getItem(cacheKey);
                 const cachedTimestamp = localStorage.getItem(cacheTimestampKey);
                 const now = Date.now();
-                // Проверяем, актуален ли кэш
+
                 if (cachedBookings && cachedTimestamp && (now - parseInt(cachedTimestamp) < cacheExpiry)) {
-                    console.log('Используем кэш:', JSON.parse(cachedBookings));
                     updateSeats(JSON.parse(cachedBookings));
                 } else {
                     localStorage.removeItem(cacheKey);
                     localStorage.removeItem(cacheTimestampKey);
                 }
-                // Подписываемся на изменения в реальном времени
-                db.collection('bookings')
+
+                if (typeof bookingsUnsub === 'function') bookingsUnsub();
+
+                bookingsUnsub = db.collection('bookings')
                     .where('film', '==', currentFilm)
                     .where('date', '==', currentDate)
                     .where('time', '==', currentTime)
-                    .onSnapshot((querySnapshot) => {
-                        const bookings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        console.log('Обновлено бронирований:', bookings);
+                    .onSnapshot((qs) => {
+                        const bookings = qs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         localStorage.setItem(cacheKey, JSON.stringify(bookings));
                         localStorage.setItem(cacheTimestampKey, Date.now());
                         updateSeats(bookings);
                     }, (error) => {
-                        console.error('Ошибка подписки на бронирования:', error);
                         alert(`Ошибка загрузки бронирований: ${error.message}`);
                     });
             } catch (error) {
-                console.error('Ошибка загрузки бронирований:', error);
                 alert(`Ошибка загрузки бронирований: ${error.message}`);
             }
         }
-        /**
-         * Обновляет статус мест на основе списка бронирований.
-         * @param {Array} bookings - Список бронирований.
-         */
+
+        // Update seats UI
         function updateSeats(bookings) {
             document.querySelectorAll('.seat').forEach(seat => {
-                seat.classList.remove('booked');
+                seat.classList.remove('booked', 'selected');
                 seat.style.cursor = 'pointer';
                 seat.onclick = () => openBooking(seat);
             });
-            bookings.forEach(booking => {
-                const seatElement = document.querySelector(`[data-seat="${booking.seat}"]`);
+            bookings.forEach(b => {
+                const seatElement = document.querySelector(`[data-seat="${b.seat}"]`);
                 if (seatElement) {
                     seatElement.classList.add('booked');
                     seatElement.onclick = null;
@@ -650,181 +427,144 @@
                 }
             });
         }
-        /**
-         * Принудительно обновляет зал, очищая кэш и загружая данные из Firestore.
-         */
+
+        // Refresh
         async function refreshHall() {
             const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
             const cacheTimestampKey = `${cacheKey}_timestamp`;
             localStorage.removeItem(cacheKey);
             localStorage.removeItem(cacheTimestampKey);
+            if (typeof bookingsUnsub === 'function') { bookingsUnsub(); bookingsUnsub = null; }
             await loadBookedSeats();
             showNotification('Зал обновлён!');
         }
-        /**
-         * Открывает модальное окно для бронирования места.
-         * @param {HTMLElement} seatElement - Элемент места (div.seat).
-         */
+
+        // Open booking modal
         function openBooking(seatElement) {
             if (seatElement.classList.contains('booked')) return;
-            // Удаляем класс selected у всех мест
-            document.querySelectorAll('.seat.selected').forEach(seat => seat.classList.remove('selected'));
+            if (isSeanceInPast()) {
+                showNotification('Нельзя бронировать на уже прошедший сеанс.');
+                return;
+            }
+
+            document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
             seatElement.classList.add('selected');
+
             currentSeat = seatElement.dataset.seat;
             currentType = seatElement.dataset.type;
+
             document.getElementById('modalSeat').textContent = currentSeat;
             document.getElementById('modalType').textContent =
                 currentType === 'single' ? 'Одноместный' :
                 currentType === 'double' ? 'Двухместный' : 'Четырехместный';
+
             const peopleSelect = document.getElementById('peopleCount');
-            peopleSelect.innerHTML = '';
             let min = 1, max = 1;
-            if (currentType === 'double') {
-                min = 2;
-                max = 3;
-            } else if (currentType === 'quad') {
-                min = 4;
-                max = 6;
-            }
+            if (currentType === 'double') { min = 2; max = 3; }
+            else if (currentType === 'quad') { min = 4; max = 6; }
+
+            peopleSelect.innerHTML = '';
             for (let i = min; i <= max; i++) {
                 const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
+                option.value = i; option.textContent = i;
                 peopleSelect.appendChild(option);
             }
+            peopleSelect.onchange = updatePrice;
+
             updatePrice();
+
             modal.style.display = 'block';
-            const modalContent = document.querySelector('.modal-content');
-            modalContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.querySelector('#bookingModal .modal-content').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '+7';
             document.getElementById('phoneError').style.display = 'none';
             document.getElementById('offerAgreement').checked = false;
             document.getElementById('offerError').style.display = 'none';
-            // Обновляем цену при открытии
-            peopleSelect.addEventListener('change', updatePrice);
         }
-        /**
-         * Обновляет цену в модальном окне на основе количества человек.
-         */
+
         function updatePrice() {
             const peopleCount = parseInt(document.getElementById('peopleCount').value) || 1;
             const totalPrice = peopleCount * pricePerSeat;
             document.getElementById('modalPrice').textContent = totalPrice;
-            document.getElementById('modalPrice').style.fontSize = '1.4rem';
-            document.getElementById('modalPrice').style.fontWeight = 'bold';
-            document.getElementById('modalPrice').style.color = '#4ecdc4';
         }
-        /**
-         * Форматирует номер телефона в формате +7XXXXXXXXXX.
-         * @param {Event} e - Событие ввода.
-         */
+
+        // Phone helpers
         function formatPhoneNumber(e) {
             let input = e.target.value.replace(/\D/g, '');
-            if (input.startsWith('7')) input = input.substring(1);
-            if (input.startsWith('8')) input = input.substring(1);
-            if (input.length > 10) input = input.substring(0, 10);
-            let formatted = '+7';
-            if (input.length > 0) formatted += input.substring(0, 3);
-            if (input.length > 3) formatted += input.substring(3, 6);
-            if (input.length > 6) formatted += input.substring(6, 8);
-            if (input.length > 8) formatted += input.substring(8, 10);
-            e.target.value = formatted;
+            if (input.startsWith('7')) input = input.slice(1);
+            if (input.startsWith('8')) input = input.slice(1);
+            if (input.length > 10) input = input.slice(0, 10);
+            e.target.value = '+7' + input;
         }
-        /**
-         * Разрешает ввод только цифр и управляющих клавиш.
-         * @param {Event} e - Событие нажатия клавиши.
-         */
         function allowOnlyNumbers(e) {
-            if ([46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||
-                (e.keyCode === 65 && e.ctrlKey === true) ||
-                (e.keyCode === 67 && e.ctrlKey === true) ||
-                (e.keyCode === 86 && e.ctrlKey === true) ||
-                (e.keyCode === 88 && e.ctrlKey === true) ||
-                (e.keyCode >= 35 && e.keyCode <= 39)) {
-                return;
-            }
-            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                e.preventDefault();
-            }
+            const kc = e.keyCode || e.which;
+            if ([46,8,9,27,13].includes(kc) || (kc >= 35 && kc <= 39)) return;
+            if ((kc === 65 || kc === 67 || kc === 86 || kc === 88) && e.ctrlKey) return;
+            if ((e.shiftKey || kc < 48 || kc > 57) && (kc < 96 || kc > 105)) e.preventDefault();
         }
-        /**
-         * Проверяет валидность номера телефона.
-         * @param {string} phone - Номер телефона.
-         * @returns {boolean} - True, если номер валиден.
-         */
-        function validatePhone(phone) {
-            const phoneRegex = /^\+7\d{10}$/;
-            return phoneRegex.test(phone);
-        }
-        /**
-         * Проверяет валидность полей формы в реальном времени.
-         * @param {Event} e - Событие ввода.
-         */
+        function validatePhone(phone) { return /^\+7\d{10}$/.test(phone); }
         function validateInput(e) {
             const input = e.target;
-            if (input.id === 'customerName') {
-                input.setCustomValidity(input.value.trim() ? '' : 'Введите имя');
-            } else if (input.id === 'customerPhone' || input.id === 'cancelPhone') {
-                input.setCustomValidity(validatePhone(input.value) ? '' : 'Неверный формат телефона');
-            }
+            if (input.id === 'customerName') input.setCustomValidity(input.value.trim() ? '' : 'Введите имя');
+            if (input.id === 'customerPhone' || input.id === 'cancelPhone') input.setCustomValidity(validatePhone(input.value) ? '' : 'Неверный формат телефона');
         }
-        /**
-         * Подтверждает бронирование и сохраняет его в Firestore.
-         */
+
+        // Confirm booking
         async function confirmBooking() {
-            const people = document.getElementById('peopleCount').value;
-            const price = document.getElementById('modalPrice').textContent;
+            if (isBookingProcessing) return;
+            if (isSeanceInPast()) { showNotification('Нельзя бронировать на уже прошедший сеанс.'); closeModal(); return; }
+
+            const people = parseInt(document.getElementById('peopleCount').value);
+            const price = parseInt(document.getElementById('modalPrice').textContent);
             const customerName = document.getElementById('customerName').value.trim();
             const customerPhone = document.getElementById('customerPhone').value.trim();
             const offerCheckbox = document.getElementById('offerAgreement');
             const offerError = document.getElementById('offerError');
-            document.getElementById('phoneError').style.display = 'none';
+            const phoneError = document.getElementById('phoneError');
+            const btn = document.getElementById('confirmBookingBtn');
+
+            phoneError.style.display = 'none';
             offerError.style.display = 'none';
-            if (!customerName) {
-                document.getElementById('customerName').setCustomValidity('Введите имя');
-                document.getElementById('customerName').reportValidity();
-                return;
-            }
-            if (!validatePhone(customerPhone)) {
-                document.getElementById('phoneError').style.display = 'block';
-                document.getElementById('customerPhone').setCustomValidity('Неверный формат телефона');
-                document.getElementById('customerPhone').reportValidity();
-                return;
-            }
-            if (!offerCheckbox.checked) {
-                offerError.style.display = 'block';
-                return;
-            }
+
+            if (!customerName) { document.getElementById('customerName').setCustomValidity('Введите имя'); document.getElementById('customerName').reportValidity(); return; }
+            if (!validatePhone(customerPhone)) { phoneError.style.display = 'block'; document.getElementById('customerPhone').setCustomValidity('Неверный формат телефона'); document.getElementById('customerPhone').reportValidity(); return; }
+            if (!offerCheckbox.checked) { offerError.style.display = 'block'; return; }
+
             try {
-                // Проверка, что место не забронировано
+                isBookingProcessing = true; btn.disabled = true;
+
+                // Check occupancy race
                 const snapshot = await db.collection('bookings')
                     .where('film', '==', currentFilm)
                     .where('date', '==', currentDate)
                     .where('time', '==', currentTime)
                     .where('seat', '==', currentSeat)
+                    .limit(1)
                     .get();
                 if (!snapshot.empty) {
                     showNotification('Место уже забронировано!');
                     closeModal();
                     return;
                 }
+
                 await db.collection('bookings').add({
                     film: currentFilm,
                     time: currentTime,
                     date: currentDate,
                     seat: currentSeat,
-                    people: parseInt(people),
-                    price: parseInt(price),
-                    customerName: customerName,
-                    customerPhone: customerPhone,
+                    people,
+                    price,
+                    customerName,
+                    customerPhone,
                     bookingTimestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                // Очищаем кэш
+
                 const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
                 const cacheTimestampKey = `${cacheKey}_timestamp`;
                 localStorage.removeItem(cacheKey);
                 localStorage.removeItem(cacheTimestampKey);
+
                 const seatElement = document.querySelector(`[data-seat="${currentSeat}"]`);
                 if (seatElement) {
                     seatElement.classList.remove('selected');
@@ -832,50 +572,38 @@
                     seatElement.onclick = null;
                     seatElement.style.cursor = 'not-allowed';
                 }
+
                 closeModal();
-                showNotification(`Бронирование подтверждено!
-Место: ${currentSeat}
-Количество человек: ${people}
-Стоимость: ${price} руб.
-Имя: ${customerName}
-Телефон: ${customerPhone}`);
-                document.getElementById('customerName').value = '';
-                document.getElementById('customerPhone').value = '+7';
-                document.getElementById('offerAgreement').checked = false;
+                showNotification(`Бронирование подтверждено!<br>Место: ${currentSeat}<br>Человек: ${people}<br>Стоимость: ${price} руб.`);
+
             } catch (error) {
-                console.error('Ошибка бронирования:', error);
                 alert(`Ошибка бронирования: ${error.message}`);
+            } finally {
+                isBookingProcessing = false; btn.disabled = false;
             }
         }
-        /**
-         * Открывает модальное окно для отмены бронирования.
-         */
+
+        // Cancel booking modal
         function openCancelBookingModal() {
             cancelModal.style.display = 'block';
             document.getElementById('cancelPhone').value = '+7';
             document.getElementById('cancelPhoneError').style.display = 'none';
-            const modalContent = cancelModal.querySelector('.modal-content');
-            modalContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.querySelector('#cancelBookingModal .modal-content').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        /**
-         * Закрывает модальное окно отмены бронирования.
-         */
-        function closeCancelModal() {
-            cancelModal.style.display = 'none';
-        }
-        /**
-         * Отменяет бронирование по номеру телефона.
-         */
+        function closeCancelModal() { cancelModal.style.display = 'none'; }
+
+        // Cancel booking by phone for this seance
         async function cancelBooking() {
+            if (isCancelProcessing) return;
             const phone = document.getElementById('cancelPhone').value.trim();
-            document.getElementById('cancelPhoneError').style.display = 'none';
-            if (!validatePhone(phone)) {
-                document.getElementById('cancelPhoneError').style.display = 'block';
-                document.getElementById('cancelPhone').setCustomValidity('Неверный формат телефона');
-                document.getElementById('cancelPhone').reportValidity();
-                return;
-            }
+            const err = document.getElementById('cancelPhoneError');
+            const btn = document.getElementById('confirmCancelBtn');
+            err.style.display = 'none';
+            if (!validatePhone(phone)) { err.style.display = 'block'; document.getElementById('cancelPhone').setCustomValidity('Неверный формат телефона'); document.getElementById('cancelPhone').reportValidity(); return; }
+
             try {
+                isCancelProcessing = true; btn.disabled = true;
+
                 const snapshot = await db.collection('bookings')
                     .where('film', '==', currentFilm)
                     .where('date', '==', currentDate)
@@ -887,56 +615,53 @@
                     closeCancelModal();
                     return;
                 }
-                for (const doc of snapshot.docs) {
-                    await db.collection('bookings').doc(doc.id).delete();
-                }
-                // Очищаем кэш
+                const batch = db.batch();
+                snapshot.docs.forEach(d => batch.delete(db.collection('bookings').doc(d.id)));
+                await batch.commit();
+
                 const cacheKey = `bookings_${currentFilm}_${currentDate}_${currentTime}`;
                 const cacheTimestampKey = `${cacheKey}_timestamp`;
                 localStorage.removeItem(cacheKey);
                 localStorage.removeItem(cacheTimestampKey);
+
                 showNotification('Бронирование успешно отменено!');
                 closeCancelModal();
             } catch (error) {
-                console.error('Ошибка отмены бронирования:', error);
                 alert(`Ошибка: ${error.message}`);
+            } finally {
+                isCancelProcessing = false; btn.disabled = false;
             }
         }
-        /**
-         * Закрывает модальное окно бронирования.
-         */
+
+        // Close booking modal
         function closeModal() {
-            document.querySelectorAll('.seat.selected').forEach(seat => seat.classList.remove('selected'));
+            document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
             modal.style.display = 'none';
         }
-        /**
-         * Показывает уведомление с сообщением.
-         * @param {string} message - Текст уведомления.
-         */
+
+        // Notification
         function showNotification(message) {
             const notification = document.createElement('div');
             notification.className = 'notification';
             notification.innerHTML = `
-                <h3>Успешно!</h3>
+                <h3>Сообщение</h3>
                 <p>${message}</p>
-                <button onclick="this.parentElement.style.display='none'" style="margin-top: 15px; background: linear-gradient(45deg, #4ecdc4, #ff6b6b);">Закрыть</button>
+                <button onclick="this.parentElement.remove()" style="margin-top: 15px; background: linear-gradient(45deg, #4ecdc4, #ff6b6b);">Закрыть</button>
             `;
             document.body.appendChild(notification);
             setTimeout(() => {
                 if (notification.parentElement) {
                     notification.style.opacity = '0';
                     notification.style.transition = 'opacity 0.5s';
-                    setTimeout(() => {
-                        if (notification.parentElement) {
-                            document.body.removeChild(notification);
-                        }
-                    }, 500);
+                    setTimeout(() => { notification.remove(); }, 500);
                 }
             }, 5000);
         }
-        window.onclick = function(event) {
-            if (event.target == modal) closeModal();
-            if (event.target == cancelModal) closeCancelModal();
+
+        // Click outside to close
+        window.onclick = function(e) {
+            if (e.target === modal) closeModal();
+            if (e.target === cancelModal) closeCancelModal();
         }
     </script>
 </body>
