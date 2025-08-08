@@ -11,11 +11,7 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="apple-touch-icon" href="/images/favicon.png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Arial', sans-serif;
             background: #1a1a2e;
@@ -24,477 +20,122 @@
             padding: 15px;
             position: relative;
         }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: -1;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 15px;
-            padding: 15px;
-        }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: -1; }
+        .container { max-width: 1200px; margin: 0 auto; background: rgba(0, 0, 0, 0.7); border-radius: 15px; padding: 15px; }
         .back-link {
-            display: inline-block;
-            margin-bottom: 15px;
-            color: #4ecdc4;
-            text-decoration: none;
-            padding: 8px 15px;
-            border: 1px solid #4ecdc4;
-            border-radius: 5px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
+            display: inline-block; margin-bottom: 15px; color: #4ecdc4; text-decoration: none; padding: 8px 15px; border: 1px solid #4ecdc4; border-radius: 5px; transition: all 0.3s; font-size: 0.9rem;
         }
-        .back-link:hover {
-            background: rgba(78, 205, 196, 0.1);
-        }
-        header {
-            text-align: center;
-            padding: 15px 0;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: #4ecdc4;
-        }
-        .admin-menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+        .back-link:hover { background: rgba(78, 205, 196, 0.1); }
+        header { text-align: center; padding: 15px 0; margin-bottom: 20px; position: relative; }
+        h1 { font-size: 1.8rem; margin-bottom: 10px; color: #4ecdc4; }
+        .admin-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .menu-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-height: 80px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s; min-height: 80px; display: flex; flex-direction: column; justify-content: center;
         }
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-3px);
-        }
-        .menu-item h3 {
-            color: #ff6b6b;
-            margin-bottom: 8px;
-            font-size: 1.2rem;
-        }
-        .menu-item p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        .section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        .section.active {
-            display: block;
-        }
-        .section h2 {
-            color: #4ecdc4;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-            text-align: center;
-        }
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 15px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-        th, td {
-            padding: 6px 4px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            white-space: nowrap;
-        }
-        th {
-            background: rgba(78, 205, 196, 0.2);
-            font-size: 0.8rem;
-        }
+        .menu-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-3px); }
+        .menu-item h3 { color: #ff6b6b; margin-bottom: 8px; font-size: 1.2rem; }
+        .menu-item p { font-size: 0.9rem; opacity: 0.9; }
+        .section { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; margin-bottom: 20px; display: none; }
+        .section.active { display: block; }
+        .section h2 { color: #4ecdc4; margin-bottom: 15px; font-size: 1.5rem; text-align: center; }
+        .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 15px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 6px 4px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.1); white-space: nowrap; }
+        th { background: rgba(78, 205, 196, 0.2); font-size: 0.8rem; }
         .logout-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            position: absolute;
-            top: 0;
-            right: 0;
-            font-size: 0.9rem;
+            background: #ff6b6b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; position: absolute; top: 0; right: 0; font-size: 0.9rem;
         }
-        .logout-btn:hover {
-            background: #ff5252;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
+        .logout-btn:hover { background: #ff5252; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
         input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #4ecdc4;
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            font-size: 0.9rem;
+            width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #4ecdc4; background: rgba(0, 0, 0, 0.3); color: white; font-size: 0.9rem;
         }
         button {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 5px;
-            font-size: 0.9rem;
-            min-height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px; font-size: 0.9rem; min-height: 40px;
         }
-        button:hover {
-            transform: translateY(-2px);
-        }
-        .success-message {
-            background: rgba(76, 175, 80, 0.2);
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            display: none;
-            font-size: 0.9rem;
-        }
-        .error-message {
-            background: rgba(255, 107, 107, 0.2);
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            display: none;
-            font-size: 0.9rem;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-size: 1rem;
-        }
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .nav-button {
-            background: rgba(78, 205, 196, 0.2);
-            color: white;
-            border: 1px solid #4ecdc4;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        .nav-button.active {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-        }
-        .refresh-btn {
-            background: #4ecdc4;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-        .filters-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-        .filter-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        button:hover { transform: translateY(-2px); }
+        .success-message { background: rgba(76, 175, 80, 0.2); padding: 10px; border-radius: 5px; margin: 10px 0; display: none; font-size: 0.9rem; }
+        .error-message { background: rgba(255, 107, 107, 0.2); padding: 10px; border-radius: 5px; margin: 10px 0; display: none; font-size: 0.9rem; }
+        .loading { text-align: center; padding: 20px; font-size: 1rem; }
+        .nav-buttons { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .nav-button { background: rgba(78, 205, 196, 0.2); color: white; border: 1px solid #4ecdc4; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; }
+        .nav-button.active { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); }
+        .refresh-btn { background: #4ecdc4; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; margin-left: 10px; }
+        .filters-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 20px; align-items: center; }
+        .filter-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         .seance-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s;
         }
-        .seance-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-        .seance-item h3 {
-            color: #4ecdc4;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-        .seance-item p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        .hall-modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            overflow: auto;
-        }
+        .seance-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+        .seance-item h3 { color: #4ecdc4; font-size: 1.1rem; margin-bottom: 5px; }
+        .seance-item p { font-size: 0.9rem; opacity: 0.9; }
+        .hall-modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); overflow: auto; }
         .hall-modal-content {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            margin: 2% auto;
-            padding: 20px;
-            border-radius: 15px;
-            width: 95%;
-            max-width: 1000px;
-            text-align: center;
-            border: 1px solid #4ecdc4;
-            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); margin: 2% auto; padding: 20px; border-radius: 15px; width: 95%; max-width: 1000px; text-align: center; border: 1px solid #4ecdc4; position: relative;
         }
-        .hall-modal-close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 15px;
-        }
-        .hall-modal-close:hover,
-        .hall-modal-close:focus {
-            color: #4ecdc4;
-        }
-        .hall-modal-header {
-            margin-bottom: 20px;
-        }
-        .hall-modal-header h2 {
-            color: #4ecdc4;
-            margin: 0;
-        }
+        .hall-modal-close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; position: absolute; top: 10px; right: 15px; }
+        .hall-modal-close:hover, .hall-modal-close:focus { color: #4ecdc4; }
+        .hall-modal-header { margin-bottom: 20px; }
+        .hall-modal-header h2 { color: #4ecdc4; margin: 0; }
         .hall-modal-screen {
-            background: linear-gradient(180deg, #4a90e2, #2c5aa0);
-            height: 40px;
-            width: 90%;
-            margin: 0 auto 20px;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 40px;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
-            font-size: 0.9rem;
+            background: linear-gradient(180deg, #4a90e2, #2c5aa0); height: 40px; width: 90%; margin: 0 auto 20px; border-radius: 5px; text-align: center; line-height: 40px; font-weight: bold; box-shadow: 0 0 10px rgba(74, 144, 226, 0.5); font-size: 0.9rem;
         }
-        .hall-modal-row {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 8px;
-            gap: 6px;
-        }
+        .hall-modal-row { display: flex; justify-content: center; margin-bottom: 8px; gap: 6px; }
         .hall-modal-seat {
-            background: #555;
-            border: 1px solid #777;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            transition: all 0.2s;
+            background: #555; border: 1px solid #777; border-radius: 4px; text-align: center; font-size: 10px; display: flex; align-items: center; justify-content: center; user-select: none; transition: all 0.2s;
         }
-        .hall-modal-seat.available {
-            background: #4ecdc4;
-            cursor: pointer;
-        }
-        .hall-modal-seat.available:hover {
-            background: #48bfb3;
-            transform: scale(1.1);
-        }
-        .hall-modal-seat.booked {
-            background: #ff6b6b;
-            cursor: pointer;
-        }
-        .hall-modal-seat.booked:hover {
-            background: #ff5252;
-            transform: scale(1.1);
-        }
-        .hall-modal-row-label {
-            width: 20px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #4ecdc4;
-            font-size: 0.7rem;
-        }
+        .hall-modal-seat.available { background: #4ecdc4; cursor: pointer; }
+        .hall-modal-seat.available:hover { background: #48bfb3; transform: scale(1.1); }
+        .hall-modal-seat.booked { background: #ff6b6b; cursor: pointer; }
+        .hall-modal-seat.booked:hover { background: #ff5252; transform: scale(1.1); }
+        .hall-modal-row-label { width: 20px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #4ecdc4; font-size: 0.7rem; }
         .hall-modal-single { width: 30px; height: 30px; }
         .hall-modal-double { width: 65px; height: 30px; }
         .hall-modal-quad { width: 135px; height: 30px; }
-        .hall-modal-seat.highlighted {
-            box-shadow: 0 0 0 3px #FFD700, 0 0 15px #FFD700;
-            position: relative;
-            z-index: 10;
-        }
+        .hall-modal-seat.highlighted { box-shadow: 0 0 0 3px #FFD700, 0 0 15px #FFD700; position: relative; z-index: 10; }
         .hall-modal-seat.highlighted::after {
-            content: "📍";
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 16px;
-            animation: pulseHighlight 1.5s infinite;
+            content: "📍"; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 16px; animation: pulseHighlight 1.5s infinite;
         }
-        @keyframes pulseHighlight {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
+        @keyframes pulseHighlight { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
         .booking-info-modal, .booking-create-modal {
-            display: none;
-            position: fixed;
-            z-index: 3000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7);
         }
         .booking-info-modal-content, .booking-create-modal-content {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            border: 1px solid #4ecdc4;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); margin: 15% auto; padding: 20px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #4ecdc4;
         }
-        .booking-info-modal-close, .booking-create-modal-close {
-            color: #aaa;
-            float: right;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .booking-info-modal-close:hover,
-        .booking-info-modal-close:focus,
-        .booking-create-modal-close:hover,
-        .booking-create-modal-close:focus {
-            color: #4ecdc4;
-        }
-        .booking-info-modal p, .booking-create-modal p {
-            margin: 10px 0;
-            font-size: 1rem;
-        }
-        .booking-info-modal h3, .booking-create-modal h3 {
-            color: #4ecdc4;
-            margin-top: 0;
-        }
-        .clear-archive-btn {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-        .clear-archive-btn:hover {
-            background: linear-gradient(45deg, #ff5252, #ff7b38);
-        }
+        .booking-info-modal-close, .booking-create-modal-close { color: #aaa; float: right; font-size: 24px; font-weight: bold; cursor: pointer; }
+        .booking-info-modal-close:hover, .booking-info-modal-close:focus, .booking-create-modal-close:hover, .booking-create-modal-close:focus { color: #4ecdc4; }
+        .booking-info-modal p, .booking-create-modal p { margin: 10px 0; font-size: 1rem; }
+        .booking-info-modal h3, .booking-create-modal h3 { color: #4ecdc4; margin-top: 0; }
+        .clear-archive-btn { background: linear-gradient(45deg, #ff6b6b, #ff8e53); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; margin-left: 10px; }
+        .clear-archive-btn:hover { background: linear-gradient(45deg, #ff5252, #ff7b38); }
         .delete-booking-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
+            background: #ff6b6b; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;
         }
-        .delete-booking-btn:hover {
-            background: #ff5252;
-        }
+        .delete-booking-btn:hover { background: #ff5252; }
         .edit-booking-btn {
-            background: #4ecdc4;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 5px;
+            background: #4ecdc4; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-left: 5px;
         }
-        .edit-booking-btn:hover {
-            background: #48bfb3;
-        }
-        .muted {
-            opacity: 0.7;
-        }
-        .btn-secondary {
-            background: #666;
-        }
+        .edit-booking-btn:hover { background: #48bfb3; }
+        .muted { opacity: 0.7; }
+        .btn-secondary { background: #666; }
         @media (max-width: 768px) {
-            body { padding: 10px; }
-            .container { padding: 5px; }
-            h1 { font-size: 1.5rem; }
+            body { padding: 10px; } .container { padding: 5px; } h1 { font-size: 1.5rem; }
             .admin-menu { grid-template-columns: 1fr; gap: 10px; }
-            .menu-item { padding: 12px; min-height: 70px; }
-            .menu-item h3 { font-size: 1.1rem; }
-            .section { padding: 15px; }
-            .form-group { margin-bottom: 12px; }
+            .menu-item { padding: 12px; min-height: 70px; } .menu-item h3 { font-size: 1.1rem; }
+            .section { padding: 15px; } .form-group { margin-bottom: 12px; }
             input, select, textarea, button { font-size: 0.85rem; padding: 8px; }
             .filters-container { flex-direction: column; gap: 10px; }
             .seance-item { padding: 12px; }
             .hall-modal-content { width: 95%; margin: 10% auto; }
         }
         @media (max-width: 480px) {
-            body { padding: 8px; }
-            h1 { font-size: 1.3rem; }
+            body { padding: 8px; } h1 { font-size: 1.3rem; }
             .section h2 { font-size: 1.2rem; }
             .nav-buttons { flex-direction: column; }
             .logout-btn { padding: 6px 12px; font-size: 0.8rem; }
-            .seance-item h3 { font-size: 1rem; }
-            .seance-item p { font-size: 0.8rem; }
+            .seance-item h3 { font-size: 1rem; } .seance-item p { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -664,7 +305,7 @@
             </div>
         </div>
 
-        <!-- Модальное окно информации о бронировании -->
+        <!-- Модалка информации о бронировании -->
         <div id="bookingInfoModal" class="booking-info-modal">
             <div class="booking-info-modal-content">
                 <span class="booking-info-modal-close" onclick="closeBookingInfoModal()">&times;</span>
@@ -673,7 +314,7 @@
             </div>
         </div>
 
-        <!-- Модальное окно создания бронирования -->
+        <!-- Модалка создания бронирования -->
         <div id="bookingCreateModal" class="booking-create-modal">
             <div class="booking-create-modal-content">
                 <span class="booking-create-modal-close" onclick="closeBookingCreateModal()">&times;</span>
@@ -711,7 +352,7 @@
             </div>
         </div>
 
-        <!-- Модальное окно редактирования бронирования -->
+        <!-- Модалка редактирования бронирования -->
         <div id="bookingEditModal" class="booking-create-modal">
             <div class="booking-create-modal-content">
                 <span class="booking-create-modal-close" onclick="closeBookingEditModal()">&times;</span>
@@ -725,7 +366,7 @@
                     <div class="form-group">
                         <label>Место (ряд-№):</label>
                         <input type="text" id="editBookingSeat" placeholder="Напр., 3-2">
-                        <p class="muted" style="margin-top:6px;">Подсказка: кликните по нужному месту на схеме, чтобы быстро открыть информацию и перейти к редактированию.</p>
+                        <p class="muted" style="margin-top:6px;">Подсказка: кликните по месту на схеме → «Информация» → «Редактировать».</p>
                     </div>
                     <div class="form-group">
                         <label>Имя клиента:</label>
@@ -753,11 +394,9 @@
     </div>
 
     <script>
-        // Защита от повторного выполнения скрипта
         if (!window.adminPanelInitialized) {
             window.adminPanelInitialized = true;
 
-            // Конфигурация и константы
             const MESSAGE_TIMEOUT = 5000;
             const FIREBASE_CONFIG = {
                 apiKey: "AIzaSyDeX86T2r1K0LRMEyk3UdUF68bfYiTwjiw",
@@ -784,66 +423,39 @@
                 BOOKING_UPDATE_FAILED: 'Ошибка обновления бронирования: '
             };
 
-            // Инициализация Firebase
             let db = null;
             try {
                 if (typeof firebase === 'undefined') throw new Error('Firebase SDK не загружен');
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(FIREBASE_CONFIG);
-                    console.log('Firebase успешно инициализирован');
-                } else {
-                    console.log('Firebase уже инициализирован');
-                }
+                if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
                 db = firebase.firestore();
-                console.log('Firestore успешно инициализирован');
             } catch (error) {
-                console.error('Ошибка инициализации Firebase:', error);
                 alert(ERROR_MESSAGES.FIREBASE_INIT_FAILED + error.message);
             }
 
-            // Глобальные переменные
             let currentBookingFilter = 'upcoming';
             let currentSeanceTab = 'upcoming';
             let allSeances = [];
             let currentHighlightedBookingId = null;
             let currentSeanceDetails = { film: '', date: '', time: '' };
 
-            // Live subscriptions
             let moviesUnsub = null;
             let seancesUnsub = null;
             let bookingsListUnsub = null;
             let hallBookingsUnsub = null;
 
-            // Кэш
             let currentMovies = [];
 
-            // Вспомогательные
             function formatDate(date) {
                 const y = date.getFullYear();
                 const m = String(date.getMonth() + 1).padStart(2, '0');
                 const d = String(date.getDate()).padStart(2, '0');
                 return `${y}-${m}-${d}`;
             }
-            function getTodayStr() {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                return formatDate(today);
-            }
-            function getTomorrowStr() {
-                const t = new Date();
-                t.setHours(0,0,0,0);
-                t.setDate(t.getDate() + 1);
-                return formatDate(t);
-            }
-            function getNextWeekStr() {
-                const t = new Date();
-                t.setHours(0,0,0,0);
-                t.setDate(t.getDate() + 7);
-                return formatDate(t);
-            }
+            function getTodayStr() { const t = new Date(); t.setHours(0,0,0,0); return formatDate(t); }
+            function getTomorrowStr() { const t = new Date(); t.setHours(0,0,0,0); t.setDate(t.getDate() + 1); return formatDate(t); }
+            function getNextWeekStr() { const t = new Date(); t.setHours(0,0,0,0); t.setDate(t.getDate() + 7); return formatDate(t); }
 
             function getHallLayout() {
-                // При необходимости меняйте конфигурацию здесь
                 return [
                     { row: 1, seats: 8, type: 'single' },
                     { row: 2, seats: 5, type: 'double' },
@@ -867,16 +479,9 @@
                 return ids;
             }
 
-            // Загрузка
             window.onload = function() {
-                if (localStorage.getItem('adminLoggedIn') !== 'true') {
-                    window.location.href = 'admin.html';
-                    return;
-                }
-                if (!db) {
-                    alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE);
-                    return;
-                }
+                if (localStorage.getItem('adminLoggedIn') !== 'true') { window.location.href = 'admin.html'; return; }
+                if (!db) { alert(ERROR_MESSAGES.FIRESTORE_UNAVAILABLE); return; }
                 const today = new Date().toISOString().split('T')[0];
                 const seanceDateInput = document.getElementById('seanceDate');
                 if (seanceDateInput) seanceDateInput.value = today;
@@ -886,23 +491,15 @@
                 subscribeToBookingsList(currentBookingFilter);
             };
 
-            // Глобальные функции для HTML-обработчиков
-            window.logout = function() {
-                localStorage.removeItem('adminLoggedIn');
-                window.location.href = 'admin.html';
-            };
+            window.logout = function() { localStorage.removeItem('adminLoggedIn'); window.location.href = 'admin.html'; };
 
             window.showSection = function(sectionId) {
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 const section = document.getElementById(sectionId);
                 if (section) section.classList.add('active');
-                if (sectionId === 'movies') {
-                    subscribeToMovies();
-                } else if (sectionId === 'seances') {
-                    switchSeanceTab(currentSeanceTab);
-                } else if (sectionId === 'bookings') {
-                    subscribeToBookingsList(currentBookingFilter);
-                }
+                if (sectionId === 'movies') subscribeToMovies();
+                else if (sectionId === 'seances') switchSeanceTab(currentSeanceTab);
+                else if (sectionId === 'bookings') subscribeToBookingsList(currentBookingFilter);
             };
 
             window.filterSeancesWithBookings = function(filter) {
@@ -912,10 +509,7 @@
                 subscribeToBookingsList(filter);
             };
 
-            window.refreshBookingsList = function() {
-                // Пересоздать подписку (на случай, если что-то подвисло)
-                subscribeToBookingsList(currentBookingFilter, true);
-            };
+            window.refreshBookingsList = function() { subscribeToBookingsList(currentBookingFilter, true); };
 
             window.switchSeanceTab = function(tab) {
                 document.querySelectorAll('#seances .nav-button').forEach(b => b.classList.remove('active'));
@@ -923,7 +517,7 @@
                     document.querySelector('button[onclick="switchSeanceTab(\'upcoming\')"]').classList.add('active');
                     document.getElementById('addSeanceForm').style.display = 'block';
                     document.getElementById('seancesListTitle').textContent = 'Актуальные сеансы';
-                } else if (tab === 'archived') {
+                } else {
                     document.querySelector('button[onclick="switchSeanceTab(\'archived\')"]').classList.add('active');
                     document.getElementById('addSeanceForm').style.display = 'none';
                     document.getElementById('seancesListTitle').textContent = 'Архив сеансов';
@@ -938,8 +532,7 @@
                 const time = document.getElementById('seanceTime').value;
                 const success = document.getElementById('seanceSuccess');
                 const error = document.getElementById('seanceError');
-                success.style.display = 'none';
-                error.style.display = 'none';
+                success.style.display = 'none'; error.style.display = 'none';
 
                 if (!movie || !date || !time) {
                     error.textContent = ERROR_MESSAGES.INVALID_INPUT;
@@ -950,8 +543,7 @@
 
                 const [y, m, d] = date.split('-').map(Number);
                 const seanceDate = new Date(y, m - 1, d);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+                const today = new Date(); today.setHours(0, 0, 0, 0);
                 if (seanceDate < today) {
                     error.textContent = 'Дата не может быть в прошлом';
                     error.style.display = 'block';
@@ -981,12 +573,8 @@
 
             window.deleteSeance = async function(id) {
                 if (confirm('Удалить сеанс?')) {
-                    try {
-                        await db.collection('seances').doc(id).delete();
-                        alert('Сеанс удалён!');
-                    } catch (e) {
-                        alert(ERROR_MESSAGES.SEANCE_DELETE_FAILED + e.message);
-                    }
+                    try { await db.collection('seances').doc(id).delete(); alert('Сеанс удалён!'); }
+                    catch (e) { alert(ERROR_MESSAGES.SEANCE_DELETE_FAILED + e.message); }
                 }
             };
 
@@ -996,8 +584,7 @@
                 const age = document.getElementById('movieAge').value;
                 const success = document.getElementById('movieSuccess');
                 const error = document.getElementById('movieError');
-                success.style.display = 'none';
-                error.style.display = 'none';
+                success.style.display = 'none'; error.style.display = 'none';
                 if (!name || !desc || !age) {
                     error.textContent = ERROR_MESSAGES.INVALID_INPUT;
                     error.style.display = 'block';
@@ -1032,43 +619,26 @@
                 }).catch(e => alert('Ошибка загрузки фильма: ' + e.message));
             };
 
-            window.closeEditMovieModal = function() {
-                document.getElementById('editMovieModal').style.display = 'none';
-            };
+            window.closeEditMovieModal = function() { document.getElementById('editMovieModal').style.display = 'none'; };
 
             window.saveMovieChanges = async function() {
                 const id = document.getElementById('editMovieId').value;
                 const name = document.getElementById('editMovieName').value.trim();
                 const desc = document.getElementById('editMovieDesc').value.trim();
                 const age = document.getElementById('editMovieAge').value;
-                if (!name || !desc || !age) {
-                    alert(ERROR_MESSAGES.INVALID_INPUT);
-                    return;
-                }
-                try {
-                    await db.collection('movies').doc(id).update({
-                        name, description: desc, age
-                    });
-                    closeEditMovieModal();
-                    alert('Фильм обновлён!');
-                } catch (e) {
-                    alert(ERROR_MESSAGES.MOVIE_UPDATE_FAILED + e.message);
-                }
+                if (!name || !desc || !age) { alert(ERROR_MESSAGES.INVALID_INPUT); return; }
+                try { await db.collection('movies').doc(id).update({ name, description: desc, age }); closeEditMovieModal(); alert('Фильм обновлён!'); }
+                catch (e) { alert(ERROR_MESSAGES.MOVIE_UPDATE_FAILED + e.message); }
             };
 
             window.deleteMovie = async function(movieId) {
                 if (confirm('Удалить фильм?')) {
-                    try {
-                        await db.collection('movies').doc(movieId).delete();
-                        alert('Фильм удалён!');
-                    } catch (e) {
-                        alert(ERROR_MESSAGES.MOVIE_DELETE_FAILED + e.message);
-                    }
+                    try { await db.collection('movies').doc(movieId).delete(); alert('Фильм удалён!'); }
+                    catch (e) { alert(ERROR_MESSAGES.MOVIE_DELETE_FAILED + e.message); }
                 }
             };
 
-            // Схема зала и модалки бронирований
-            window.showHallScheme = async function(film, date, time) {
+            window.showHallScheme = function(film, date, time) {
                 currentSeanceDetails = { film, date, time };
                 const modal = document.getElementById('hallSchemeModal');
                 const container = document.getElementById('hallSchemeContainer');
@@ -1089,9 +659,8 @@
                 if (!modal || !content) return;
                 try {
                     const doc = await db.collection('bookings').doc(id).get();
-                    if (!doc.exists) {
-                        content.innerHTML = '<p>Бронирование не найдено</p>';
-                    } else {
+                    if (!doc.exists) content.innerHTML = '<p>Бронирование не найдено</p>';
+                    else {
                         const b = doc.data();
                         const ts = b.bookingTimestamp?.toDate ? b.bookingTimestamp.toDate().toLocaleString('ru-RU') : 'неизвестно';
                         content.innerHTML = `
@@ -1116,22 +685,14 @@
                 }
             };
 
-            window.deleteBooking = async function(id, active) {
+            window.deleteBooking = async function(id) {
                 if (confirm('Удалить бронирование?')) {
-                    try {
-                        await db.collection('bookings').doc(id).delete();
-                        alert('Бронирование удалено!');
-                        closeBookingInfoModal();
-                        // Живые подписки сами обновят списки и схему
-                    } catch (e) {
-                        alert(ERROR_MESSAGES.BOOKING_DELETE_FAILED + e.message);
-                    }
+                    try { await db.collection('bookings').doc(id).delete(); alert('Бронирование удалено!'); }
+                    catch (e) { alert(ERROR_MESSAGES.BOOKING_DELETE_FAILED + e.message); }
                 }
             };
 
-            window.closeBookingInfoModal = function() {
-                document.getElementById('bookingInfoModal').style.display = 'none';
-            };
+            window.closeBookingInfoModal = function() { document.getElementById('bookingInfoModal').style.display = 'none'; };
 
             window.showBookingCreateForm = function(seat) {
                 const modal = document.getElementById('bookingCreateModal');
@@ -1161,8 +722,7 @@
                 const price = parseInt(document.getElementById('createBookingPrice').value);
                 const success = document.getElementById('createBookingSuccess');
                 const error = document.getElementById('createBookingError');
-                success.style.display = 'none';
-                error.style.display = 'none';
+                success.style.display = 'none'; error.style.display = 'none';
 
                 if (!film || !date || !time || !seat || !customerName || !customerPhone || !people || !price) {
                     error.textContent = ERROR_MESSAGES.INVALID_INPUT;
@@ -1171,7 +731,6 @@
                     return;
                 }
 
-                // Валидация места
                 const validSeats = getValidSeatIdsSet();
                 if (!validSeats.has(seat)) {
                     error.textContent = 'Некорректное место. Используйте формат "ряд-номер" и существующие места.';
@@ -1181,7 +740,6 @@
                 }
 
                 try {
-                    // Проверка, что место не занято
                     const snapshot = await db.collection('bookings')
                         .where('film', '==', film)
                         .where('date', '==', date)
@@ -1196,14 +754,7 @@
                     }
 
                     await db.collection('bookings').add({
-                        film,
-                        date,
-                        time,
-                        seat,
-                        customerName,
-                        customerPhone,
-                        people,
-                        price,
+                        film, date, time, seat, customerName, customerPhone, people, price,
                         bookingTimestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     success.style.display = 'block';
@@ -1216,23 +767,16 @@
                 }
             };
 
-            window.closeBookingCreateModal = function() {
-                document.getElementById('bookingCreateModal').style.display = 'none';
-            };
+            window.closeBookingCreateModal = function() { document.getElementById('bookingCreateModal').style.display = 'none'; };
 
-            // РЕДАКТИРОВАНИЕ БРОНИРОВАНИЯ
             window.showBookingEditForm = async function(bookingId) {
                 const modal = document.getElementById('bookingEditModal');
                 const success = document.getElementById('editBookingSuccess');
                 const error = document.getElementById('editBookingError');
-                success.style.display = 'none';
-                error.style.display = 'none';
+                success.style.display = 'none'; error.style.display = 'none';
                 try {
                     const doc = await db.collection('bookings').doc(bookingId).get();
-                    if (!doc.exists) {
-                        alert('Бронирование не найдено');
-                        return;
-                    }
+                    if (!doc.exists) { alert('Бронирование не найдено'); return; }
                     const b = doc.data();
                     document.getElementById('editBookingId').value = bookingId;
                     document.getElementById('editBookingFilm').value = b.film;
@@ -1250,9 +794,7 @@
                 }
             };
 
-            window.closeBookingEditModal = function() {
-                document.getElementById('bookingEditModal').style.display = 'none';
-            };
+            window.closeBookingEditModal = function() { document.getElementById('bookingEditModal').style.display = 'none'; };
 
             window.updateBooking = async function() {
                 const id = document.getElementById('editBookingId').value;
@@ -1268,8 +810,7 @@
                 const success = document.getElementById('editBookingSuccess');
                 const error = document.getElementById('editBookingError');
 
-                success.style.display = 'none';
-                error.style.display = 'none';
+                success.style.display = 'none'; error.style.display = 'none';
 
                 if (!id || !film || !date || !time || !seat || !customerName || !customerPhone || !people || !price) {
                     error.textContent = ERROR_MESSAGES.INVALID_INPUT;
@@ -1278,7 +819,6 @@
                     return;
                 }
 
-                // Валидация места
                 const validSeats = getValidSeatIdsSet();
                 if (!validSeats.has(seat)) {
                     error.textContent = 'Некорректное место. Используйте формат "ряд-номер" и существующие места.';
@@ -1305,11 +845,7 @@
                     }
 
                     await db.collection('bookings').doc(id).update({
-                        seat,
-                        customerName,
-                        customerPhone,
-                        people,
-                        price
+                        seat, customerName, customerPhone, people, price
                     });
                     success.style.display = 'block';
                     setTimeout(() => success.style.display = 'none', MESSAGE_TIMEOUT);
@@ -1321,37 +857,28 @@
                 }
             };
 
-            // Остальные функции
             async function loadAllSeances() {
                 if (!db) return [];
                 try {
                     const snapshot = await db.collection('seances').get();
-                    allSeances = snapshot.docs
-                        .map(doc => ({ id: doc.id, ...doc.data() }))
-                        .filter(s => s.movie && s.date && s.time);
+                    allSeances = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(s => s.movie && s.date && s.time);
                     return allSeances;
-                } catch (e) {
-                    console.error('Ошибка загрузки сеансов:', e);
-                    return [];
-                }
+                } catch (e) { return []; }
             }
 
             function seanceExists(film, date, time) {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+                const today = new Date(); today.setHours(0, 0, 0, 0);
                 const [y, m, d] = date.split('-').map(Number);
                 const seanceDate = new Date(y, m - 1, d);
                 return allSeances.some(s => s.movie === film && s.date === date && s.time === time && seanceDate >= today);
             }
 
-            // Live: фильмы
             function subscribeToMovies() {
                 const loading = document.getElementById('moviesLoading');
                 const table = document.getElementById('moviesTable');
                 const tbody = document.getElementById('moviesTableBody');
                 if (loading) loading.style.display = 'block';
                 if (table) table.style.display = 'none';
-
                 if (typeof moviesUnsub === 'function') moviesUnsub();
 
                 moviesUnsub = db.collection('movies').orderBy('name').onSnapshot(snapshot => {
@@ -1379,10 +906,7 @@
                     if (loading) loading.style.display = 'none';
                     if (table) table.style.display = 'table';
                     updateSeanceSelectFromCache();
-                }, (e) => {
-                    console.error('Ошибка live-фильмов:', e);
-                    if (loading) loading.innerHTML = `Ошибка: ${e.message}`;
-                });
+                }, (e) => { if (loading) loading.innerHTML = `Ошибка: ${e.message}`; });
             }
 
             function updateSeanceSelectFromCache() {
@@ -1396,33 +920,27 @@
                     opt.textContent = m.name;
                     select.appendChild(opt);
                 });
-                if (currentValue && [...select.options].some(o => o.value === currentValue)) {
-                    select.value = currentValue;
-                }
+                if (currentValue && [...select.options].some(o => o.value === currentValue)) select.value = currentValue;
             }
 
-            // Live: сеансы (вкладки)
             function subscribeToSeances(tab) {
                 const loading = document.getElementById('seancesLoading');
                 const table = document.getElementById('seancesTable');
                 const tbody = document.getElementById('seancesTableBody');
                 if (loading) loading.style.display = 'block';
                 if (table) table.style.display = 'none';
-
                 if (typeof seancesUnsub === 'function') seancesUnsub();
 
                 const todayStr = getTodayStr();
                 let query = db.collection('seances');
-                if (tab === 'upcoming') {
-                    query = query.where('date', '>=', todayStr);
-                } else if (tab === 'archived') {
-                    query = query.where('date', '<', todayStr);
-                }
-                // Для сортировки
-                query = query.orderBy('date').orderBy('time');
+                if (tab === 'upcoming') query = query.where('date', '>=', todayStr);
+                else if (tab === 'archived') query = query.where('date', '<', todayStr);
+                // ВАЖНО: только orderBy('date') (без orderBy('time')), чтобы не требовать композитный индекс
+                query = query.orderBy('date');
 
                 seancesUnsub = query.onSnapshot(snapshot => {
                     let seances = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(s => s.movie && s.date && s.time);
+                    // Клиентская сортировка: по дате, затем по времени
                     seances.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
 
                     tbody.innerHTML = seances.length
@@ -1431,37 +949,23 @@
                                 <td>${s.movie}</td>
                                 <td>${s.date}</td>
                                 <td>${s.time}</td>
-                                <td>
-                                    <button class="delete-booking-btn" onclick="deleteSeance('${s.id}')">Удалить</button>
-                                </td>
+                                <td><button class="delete-booking-btn" onclick="deleteSeance('${s.id}')">Удалить</button></td>
                             </tr>
                         `).join('')
                         : '<tr><td colspan="4" style="text-align: center;">Нет сеансов</td></tr>';
 
                     if (loading) loading.style.display = 'none';
                     if (table) table.style.display = 'table';
-
-                    // Обновим кэш для проверки дублей
                     allSeances = seances;
-                }, (e) => {
-                    console.error('Ошибка live-сеансов:', e);
-                    if (loading) loading.innerHTML = `Ошибка: ${e.message}`;
-                });
+                }, (e) => { if (loading) loading.innerHTML = `Ошибка: ${e.message}`; });
             }
 
-            // Live: список сеансов с бронированиями (группы)
             function subscribeToBookingsList(filter = 'upcoming', forceRestart = false) {
                 const loading = document.getElementById('bookingsLoading');
                 const container = document.getElementById('seancesWithBookingsContainer');
                 if (loading) loading.style.display = 'block';
                 if (container) container.innerHTML = '';
-
-                if (typeof bookingsListUnsub === 'function') {
-                    bookingsListUnsub();
-                    if (!forceRestart) {
-                        // ничего
-                    }
-                }
+                if (typeof bookingsListUnsub === 'function') bookingsListUnsub();
 
                 const todayStr = getTodayStr();
                 const tomorrowStr = getTomorrowStr();
@@ -1479,14 +983,9 @@
                     });
                     let list = Object.values(groups);
 
-                    // Базовый фильтр: актуальные (>= today) уже в запросе
-                    if (filter === 'today') {
-                        list = list.filter(s => s.date === todayStr);
-                    } else if (filter === 'tomorrow') {
-                        list = list.filter(s => s.date === tomorrowStr);
-                    } else if (filter === 'week') {
-                        list = list.filter(s => s.date >= todayStr && s.date <= nextWeekStr);
-                    }
+                    if (filter === 'today') list = list.filter(s => s.date === todayStr);
+                    else if (filter === 'tomorrow') list = list.filter(s => s.date === tomorrowStr);
+                    else if (filter === 'week') list = list.filter(s => s.date >= todayStr && s.date <= nextWeekStr);
 
                     list.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
 
@@ -1499,13 +998,9 @@
                     `).join('') : '<p style="text-align: center; color: #ff6b6b;">Нет актуальных сеансов с бронированиями</p>';
 
                     if (loading) loading.style.display = 'none';
-                }, (e) => {
-                    console.error('Ошибка live-списка бронирований:', e);
-                    if (loading) loading.innerHTML = `Ошибка: ${e.message}`;
-                });
+                }, (e) => { if (loading) loading.innerHTML = `Ошибка: ${e.message}`; });
             }
 
-            // Live: бронирования для конкретного сеанса + рендер схемы
             function subscribeToHallBookings(film, date, time) {
                 const container = document.getElementById('hallSchemeContainer');
                 const tableContainer = document.getElementById('bookingsTableContainer');
@@ -1551,7 +1046,6 @@
                 });
                 container.innerHTML = hallHTML;
 
-                // Таблица бронирований
                 tableContainer.innerHTML = `
                     <table>
                         <thead><tr>
@@ -1570,12 +1064,11 @@
                         <td>${b.customerPhone || '---'}</td>
                         <td>
                             <button class="edit-booking-btn" onclick="showBookingEditForm('${b.id}');event.stopPropagation()">Редактировать</button>
-                            <button class="delete-booking-btn" onclick="deleteBooking('${b.id}', true);event.stopPropagation()">Удалить</button>
+                            <button class="delete-booking-btn" onclick="deleteBooking('${b.id}');event.stopPropagation()">Удалить</button>
                         </td>
                     </tr>
                 `).join('') : '<tr><td colspan="6" style="text-align: center;">Нет бронирований</td></tr>';
 
-                // Подсветка ранее выбранного
                 if (currentHighlightedBookingId) {
                     const selected = bookings.find(b => b.id === currentHighlightedBookingId);
                     if (selected) {
@@ -1597,10 +1090,7 @@
             window.closeHallSchemeModal = function() {
                 document.getElementById('hallSchemeModal').style.display = 'none';
                 currentHighlightedBookingId = null;
-                if (typeof hallBookingsUnsub === 'function') {
-                    hallBookingsUnsub();
-                    hallBookingsUnsub = null;
-                }
+                if (typeof hallBookingsUnsub === 'function') { hallBookingsUnsub(); hallBookingsUnsub = null; }
             };
 
             window.clearArchive = async function() {
@@ -1608,7 +1098,6 @@
                     try {
                         await loadAllSeances();
                         const todayStr = getTodayStr();
-                        // Удаляем пакетами по 500
                         let batchCount = 0;
                         while (true) {
                             const snap = await db.collection('bookings').where('date', '<', todayStr).limit(500).get();
@@ -1620,9 +1109,7 @@
                             if (snap.size < 500) break;
                         }
                         alert(`Архив очищен. Удалено: ${batchCount}`);
-                    } catch (e) {
-                        alert(ERROR_MESSAGES.ARCHIVE_CLEAR_FAILED + e.message);
-                    }
+                    } catch (e) { alert(ERROR_MESSAGES.ARCHIVE_CLEAR_FAILED + e.message); }
                 }
             };
 
