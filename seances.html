@@ -70,19 +70,16 @@
             <h1>Расписание сеансов</h1>
             <p>Выберите фильм, дату и удобное время</p>
         </header>
-
         <div class="filter-buttons">
             <button class="filter-button active" onclick="filterSeances('all')" id="allBtn">Все сеансы</button>
             <button class="filter-button" onclick="filterSeances('today')" id="todayBtn">Сегодня</button>
             <button class="filter-button" onclick="filterSeances('tomorrow')" id="tomorrowBtn">Завтра</button>
             <button class="filter-button" onclick="filterSeances('week')" id="weekBtn">На неделю</button>
         </div>
-
         <div id="loading" class="loading">Загрузка сеансов...</div>
         <div id="seancesContent" style="display: none;"></div>
         <div id="noSeances" class="no-seances" style="display: none;">Нет доступных сеансов</div>
     </div>
-
     <script>
         // Firebase init (guard)
         const firebaseConfig = {
@@ -95,8 +92,15 @@
         };
         if (!firebase.apps?.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.firestore();
-        // Опционально: оффлайн кэш с синхронизацией вкладок
-        try { firebase.firestore().enablePersistence({ synchronizeTabs: true }); } catch (e) {}
+
+        // ✅ ВКЛЮЧАЕМ КЭШИРОВАНИЕ — ЭТО СНИЖАЕТ РАСХОД ЧТЕНИЙ
+        try {
+            firebase.firestore().enablePersistence({
+                synchronizeTabs: true
+            });
+        } catch (e) {
+            console.log("Кэширование не включено: ", e.message);
+        }
 
         // Global state
         let allSeances = [];
@@ -110,13 +114,16 @@
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
+
         function formatDate(date) {
             return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long' });
         }
+
         function getWeekday(date) {
             const weekdays = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
             return weekdays[date.getDay()];
         }
+
         function getNowTimeString() {
             const n = new Date();
             const hh = String(n.getHours()).padStart(2, '0');
@@ -132,7 +139,6 @@
             const loading = document.getElementById('loading');
             const seancesContent = document.getElementById('seancesContent');
             const noSeances = document.getElementById('noSeances');
-
             loading.style.display = 'block';
             seancesContent.style.display = 'none';
             noSeances.style.display = 'none';
@@ -140,11 +146,16 @@
             if (seancesUnsub) seancesUnsub();
 
             const todayStr = formatDateForComparison(new Date());
-            // Только будущие даты, сортировка по дате (без индекса по времени)
+            const twoWeeksLater = new Date();
+            twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
+            const twoWeeksStr = formatDateForComparison(twoWeeksLater);
+
+            // ✅ ОПТИМИЗИРОВАННЫЙ ЗАПРОС: только на 2 недели вперёд + лимит 100
             const query = db.collection('seances')
                 .where('date', '>=', todayStr)
+                .where('date', '<=', twoWeeksStr) // ← ЧИТАЕМ ТОЛЬКО НА 2 НЕДЕЛИ ВПЕРЁД
                 .orderBy('date')
-                .limit(200);
+                .limit(100); // ← МАКСИМУМ 100 ДОКУМЕНТОВ
 
             seancesUnsub = query.onSnapshot((snapshot) => {
                 allSeances = snapshot.docs
@@ -153,11 +164,21 @@
 
                 // Клиентская сортировка по дате и времени
                 allSeances.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
-
                 displaySeances();
             }, (error) => {
                 console.error('Ошибка live-сеансов:', error);
                 loading.textContent = 'Ошибка загрузки: ' + error.message;
+
+                // ✅ ОБРАБОТКА ОШИБКИ КВОТЫ — ПОКАЗЫВАЕМ ДРУЖЕЛЮБНОЕ СООБЩЕНИЕ
+                if (error.code === 'permission-denied' || error.message.includes('Quota')) {
+                    loading.innerHTML = `
+                        <div style="color: #ff6b6b; text-align: center; padding: 20px;">
+                            <h3>⏳ Превышена дневная квота</h3>
+                            <p>Расписание временно недоступно. Попробуйте зайти после 03:00 МСК.</p>
+                            <p>Мы работаем над решением этой проблемы!</p>
+                        </div>
+                    `;
+                }
             });
         }
 
@@ -229,21 +250,23 @@
 
             const groupedSeances = groupSeancesByMovieAndDate(filteredSeances);
             let html = '';
+
             for (const [movieName, dates] of Object.entries(groupedSeances)) {
                 html += `<div class="movie-section"><h2 class="movie-header">🎬 ${movieName}</h2>`;
-                // Даты по возрастанию
                 const sortedDates = Object.keys(dates).sort((a, b) => a.localeCompare(b));
+
                 for (const date of sortedDates) {
                     const seances = dates[date];
                     const dateObj = new Date(date + 'T00:00:00');
                     const formattedDate = formatDate(dateObj);
                     const weekday = getWeekday(dateObj);
+
                     html += `
                         <div class="seance-date">
                             <h3>${formattedDate} (${weekday})</h3>
                             <div class="seances-list">
                     `;
-                    // Сеансы по времени
+
                     seances.sort((a, b) => a.time.localeCompare(b.time));
                     for (const seance of seances) {
                         html += `
@@ -251,6 +274,7 @@
                                class="seance">${seance.time}</a>
                         `;
                     }
+
                     html += `</div></div>`;
                 }
                 html += `</div>`;
